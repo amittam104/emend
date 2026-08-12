@@ -1,0 +1,39 @@
+{
+  "name": "@emend/ai",
+  "version": "0.0.0",
+  "description": "Provider-neutral human-in-the-loop AI editing runtime for Tiptap.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "lint": "eslint .",
+    "format": "prettier --write \"**/*.{ts,md,json}\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "eslint": "9",
+    "tsdown": "^0.21.10",
+    "typescript": "5"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
