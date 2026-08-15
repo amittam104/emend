@@ -1,3 +1,7 @@
+import type { EmendAiError } from "./errors.js"
+
+export type { EmendAiError } from "./errors.js"
+
 export const PROTOCOL_VERSION = 1 as const
 
 export type EmendAiState =
@@ -89,12 +93,6 @@ export const DEFAULT_REQUEST_LIMITS: EmendRequestLimits = {
   maxInstructionLength: 1_000,
   maxActionIdLength: 100,
   maxCapabilityNameLength: 100,
-}
-
-export interface EmendAiError {
-  readonly code: string
-  readonly message: string
-  readonly retryable: boolean
 }
 
 export type EmendStreamEvent =
