@@ -10,20 +10,26 @@
 
 `@emend/ai` is under internal V0 development and is not published yet.
 
-The package currently contains only a buildable package shell. It does not expose usable AI APIs yet.
+The versioned protocol and immutable proposal boundaries are implemented for
+Phase 2. The package is still unpublished; the controller, streaming
+transport, server helpers, content adapters, editor integrations, and UI
+surfaces remain later implementation work.
 
-## Planned module boundaries
+## Module boundaries
 
-These boundaries are planned for later phases. They are documented here for package architecture only; they are not implemented or exported in Phase One.
+The current public entry points are:
 
 - **Root** — common consumer entry point.
-- **protocol** — versioned requests, actions, states, and errors.
-- **proposal** — immutable proposal lifecycle.
-- **transport** — provider-neutral streaming and cancellation.
+- **protocol** — versioned requests, actions, states, errors, transitions, and boundary validators.
+- **proposal** — immutable Markdown proposal snapshots.
+- **transport** — reserved public subpath; provider-neutral streaming is a later Phase 2 step.
 - **content** — Markdown normalization and parse results.
 - **tiptap** — `EmendAi` and editor integration.
 - **react** — `useEditorAi`.
-- **server** — framework-neutral `Request` and `Response` helpers.
+- **server** — reserved public subpath; framework-neutral `Request` and `Response` helpers are a later Phase 2 step.
+
+The package can be imported through `@emend/ai`, `@emend/ai/protocol`,
+`@emend/ai/proposal`, `@emend/ai/transport`, and `@emend/ai/server`.
 
 ## Dependency rules
 
