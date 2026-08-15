@@ -101,7 +101,7 @@ export function createStreamEventParser(
       return validation
     },
     finish() {
-      return terminal === "done" ? null : createEmendError("transport_error")
+      return terminal !== null ? null : createEmendError("transport_error")
     },
   }
 }
