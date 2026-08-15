@@ -17,7 +17,12 @@
 
 ## Development Status
 
-Emend is in active development and has not been released yet. We are not accepting contributions until we reach a stable release.
+Emend is in active development and has not been released yet. The unpublished
+`@emend/ai` package now includes the provider-neutral protocol, immutable
+proposals, controller, streaming transports, and Web Platform server helpers.
+Content and Tiptap adapters, React integration, provider recipes, registry
+components, and the full editor remain future V0 work. We are not accepting
+contributions until we reach a stable release.
 
 ## Distribution Model
 
@@ -30,8 +35,8 @@ Emend is in active development and has not been released yet. We are not accepti
 
 ## Repository Layout
 
-- apps/web — current Next.js application; later documentation, demos, and registry host.
-- packages/ai — future published Emend AI core.
+- apps/web — current Next.js application and internal AI runtime harness; later documentation, demos, and registry host.
+- packages/ai — unpublished provider-neutral Emend AI runtime.
 - packages/ui — private internal shadcn primitives.
 - packages/eslint-config — shared ESLint configuration.
 - packages/typescript-config — shared TypeScript configuration.
