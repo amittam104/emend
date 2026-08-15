@@ -3,7 +3,8 @@ import { PROTOCOL_VERSION, type EmendStreamEvent } from "../protocol/types.js"
 
 export function createEmendSseStream(
   generate: AsyncIterable<string>,
-  requestId: string
+  requestId: string,
+  onCancel?: () => void
 ): ReadableStream<Uint8Array> {
   const encoder = new TextEncoder()
   const encode = (event: EmendStreamEvent) =>
@@ -54,6 +55,7 @@ export function createEmendSseStream(
     },
     async cancel(reason) {
       cancelled = true
+      onCancel?.()
       await iterator.return?.(reason)
     },
   })

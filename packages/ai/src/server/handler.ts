@@ -59,11 +59,21 @@ export function createEmendAiHandler(
       return errorResponse(createEmendError("internal_error"), 500)
     }
 
+    const generationAbort = new AbortController()
+    const generationSignal = AbortSignal.any([
+      request.signal,
+      generationAbort.signal,
+    ])
+
     async function* generate(): AsyncIterable<string> {
-      yield* options.generate(validatedRequest, request.signal)
+      yield* options.generate(validatedRequest, generationSignal)
     }
 
-    const stream = createEmendSseStream(generate(), validatedRequest.requestId)
+    const stream = createEmendSseStream(
+      generate(),
+      validatedRequest.requestId,
+      () => generationAbort.abort()
+    )
 
     return new Response(stream, {
       headers: {
