@@ -77,6 +77,10 @@ importers:
         version: 5.9.3
 
   packages/ai:
+    dependencies:
+      eventsource-parser:
+        specifier: ^4.0.0
+        version: 4.0.0
     devDependencies:
       '@workspace/eslint-config':
         specifier: workspace:*
@@ -1937,6 +1941,10 @@ packages:
   eventsource-parser@3.1.1:
     resolution: {integrity: sha512-EKN1vKAMcZ8MlYMpaNuxN6R9yakzH6uajHcHVTqWJzvu5pWw9DyhbP35HH8MVBQ+dZjAfDxk+A8NiR9KWaXiyQ==}
     engines: {node: '>=18.0.0'}
+
+  eventsource-parser@4.0.0:
+    resolution: {integrity: sha512-aIpvYxbqTx4KYWw73KpCt1Rh22tEAJ144F1qR76CT3Ex+LNMEPKf5HFrK5Yz9fMP1EVT0GrfA35VZvWQhMPuSQ==}
+    engines: {node: '>=22.12'}
 
   eventsource@3.0.7:
     resolution: {integrity: sha512-CRT1WTyuQoD771GW56XEZFQ/ZoSfWid1alKGDYMmkt2yl8UXrVR4pspqWNEcqKvVIzg6PAltWjxcSSPrboA4iA==}
@@ -5196,6 +5204,8 @@ snapshots:
   etag@1.8.1: {}
 
   eventsource-parser@3.1.1: {}
+
+  eventsource-parser@4.0.0: {}
 
   eventsource@3.0.7:
     dependencies:
