@@ -19,10 +19,11 @@
 
 Emend is in active development and has not been released yet. The unpublished
 `@emend/ai` package now includes the provider-neutral protocol, immutable
-proposals, controller, streaming transports, and Web Platform server helpers.
-Content and Tiptap adapters, React integration, provider recipes, registry
-components, and the full editor remain future V0 work. We are not accepting
-contributions until we reach a stable release.
+proposals, controller, streaming transports, Web Platform server helpers, and
+the Markdown content boundary. Tiptap document application, editor adapters,
+React integration, provider recipes, registry components, and the full editor
+remain future V0 work. We are not accepting contributions until we reach a
+stable release.
 
 ## Distribution Model
 
@@ -35,11 +36,26 @@ contributions until we reach a stable release.
 
 ## Repository Layout
 
-- apps/web — current Next.js application and internal AI runtime harness; later documentation, demos, and registry host.
+- apps/web — current Next.js application and temporary internal Phase 2/3 runtime and content harnesses; later documentation, demos, and registry host.
 - packages/ai — unpublished provider-neutral Emend AI runtime.
 - packages/ui — private internal shadcn primitives.
 - packages/eslint-config — shared ESLint configuration.
 - packages/typescript-config — shared TypeScript configuration.
+
+## Markdown content boundary
+
+The unpublished runtime now exposes `@emend/ai/content`, a Tiptap-backed
+boundary for separate target/context Source Markdown and completed Proposal
+Markdown preparation. Tiptap remains the canonical document model and owns
+syntax and attributes. Emend adds focused safety and losslessness checks,
+including protocol-validated links, blocked raw HTML and generated images, and
+a narrow basic GFM table profile.
+
+Proposal preparation returns Supported Markdown, an explicit Plain-text
+fallback only for a caller-confirmed text-safe target, or blocked content. It
+does not apply changes to an editor document. The temporary `/phase-3` harness
+demonstrates these boundaries without mounting or mutating an editor; it is
+internal verification tooling and is not a published UI.
 
 ## Development
 
