@@ -6,6 +6,7 @@ export default defineConfig({
     "src/content/index.ts",
     "src/protocol/index.ts",
     "src/proposal/index.ts",
+    "src/tiptap/index.ts",
     "src/transport/index.ts",
     "src/server/index.ts",
   ],

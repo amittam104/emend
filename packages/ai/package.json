@@ -44,6 +44,10 @@
       "types": "./dist/content/index.d.ts",
       "import": "./dist/content/index.js"
     },
+    "./tiptap": {
+      "types": "./dist/tiptap/index.d.ts",
+      "import": "./dist/tiptap/index.js"
+    },
     "./transport": {
       "types": "./dist/transport/index.d.ts",
       "import": "./dist/transport/index.js"

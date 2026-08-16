@@ -15,6 +15,8 @@ export type EmendErrorCode =
   | "rate_limited"
   | "markdown_unavailable"
   | "schema_unsupported"
+  | "editor_not_configured"
+  | "confirmation_required"
   | "apply_failed"
   | "internal_error"
 
@@ -85,6 +87,14 @@ const errorDefaults: Record<
   },
   schema_unsupported: {
     message: "The editor cannot safely accept this generated content.",
+    retryable: false,
+  },
+  editor_not_configured: {
+    message: "This editor does not have Emend AI configured.",
+    retryable: false,
+  },
+  confirmation_required: {
+    message: "Confirm the document replacement before applying this proposal.",
     retryable: false,
   },
   apply_failed: {
