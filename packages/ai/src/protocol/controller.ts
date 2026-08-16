@@ -229,6 +229,33 @@ export class EmendAiController {
     })
   }
 
+  clearPendingProposal(proposalId: string): boolean {
+    const proposal = this.snapshot.pendingProposal
+    if (!proposal || proposal.id !== proposalId) return false
+
+    const activeEditReview =
+      this.snapshot.activeRequest?.interactionMode === "edit" &&
+      this.snapshot.activeRequest.requestId === proposal.id
+
+    if (!activeEditReview) {
+      this.update({ pendingProposal: null })
+      return true
+    }
+
+    this.lastRequest = null
+    this.lastRun = null
+    this.update({
+      state: "idle",
+      activeRequest: null,
+      streamedMarkdown: "",
+      informationalMarkdown: "",
+      streamCompleted: false,
+      error: null,
+      pendingProposal: null,
+    })
+    return true
+  }
+
   copy(): string | null {
     if (this.snapshot.pendingProposal) {
       return this.snapshot.pendingProposal.content.value
