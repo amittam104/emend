@@ -13,6 +13,7 @@ export type EmendErrorCode =
   | "provider_error"
   | "unauthorized"
   | "rate_limited"
+  | "markdown_unavailable"
   | "schema_unsupported"
   | "apply_failed"
   | "internal_error"
@@ -77,6 +78,10 @@ const errorDefaults: Record<
   rate_limited: {
     message: "Too many requests. Try again shortly.",
     retryable: true,
+  },
+  markdown_unavailable: {
+    message: "This editor needs compatible Tiptap Markdown support.",
+    retryable: false,
   },
   schema_unsupported: {
     message: "The editor cannot safely accept this generated content.",

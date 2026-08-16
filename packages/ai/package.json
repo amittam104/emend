@@ -12,6 +12,9 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@tiptap/core": "3.30.1",
+    "@tiptap/markdown": "3.30.1",
+    "@tiptap/pm": "3.30.1",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "eslint": "9",
@@ -37,6 +40,10 @@
       "types": "./dist/proposal/index.d.ts",
       "import": "./dist/proposal/index.js"
     },
+    "./content": {
+      "types": "./dist/content/index.d.ts",
+      "import": "./dist/content/index.js"
+    },
     "./transport": {
       "types": "./dist/transport/index.d.ts",
       "import": "./dist/transport/index.js"
@@ -51,6 +58,11 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "peerDependencies": {
+    "@tiptap/core": "3.30.1",
+    "@tiptap/markdown": "3.30.1",
+    "@tiptap/pm": "3.30.1"
   },
   "dependencies": {
     "eventsource-parser": "^4.0.0"
