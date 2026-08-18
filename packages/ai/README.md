@@ -11,9 +11,10 @@
 `@emend/ai` is under internal V0 development and is not published yet.
 
 The versioned protocol, immutable proposals, framework-neutral controller,
-provider-neutral transports, Web Platform server helpers, and the Markdown
-content boundary are implemented. Tiptap document application, editor
-integrations, and UI surfaces remain later V0 work.
+provider-neutral transports, Web Platform server helpers, the Markdown content
+boundary, and the direct Tiptap capture/preview/safe-apply boundary are
+implemented. React integration, shared UI surfaces, and the supplied editor
+starter remain later V0 work.
 
 ## Module boundaries
 
@@ -23,12 +24,13 @@ The current public entry points are:
 - **protocol** — versioned requests and stream events, action policy, controller state, errors, transitions, and boundary validators.
 - **proposal** — immutable Markdown proposal snapshots captured against their source request.
 - **content** — Tiptap-backed Source Markdown serialization and completed-proposal preparation.
+- **tiptap** — consumer-editor capture, revision tracking, proposal decorations, target-aware preparation, and exact-range Accept/Reject.
 - **transport** — one-shot fetch/SSE transport and deterministic mock transport.
 - **server** — framework-neutral Web `Request`, `Response`, SSE, and mock-generation helpers.
 
 The package can be imported through `@emend/ai`, `@emend/ai/protocol`,
-`@emend/ai/proposal`, `@emend/ai/content`, `@emend/ai/transport`, and
-`@emend/ai/server`.
+`@emend/ai/proposal`, `@emend/ai/content`, `@emend/ai/transport`,
+`@emend/ai/tiptap`, and `@emend/ai/server`.
 
 The content entry point does not expose Tiptap Markdown manager, Marked lexer,
 or handler internals. Those remain behind the package boundary.
@@ -74,6 +76,77 @@ Accept in this boundary. Arbitrary raw HTML and generated images are disabled;
 the only HTML-shaped exception is an attribute-free `<br>` inside a table cell.
 Link destinations are protocol-validated, including links nested in tables.
 
+## Tiptap integration boundary
+
+`@emend/ai/tiptap` works with an existing consumer-owned vanilla Tiptap
+`Editor`. The consumer supplies the schema and Markdown support, then installs
+one `EmendAi` extension. The complete default composition is:
+
+```ts
+import { TaskItem, TaskList } from "@tiptap/extension-list"
+import { TableKit } from "@tiptap/extension-table"
+import { Markdown } from "@tiptap/markdown"
+import StarterKit from "@tiptap/starter-kit"
+import { EmendAi } from "@emend/ai/tiptap"
+
+const extensions = [
+  StarterKit,
+  TaskList,
+  TaskItem.configure({ nested: true }),
+  TableKit,
+  Markdown.configure({ markedOptions: { gfm: true } }),
+  EmendAi,
+]
+```
+
+This is the complete default profile, not a request to add duplicate
+extensions. An existing editor can keep equivalent schema and Markdown
+handlers. `StarterKit` belongs to that consumer editor or to the later supplied
+editor starter; it is not bundled by `@emend/ai` core.
+
+Create one adapter for the editor and connect its `capture` and
+`isSourceRevisionCurrent` helpers to `EmendAiController`:
+
+```ts
+const adapter = createEmendTiptapAdapter(editor)
+
+adapter.capture(options)
+adapter.prepare(proposal, editedMarkdown)
+adapter.show(proposal, preparation, { inlinePreview: true })
+adapter.accept(proposal, preparation, {
+  confirmDocumentReplacement: false,
+})
+adapter.reject(proposal.id)
+adapter.getEditorState()
+```
+
+Capture keeps exact target and context ranges, Source Markdown, source marks,
+schema capabilities, and the local source slice in the adapter. `prepare`
+returns target-aware Supported Markdown, an explicit Plain-text fallback, or a
+blocked error. `show` creates ephemeral target and preview decorations;
+selection and cursor changes do not retarget them, while any content-changing
+transaction makes the proposal stale. A stale proposal cannot be prepared or
+accepted again.
+
+Basic GFM tables are applyable only at an exact block-compatible target that
+the configured schema accepts. Accept performs one exact-range replacement in
+one isolated undo event. The exported `EMEND_AI_TRANSACTION_META` key records:
+
+```ts
+{
+  origin: "emend-ai",
+  proposalId: string,
+  actionId: string,
+  userModified: boolean,
+}
+```
+
+`EmendAi` decoration classes and data attributes are styling hooks only. A
+non-empty Document replacement requires `confirmDocumentReplacement: true`,
+and missing editor integration returns `editor_not_configured`. The
+editor-neutral `clearPendingProposal(proposalId)` acknowledgment is called
+only after successful Accept or explicit Reject; it never applies content.
+
 ## Mock route pattern
 
 The server helpers can be adapted directly to a Web-compatible route while the
@@ -102,9 +175,9 @@ the controller or transport contracts.
 - Core modules do not import Next.js, shadcn, Tailwind, or provider SDKs.
 - Protocol, proposal, and transport do not import React.
 - Server helpers use Web Platform APIs and do not import Next.js.
-- Content uses exact aligned `@tiptap/core`, `@tiptap/markdown`, and `@tiptap/pm` peers and does not bundle StarterKit.
+- Content and direct Tiptap integration use exact aligned `@tiptap/core`, `@tiptap/markdown`, and `@tiptap/pm` peers and do not bundle StarterKit.
 - Provider SDKs belong in registry server recipes.
-- React, Tiptap document application, and editor UI adapters remain outside this package boundary.
+- React, shared review UI, provider recipes, and the supplied editor starter remain outside this package boundary.
 - UI is not published from this package.
 
 ## Development

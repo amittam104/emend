@@ -19,11 +19,11 @@
 
 Emend is in active development and has not been released yet. The unpublished
 `@emend/ai` package now includes the provider-neutral protocol, immutable
-proposals, controller, streaming transports, Web Platform server helpers, and
-the Markdown content boundary. Tiptap document application, editor adapters,
-React integration, provider recipes, registry components, and the full editor
-remain future V0 work. We are not accepting contributions until we reach a
-stable release.
+proposals, controller, streaming transports, Web Platform server helpers, the
+Markdown content boundary, and the `@emend/ai/tiptap` capture, preview, stale,
+and safe-apply boundary. React integration, shared UI surfaces, provider
+recipes, registry components, and the full editor remain future V0 work. We
+are not accepting contributions until we reach a stable release.
 
 ## Distribution Model
 
@@ -36,7 +36,7 @@ stable release.
 
 ## Repository Layout
 
-- apps/web — current Next.js application and temporary internal Phase 2/3 runtime and content harnesses; later documentation, demos, and registry host.
+- apps/web — current Next.js application and temporary internal Phase 2/3/4 runtime, content, and Tiptap harnesses; later documentation, demos, and registry host.
 - packages/ai — unpublished provider-neutral Emend AI runtime.
 - packages/ui — private internal shadcn primitives.
 - packages/eslint-config — shared ESLint configuration.
@@ -56,6 +56,15 @@ fallback only for a caller-confirmed text-safe target, or blocked content. It
 does not apply changes to an editor document. The temporary `/phase-3` harness
 demonstrates these boundaries without mounting or mutating an editor; it is
 internal verification tooling and is not a published UI.
+
+## Tiptap runtime boundary
+
+The unpublished `@emend/ai/tiptap` entry connects the completed controller and
+Markdown boundary to a consumer-owned Tiptap editor. It captures exact target
+and context ranges, keeps proposal previews ephemeral, rejects stale content,
+and applies an accepted proposal through one exact-range transaction with one
+isolated Undo event. Cursor and selection changes do not retarget an open
+proposal.
 
 ## Development
 
