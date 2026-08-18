@@ -380,11 +380,13 @@ export function Phase4TiptapHarness() {
       const nextProposal = nextSnapshot.pendingProposal
       if (!nextProposal) {
         pendingProposalIdRef.current = null
+        setConfirmDocumentReplacement(false)
         return
       }
       if (pendingProposalIdRef.current === nextProposal.id) return
 
       pendingProposalIdRef.current = nextProposal.id
+      setConfirmDocumentReplacement(false)
       setReviewedMarkdown(nextProposal.content.value)
       setProposalPresetId("streamed")
       setPreparation(null)
