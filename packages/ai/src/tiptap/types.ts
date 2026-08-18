@@ -23,6 +23,8 @@ export type EmendTiptapPreviewKind =
   | "supported-markdown"
   | "plain-text-fallback"
 
+export type EmendTiptapPreviewPlacement = "inline" | "block"
+
 export interface EmendCapturedRange extends EmendSelectionRange {
   readonly fromResolved: ResolvedPos
   readonly toResolved: ResolvedPos
@@ -133,6 +135,8 @@ export interface EmendTiptapShowProposalOptions {
   readonly targetRange: EmendSelectionRange
   readonly sourceRevision: EmendSourceRevision
   readonly previewKind?: EmendTiptapPreviewKind | null
+  readonly preview?: Fragment
+  readonly previewPlacement?: EmendTiptapPreviewPlacement
 }
 
 export interface EmendTiptapClearProposalOptions {
