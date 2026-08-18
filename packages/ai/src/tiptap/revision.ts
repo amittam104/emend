@@ -1,6 +1,6 @@
 import type { Editor } from "@tiptap/core"
 import { PluginKey, type EditorState } from "@tiptap/pm/state"
-import { DecorationSet } from "@tiptap/pm/view"
+import type { DecorationSet } from "@tiptap/pm/view"
 import { createEmendError } from "../protocol/errors.js"
 import type {
   EmendSelectionRange,
