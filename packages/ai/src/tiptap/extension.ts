@@ -1,6 +1,7 @@
 import { Extension, type CommandProps, type Editor } from "@tiptap/core"
+import { Fragment } from "@tiptap/pm/model"
 import { Plugin } from "@tiptap/pm/state"
-import { Decoration, DecorationSet } from "@tiptap/pm/view"
+import { DecorationSet } from "@tiptap/pm/view"
 import type {
   EmendTiptapClearProposalOptions,
   EmendTiptapEditorState,
@@ -14,6 +15,7 @@ import {
   toEmendAiEditorState,
   type EmendAiPluginState,
 } from "./revision.js"
+import { createTiptapProposalDecorations } from "./decorations.js"
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -95,8 +97,10 @@ export const EmendAi = Extension.create({
                   ...meta.options.sourceRevision,
                 }),
                 stale: false,
-                previewKind: meta.options.previewKind ?? null,
-                decorations: createTargetDecorations(
+                previewKind: meta.options.preview
+                  ? (meta.options.previewKind ?? null)
+                  : null,
+                decorations: createTiptapProposalDecorations(
                   newState.doc,
                   meta.options
                 ),
@@ -209,47 +213,6 @@ function clearPluginState(state: EmendAiPluginState): EmendAiPluginState {
   }
 }
 
-function createTargetDecorations(
-  doc: Parameters<typeof DecorationSet.create>[0],
-  options: EmendTiptapShowProposalOptions
-): DecorationSet {
-  const attrs = {
-    class: "emend-ai-target",
-    "data-emend-proposal-id": options.proposalId,
-  }
-
-  try {
-    if (options.targetRange.from === options.targetRange.to) {
-      return DecorationSet.create(doc, [
-        Decoration.widget(
-          options.targetRange.from,
-          (view) => {
-            const element = view.dom.ownerDocument.createElement("span")
-            element.className = attrs.class
-            element.setAttribute("data-emend-proposal-id", options.proposalId)
-            element.setAttribute("aria-hidden", "true")
-            return element
-          },
-          {
-            key: `${options.proposalId}:target`,
-            ignoreSelection: true,
-          }
-        ),
-      ])
-    }
-
-    return DecorationSet.create(doc, [
-      Decoration.inline(
-        options.targetRange.from,
-        options.targetRange.to,
-        attrs
-      ),
-    ])
-  } catch {
-    return DecorationSet.empty
-  }
-}
-
 function readLifecycleMeta(value: unknown): EmendAiLifecycleMeta | undefined {
   if (!isRecord(value) || typeof value.type !== "string") return undefined
 
@@ -294,12 +257,26 @@ function isValidShowOptionsValue(
   if (!value.proposalId.trim()) return false
   if (!isValidRange(value.targetRange)) return false
   if (!isValidSourceRevision(value.sourceRevision)) return false
+  if (value.preview !== undefined && !(value.preview instanceof Fragment)) {
+    return false
+  }
+  if (
+    value.preview !== undefined &&
+    (value.previewKind === undefined ||
+      value.previewKind === null ||
+      value.previewPlacement === undefined)
+  ) {
+    return false
+  }
 
   return (
-    value.previewKind === undefined ||
-    value.previewKind === null ||
-    value.previewKind === "supported-markdown" ||
-    value.previewKind === "plain-text-fallback"
+    (value.previewKind === undefined ||
+      value.previewKind === null ||
+      value.previewKind === "supported-markdown" ||
+      value.previewKind === "plain-text-fallback") &&
+    (value.previewPlacement === undefined ||
+      value.previewPlacement === "inline" ||
+      value.previewPlacement === "block")
   )
 }
 
