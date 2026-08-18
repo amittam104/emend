@@ -1,3 +1,4 @@
+export { captureTiptapContent } from "./capture.js"
 export { EmendAi, getEmendAiEditorState } from "./extension.js"
 export {
   getTiptapSourceRevision,
