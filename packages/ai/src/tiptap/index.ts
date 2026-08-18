@@ -1,5 +1,6 @@
 export { captureTiptapContent } from "./capture.js"
 export { EmendAi, getEmendAiEditorState } from "./extension.js"
+export { prepareTiptapProposal } from "./prepare.js"
 export {
   getTiptapSourceRevision,
   isTiptapSourceRevisionCurrent,
