@@ -66,6 +66,11 @@ export interface EmendTiptapCaptureOptions extends EmendCaptureOptions {
   readonly contextProjection?: string
 }
 
+export interface EmendTiptapPrepareOptions {
+  readonly editedMarkdown?: string
+  readonly linkProtocols?: readonly string[]
+}
+
 interface EmendTiptapPreparationBase {
   readonly proposalId: string
   readonly actionId: EmendActionId
