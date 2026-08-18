@@ -113,11 +113,15 @@ function createPreviewDecoration(
 ): Decoration | null {
   if (!options.preview) return null
 
-  const position = options.targetRange.to
-  if (position < 0 || position > doc.content.size) return null
-
   const placement = options.previewPlacement
   if (!placement) return null
+
+  const position = resolvePreviewPosition(
+    doc,
+    options.targetRange.to,
+    placement
+  )
+  if (position === null) return null
   let previewElement: HTMLElement | null = null
 
   return Decoration.widget(
@@ -138,6 +142,18 @@ function createPreviewDecoration(
       },
     }
   )
+}
+
+function resolvePreviewPosition(
+  doc: ProseMirrorNode,
+  position: number,
+  placement: EmendTiptapPreviewPlacement
+): number | null {
+  if (position < 0 || position > doc.content.size) return null
+  if (placement === "inline") return position
+
+  const resolved = doc.resolve(position)
+  return resolved.parent.isTextblock ? resolved.after() : position
 }
 
 function createTargetMarker(view: EditorView, proposalId: string): HTMLElement {
