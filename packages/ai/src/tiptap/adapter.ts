@@ -42,6 +42,7 @@ export interface EmendTiptapAdapter {
     preparation: EmendTiptapPreparation,
     options?: EmendTiptapShowOptions
   ) => EmendTiptapApplyResult
+  readonly hide: (proposalId?: string) => EmendTiptapApplyResult
   readonly accept: (
     proposal: EmendProposal,
     preparation: EmendTiptapPreparation,
@@ -125,6 +126,11 @@ export function createEmendTiptapAdapter(
         preparation,
         showOptions
       )
+    },
+
+    hide(proposalId) {
+      if (destroyed) return failure("editor_not_configured")
+      return clearTiptapProposal(editor, proposalId)
     },
 
     accept(proposal, preparation, acceptOptions) {

@@ -9,6 +9,7 @@ export default defineConfig({
     "src/tiptap/index.ts",
     "src/transport/index.ts",
     "src/server/index.ts",
+    "src/react/index.ts",
   ],
   format: ["esm"],
   platform: "neutral",
