@@ -256,6 +256,45 @@ export class EmendAiController {
     return true
   }
 
+  dismissInformationalResult(): void {
+    if (
+      this.snapshot.activeRequest?.interactionMode !== "ask" ||
+      !["reviewing", "error", "aborted"].includes(this.snapshot.state)
+    ) {
+      return
+    }
+
+    const proposal = this.snapshot.pendingProposal
+    this.generation += 1
+    this.abortController?.abort()
+    this.abortController = null
+
+    if (proposal) {
+      this.lastRequest = proposal.request
+      this.lastRun = lastRunForProposal(proposal)
+      this.update({
+        state: "reviewing",
+        activeRequest: proposal.request,
+        streamedMarkdown: proposal.content.value,
+        informationalMarkdown: "",
+        streamCompleted: true,
+        error: null,
+      })
+      return
+    }
+
+    this.lastRequest = null
+    this.lastRun = null
+    this.update({
+      state: "idle",
+      activeRequest: null,
+      streamedMarkdown: "",
+      informationalMarkdown: "",
+      streamCompleted: false,
+      error: null,
+    })
+  }
+
   copy(): string | null {
     if (this.snapshot.pendingProposal) {
       return this.snapshot.pendingProposal.content.value
@@ -495,6 +534,22 @@ function resolveRunOptions(
       contextScope,
       mutationOperation,
     },
+  }
+}
+
+function lastRunForProposal(proposal: EmendProposal): LastRun {
+  const request = proposal.request
+  return {
+    actionId: proposal.actionId,
+    options: Object.freeze({
+      interactionMode: request.interactionMode,
+      targetScope: request.targetScope,
+      contextScope: request.contextScope,
+      mutationOperation: request.mutationOperation,
+      ...(request.instruction !== undefined
+        ? { instruction: request.instruction }
+        : {}),
+    }),
   }
 }
 

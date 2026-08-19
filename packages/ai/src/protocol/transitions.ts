@@ -6,7 +6,7 @@ const transitions: Readonly<Record<EmendAiState, readonly EmendAiState[]>> = {
   streaming: ["reviewing", "error", "aborted"],
   reviewing: ["idle", "submitting", "error"],
   error: ["submitting", "idle", "reviewing"],
-  aborted: ["submitting", "idle"],
+  aborted: ["submitting", "idle", "reviewing"],
 }
 
 export function canTransition(from: EmendAiState, to: EmendAiState): boolean {
