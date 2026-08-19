@@ -72,9 +72,12 @@ interface SessionSnapshot {
 }
 
 interface SessionStore {
-  snapshot: SessionSnapshot
-  readonly listeners: Set<() => void>
-  session: Session | null
+  readonly getSnapshot: () => SessionSnapshot
+  readonly getSession: () => Session | null
+  readonly setSession: (session: Session | null) => void
+  readonly subscribe: (listener: () => void) => () => void
+  readonly publish: (snapshot: SessionSnapshot) => void
+  readonly reset: () => void
 }
 
 interface Session {
@@ -120,6 +123,8 @@ export function useEditorAi(options: UseEditorAiOptions): UseEditorAiResult {
     contextProjection,
   } = options
   const [store] = useState<SessionStore>(createSessionStore)
+  const limitsKey = getLimitsKey(limits)
+  const linkProtocolsKey = getLinkProtocolsKey(linkProtocols)
 
   useEffect(() => {
     if (!editor) {
@@ -144,7 +149,7 @@ export function useEditorAi(options: UseEditorAiOptions): UseEditorAiResult {
       adapter,
       controller,
       store,
-      previewMode: "inline",
+      previewMode,
       controllerSnapshot: controller.getSnapshot(),
       proposalId: null,
       proposalMarkdown: null,
@@ -153,7 +158,7 @@ export function useEditorAi(options: UseEditorAiOptions): UseEditorAiResult {
       editorState: adapter.getEditorState(),
       disposed: false,
     }
-    store.session = session
+    store.setSession(session)
     publish(session)
 
     const unsubscribe = controller.subscribe((snapshot) => {
@@ -171,26 +176,28 @@ export function useEditorAi(options: UseEditorAiOptions): UseEditorAiResult {
       editor.off("transaction", onTransaction)
       controller.cancel()
       adapter.destroy()
-      if (store.session === session) resetStore(store)
+      if (store.getSession() === session) resetStore(store)
     }
-  }, [contextProjection, editor, limits, linkProtocols, store, transport])
+    // These serialized keys intentionally replace object and array identity.
+    // Preview mode is presentation state and must not recreate the session.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contextProjection, editor, limitsKey, linkProtocolsKey, store, transport])
 
   useEffect(() => {
-    const session = store.session
+    const session = store.getSession()
     if (!session) return
 
-    session.previewMode = previewMode
+    setPreviewMode(session, previewMode)
     showCurrentPresentation(session)
   }, [previewMode, store])
 
   const subscribe = useCallback(
     (listener: () => void) => {
-      store.listeners.add(listener)
-      return () => store.listeners.delete(listener)
+      return store.subscribe(listener)
     },
     [store]
   )
-  const getSnapshot = useCallback(() => store.snapshot, [store])
+  const getSnapshot = useCallback(() => store.getSnapshot(), [store])
   const getServerSnapshot = useCallback(() => EMPTY_SESSION_SNAPSHOT, [])
   const current = useSyncExternalStore(
     subscribe,
@@ -200,27 +207,28 @@ export function useEditorAi(options: UseEditorAiOptions): UseEditorAiResult {
 
   const run = useCallback(
     (actionId: EmendActionId, runOptions?: EmendRunOptions) =>
-      store.session?.controller.run(actionId, runOptions) ?? Promise.resolve(),
+      store.getSession()?.controller.run(actionId, runOptions) ??
+      Promise.resolve(),
     [store]
   )
   const stop = useCallback(() => {
-    store.session?.controller.cancel()
+    store.getSession()?.controller.cancel()
   }, [store])
   const retry = useCallback(
-    () => store.session?.controller.retry() ?? Promise.resolve(),
+    () => store.getSession()?.controller.retry() ?? Promise.resolve(),
     [store]
   )
   const regenerate = useCallback(
-    () => store.session?.controller.regenerate() ?? Promise.resolve(),
+    () => store.getSession()?.controller.regenerate() ?? Promise.resolve(),
     [store]
   )
   const setProposalMarkdown = useCallback(
     (markdown: string) => {
-      const session = store.session
+      const session = store.getSession()
       const proposal = session?.controllerSnapshot.pendingProposal
       if (!session || !proposal) return
 
-      session.proposalMarkdown = markdown
+      setSessionProposalMarkdown(session, markdown)
       prepareAndShow(
         session,
         proposal,
@@ -231,7 +239,7 @@ export function useEditorAi(options: UseEditorAiOptions): UseEditorAiResult {
   )
   const accept = useCallback(
     (confirmDocumentReplacement = false): EmendTiptapApplyResult => {
-      const session = store.session
+      const session = store.getSession()
       const proposal = session?.controllerSnapshot.pendingProposal
       const preparation = session?.preparation
       if (!session) return failure("editor_not_configured")
@@ -241,14 +249,14 @@ export function useEditorAi(options: UseEditorAiOptions): UseEditorAiResult {
         confirmDocumentReplacement,
       })
       if (!result.ok) {
-        session.reviewError = result.error
+        setReviewError(session, result.error)
         publish(session)
         return result
       }
 
       if (!session.controller.clearPendingProposal(proposal.id)) {
         const error = createEmendError("invalid_request")
-        session.reviewError = error
+        setReviewError(session, error)
         publish(session)
         return { ok: false, error }
       }
@@ -257,31 +265,31 @@ export function useEditorAi(options: UseEditorAiOptions): UseEditorAiResult {
     [store]
   )
   const reject = useCallback((): EmendTiptapApplyResult => {
-    const session = store.session
+    const session = store.getSession()
     const proposal = session?.controllerSnapshot.pendingProposal
     if (!session) return failure("editor_not_configured")
     if (!proposal) return failure("invalid_request")
 
     const result = session.adapter.reject(proposal.id)
     if (!result.ok) {
-      session.reviewError = result.error
+      setReviewError(session, result.error)
       publish(session)
       return result
     }
 
     if (!session.controller.clearPendingProposal(proposal.id)) {
       const error = createEmendError("invalid_request")
-      session.reviewError = error
+      setReviewError(session, error)
       publish(session)
       return { ok: false, error }
     }
     return result
   }, [store])
   const dismissInformationalResult = useCallback(() => {
-    store.session?.controller.dismissInformationalResult()
+    store.getSession()?.controller.dismissInformationalResult()
   }, [store])
   const copy = useCallback(() => {
-    const session = store.session
+    const session = store.getSession()
     if (!session) return null
 
     const snapshot = session.controllerSnapshot
@@ -406,33 +414,75 @@ function isStale(snapshot: SessionSnapshot): boolean {
 }
 
 function publish(session: Session): void {
-  if (session.disposed || session.store.session !== session) return
-  session.store.snapshot = Object.freeze({
+  if (session.disposed || session.store.getSession() !== session) return
+  session.store.publish({
     controller: session.controllerSnapshot,
     proposalMarkdown: session.proposalMarkdown,
     preparation: session.preparation,
     reviewError: session.reviewError,
     editorState: session.editorState,
   })
-  emit(session.store)
 }
 
 function resetStore(store: SessionStore): void {
-  store.session = null
-  store.snapshot = EMPTY_SESSION_SNAPSHOT
-  emit(store)
-}
-
-function emit(store: SessionStore): void {
-  for (const listener of store.listeners) listener()
+  store.reset()
 }
 
 function createSessionStore(): SessionStore {
+  let snapshot = EMPTY_SESSION_SNAPSHOT
+  let session: Session | null = null
+  const listeners = new Set<() => void>()
+
   return {
-    snapshot: EMPTY_SESSION_SNAPSHOT,
-    listeners: new Set(),
-    session: null,
+    getSnapshot: () => snapshot,
+    getSession: () => session,
+    setSession: (next) => {
+      session = next
+    },
+    subscribe: (listener) => {
+      listeners.add(listener)
+      return () => listeners.delete(listener)
+    },
+    publish: (next) => {
+      snapshot = Object.freeze(next)
+      for (const listener of listeners) listener()
+    },
+    reset: () => {
+      session = null
+      snapshot = EMPTY_SESSION_SNAPSHOT
+      for (const listener of listeners) listener()
+    },
   }
+}
+
+function setPreviewMode(
+  session: Session,
+  previewMode: "inline" | "card"
+): void {
+  session.previewMode = previewMode
+}
+
+function setSessionProposalMarkdown(session: Session, markdown: string): void {
+  session.proposalMarkdown = markdown
+}
+
+function setReviewError(session: Session, error: EmendAiError | null): void {
+  session.reviewError = error
+}
+
+function getLimitsKey(limits?: Partial<EmendRequestLimits>): string {
+  return [
+    limits?.maxRequestIdLength ?? "",
+    limits?.maxTargetMarkdownLength ?? "",
+    limits?.maxContextMarkdownLength ?? "",
+    limits?.maxInstructionLength ?? "",
+    limits?.maxActionIdLength ?? "",
+    limits?.maxCapabilityNameLength ?? "",
+  ].join("|")
+}
+
+function getLinkProtocolsKey(linkProtocols?: readonly string[]): string {
+  return JSON.stringify(linkProtocols ?? null)
 }
 
 function failure(
