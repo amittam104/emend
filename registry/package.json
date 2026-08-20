@@ -1,0 +1,26 @@
+{
+  "name": "@emend/registry-components",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write \"**/*.{ts,tsx,json}\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./components/_shared/use-emend-ai-session": "./components/_shared/use-emend-ai-session.ts",
+    "./components/_shared/ai-review-card": "./components/_shared/ai-review-card.tsx"
+  },
+  "dependencies": {
+    "@emend/ai": "workspace:*",
+    "react": "19.2.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "eslint": "9",
+    "typescript": "5"
+  }
+}

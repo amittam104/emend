@@ -1,0 +1,27 @@
+.phase-5-editor .ProseMirror {
+  min-height: 18rem;
+  outline: none;
+}
+
+.phase-5-editor .ProseMirror > * + * {
+  margin-top: 0.75rem;
+}
+
+.phase-5-editor .emend-ai-target {
+  border-radius: 0.25rem;
+  background: color-mix(in oklch, var(--primary) 14%, transparent);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.phase-5-editor [data-emend-preview="true"] {
+  margin-inline: 0.25rem;
+  border-radius: 0.375rem;
+  background: color-mix(in oklch, var(--chart-2) 20%, transparent);
+  color: var(--foreground);
+  opacity: 0.8;
+}
+
+.phase-5-editor [data-emend-preview-fallback="plain-text"] {
+  background: color-mix(in oklch, var(--chart-4) 20%, transparent);
+}
