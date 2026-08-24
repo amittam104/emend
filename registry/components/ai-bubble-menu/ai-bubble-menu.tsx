@@ -115,14 +115,6 @@ export function AiBubbleMenuView({
   const [documentContext, setDocumentContext] = useState(false)
   const textColorInputRef = useRef<HTMLInputElement>(null)
   const backgroundColorInputRef = useRef<HTMLInputElement>(null)
-  const supportsUnderline =
-    typeof editor.commands.toggleUnderline === "function"
-  const supportsTextColor = typeof editor.commands.setColor === "function"
-  const supportsBackgroundColor =
-    typeof editor.commands.setBackgroundColor === "function"
-  const supportsLink =
-    typeof editor.commands.setLink === "function" &&
-    typeof editor.commands.unsetLink === "function"
   const activeFormats = useEditorState({
     editor,
     selector: ({ editor }) => ({
@@ -362,93 +354,81 @@ export function AiBubbleMenuView({
           >
             <Icon icon={TextItalicIcon} size={14} />
           </Button>
-          {supportsUnderline && (
-            <Button
-              variant="ghost"
-              size="icon"
-              type="button"
-              className={cn(
-                activeFormats.underline && "bg-muted text-foreground"
-              )}
-              aria-label="Underline"
-              aria-pressed={activeFormats.underline}
-              onClick={() => editor.chain().focus().toggleUnderline().run()}
-            >
-              <Icon icon={TextUnderlineIcon} size={14} />
-            </Button>
-          )}
-          {supportsTextColor && (
-            <>
-              <Button
-                variant="ghost"
-                size="icon"
-                type="button"
-                className={cn(
-                  activeFormats.textColor && "bg-muted text-foreground"
-                )}
-                aria-label="Text color"
-                aria-pressed={activeFormats.textColor}
-                onClick={() => textColorInputRef.current?.click()}
-              >
-                <Icon icon={TextColorIcon} size={14} />
-              </Button>
-              <input
-                ref={textColorInputRef}
-                type="color"
-                tabIndex={-1}
-                className="sr-only"
-                aria-label="Choose text color"
-                onChange={(event) =>
-                  editor.chain().focus().setColor(event.target.value).run()
-                }
-              />
-            </>
-          )}
-          {supportsBackgroundColor && (
-            <>
-              <Button
-                variant="ghost"
-                size="icon"
-                type="button"
-                className={cn(
-                  activeFormats.backgroundColor && "bg-muted text-foreground"
-                )}
-                aria-label="Background color"
-                aria-pressed={activeFormats.backgroundColor}
-                onClick={() => backgroundColorInputRef.current?.click()}
-              >
-                <Icon icon={HighlighterIcon} size={14} />
-              </Button>
-              <input
-                ref={backgroundColorInputRef}
-                type="color"
-                tabIndex={-1}
-                className="sr-only"
-                aria-label="Choose background color"
-                defaultValue="#ffff00"
-                onChange={(event) =>
-                  editor
-                    .chain()
-                    .focus()
-                    .setBackgroundColor(event.target.value)
-                    .run()
-                }
-              />
-            </>
-          )}
-          {supportsLink && (
-            <Button
-              variant="ghost"
-              size="icon"
-              type="button"
-              className={cn(activeFormats.link && "bg-muted text-foreground")}
-              aria-label="Link"
-              aria-pressed={activeFormats.link}
-              onClick={updateLink}
-            >
-              <Icon icon={Link01Icon} size={14} />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            type="button"
+            className={cn(
+              activeFormats.underline && "bg-muted text-foreground"
+            )}
+            aria-label="Underline"
+            aria-pressed={activeFormats.underline}
+            onClick={() => editor.chain().focus().toggleUnderline().run()}
+          >
+            <Icon icon={TextUnderlineIcon} size={14} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            type="button"
+            className={cn(
+              activeFormats.textColor && "bg-muted text-foreground"
+            )}
+            aria-label="Text color"
+            aria-pressed={activeFormats.textColor}
+            onClick={() => textColorInputRef.current?.click()}
+          >
+            <Icon icon={TextColorIcon} size={14} />
+          </Button>
+          <input
+            ref={textColorInputRef}
+            type="color"
+            tabIndex={-1}
+            className="sr-only"
+            aria-label="Choose text color"
+            onChange={(event) =>
+              editor.chain().focus().setColor(event.target.value).run()
+            }
+          />
+          <Button
+            variant="ghost"
+            size="icon"
+            type="button"
+            className={cn(
+              activeFormats.backgroundColor && "bg-muted text-foreground"
+            )}
+            aria-label="Background color"
+            aria-pressed={activeFormats.backgroundColor}
+            onClick={() => backgroundColorInputRef.current?.click()}
+          >
+            <Icon icon={HighlighterIcon} size={14} />
+          </Button>
+          <input
+            ref={backgroundColorInputRef}
+            type="color"
+            tabIndex={-1}
+            className="sr-only"
+            aria-label="Choose background color"
+            defaultValue="#ffff00"
+            onChange={(event) =>
+              editor
+                .chain()
+                .focus()
+                .setBackgroundColor(event.target.value)
+                .run()
+            }
+          />
+          <Button
+            variant="ghost"
+            size="icon"
+            type="button"
+            className={cn(activeFormats.link && "bg-muted text-foreground")}
+            aria-label="Link"
+            aria-pressed={activeFormats.link}
+            onClick={updateLink}
+          >
+            <Icon icon={Link01Icon} size={14} />
+          </Button>
         </div>
         {showReviewInMenu && (
           <section
