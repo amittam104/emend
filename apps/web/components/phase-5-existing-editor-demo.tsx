@@ -3,19 +3,23 @@
 import type { JSONContent } from "@tiptap/core"
 import { TaskItem, TaskList } from "@tiptap/extension-list"
 import { TableKit } from "@tiptap/extension-table"
+import { BackgroundColor, Color, TextStyle } from "@tiptap/extension-text-style"
 import { Markdown } from "@tiptap/markdown"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import { useEffect, useMemo, useState } from "react"
-import { AiReviewCard } from "@emend/registry-components/components/_shared/ai-review-card"
 import { useEditorAi } from "@emend/registry-components/components/_shared/use-emend-ai-session"
 import { createFetchTransport } from "@emend/ai/transport"
 import { EmendAi, getTiptapSourceRevision } from "@emend/ai/tiptap"
+import { AiBubbleMenuView } from "@emend/registry-components/components/ai-bubble-menu"
 
 type MockMode = "normal" | "delayed" | "failing"
 
 const editorExtensions = [
   StarterKit,
+  TextStyle,
+  Color,
+  BackgroundColor,
   TaskList,
   TaskItem.configure({ nested: true }),
   TableKit,
@@ -168,6 +172,7 @@ export function Phase5ExistingEditorDemo() {
 
         <div className="phase-5-editor rounded-xl border border-input bg-background p-4">
           <EditorContent editor={configuredEditor} />
+          <AiBubbleMenuView editor={configuredEditor} session={session} />
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -272,8 +277,6 @@ export function Phase5ExistingEditorDemo() {
           </div>
         </div>
       </section>
-
-      <AiReviewCard session={session} />
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
         <div className="space-y-4 rounded-2xl border border-border bg-card p-5 shadow-sm">

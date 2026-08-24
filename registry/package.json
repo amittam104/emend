@@ -9,11 +9,24 @@
     "typecheck": "tsc --noEmit"
   },
   "exports": {
+    "./components/_shared/icon": "./components/_shared/icon.tsx",
     "./components/_shared/use-emend-ai-session": "./components/_shared/use-emend-ai-session.ts",
-    "./components/_shared/ai-review-card": "./components/_shared/ai-review-card.tsx"
+    "./components/_shared/ai-review-card": "./components/_shared/ai-review-card.tsx",
+    "./components/ai-bubble-menu": "./components/ai-bubble-menu/index.ts"
   },
   "dependencies": {
     "@emend/ai": "workspace:*",
+    "@hugeicons/core-free-icons": "4.2.3",
+    "@hugeicons/react": "^1.1.9",
+    "@tiptap/extension-bold": "3.30.1",
+    "@tiptap/extension-bubble-menu": "3.30.1",
+    "@tiptap/extension-italic": "3.30.1",
+    "@tiptap/extension-link": "3.30.1",
+    "@tiptap/extension-text-style": "3.30.1",
+    "@tiptap/extension-underline": "3.30.1",
+    "@tiptap/react": "3.30.1",
+    "@workspace/ui": "workspace:*",
+    "motion": "^13.1.1",
     "react": "19.2.4"
   },
   "devDependencies": {

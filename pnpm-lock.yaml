@@ -9,6 +9,7 @@ overrides:
   '@tiptap/pm': 3.30.1
   '@tiptap/markdown': 3.30.1
   '@tiptap/react': 3.30.1
+  '@tiptap/extension-bubble-menu': 3.30.1
   '@tiptap/starter-kit': 3.30.1
   '@tiptap/extension-blockquote': 3.30.1
   '@tiptap/extension-bold': 3.30.1
@@ -31,6 +32,7 @@ overrides:
   '@tiptap/extension-strike': 3.30.1
   '@tiptap/extension-table': 3.30.1
   '@tiptap/extension-text': 3.30.1
+  '@tiptap/extension-text-style': 3.30.1
   '@tiptap/extension-underline': 3.30.1
   '@tiptap/extensions': 3.30.1
 
@@ -80,6 +82,9 @@ importers:
       '@tiptap/extension-table':
         specifier: 3.30.1
         version: 3.30.1(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))(@tiptap/pm@3.30.1)
+      '@tiptap/extension-text-style':
+        specifier: 3.30.1
+        version: 3.30.1(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))
       '@tiptap/markdown':
         specifier: 3.30.1
         version: 3.30.1(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))(@tiptap/pm@3.30.1)
@@ -286,6 +291,39 @@ importers:
       '@emend/ai':
         specifier: workspace:*
         version: link:../packages/ai
+      '@hugeicons/core-free-icons':
+        specifier: 4.2.3
+        version: 4.2.3
+      '@hugeicons/react':
+        specifier: ^1.1.9
+        version: 1.1.9(react@19.2.4)
+      '@tiptap/extension-bold':
+        specifier: 3.30.1
+        version: 3.30.1(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))
+      '@tiptap/extension-bubble-menu':
+        specifier: 3.30.1
+        version: 3.30.1(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))(@tiptap/pm@3.30.1)
+      '@tiptap/extension-italic':
+        specifier: 3.30.1
+        version: 3.30.1(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))
+      '@tiptap/extension-link':
+        specifier: 3.30.1
+        version: 3.30.1(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))(@tiptap/pm@3.30.1)
+      '@tiptap/extension-text-style':
+        specifier: 3.30.1
+        version: 3.30.1(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))
+      '@tiptap/extension-underline':
+        specifier: 3.30.1
+        version: 3.30.1(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))
+      '@tiptap/react':
+        specifier: 3.30.1
+        version: 3.30.1(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))(@tiptap/pm@3.30.1)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@workspace/ui':
+        specifier: workspace:*
+        version: link:../packages/ui
+      motion:
+        specifier: ^13.1.1
+        version: 13.1.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react:
         specifier: 19.2.4
         version: 19.2.4
@@ -1485,6 +1523,11 @@ packages:
       '@tiptap/core': 3.30.1
       '@tiptap/pm': 3.30.1
 
+  '@tiptap/extension-text-style@3.30.1':
+    resolution: {integrity: sha512-VLci8TnjAxBGbNlailFabGAv8ayPR8roGeNhS25UG90XJxiO2FZUHmOv+vqrciQ7Zfs5BXyrGQY+Yb3dAtHgIw==}
+    peerDependencies:
+      '@tiptap/core': 3.30.1
+
   '@tiptap/extension-text@3.30.1':
     resolution: {integrity: sha512-Zt3Ik95ZKJx5YNzC6TUXWTNBHUfRH/qVENmqfPjA7x7q4cqNdOEU+tX9DrlFjgxu/x0k48dlQS0Kaop24/vihA==}
     peerDependencies:
@@ -2161,6 +2204,7 @@ packages:
   eslint@9.39.4:
     resolution: {integrity: sha512-XoMjdBOwe/esVgEvLmNsD3IRHkm7fbKIUGvrleloJXUZgDHig2IPWNniv+GwjyJXzuNqVjlr5+4yVUZjycJwfQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -2304,6 +2348,17 @@ packages:
   forwarded@0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
+
+  framer-motion@13.1.1:
+    resolution: {integrity: sha512-B/xn2TPS4f61cEBLFjiYlQFnBZUW1YVj/LM+C+N4OP8Rs95VLEI2ot/RlfBg111la/EiyECFaJJi/A3FWA8MUA==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
 
   fresh@2.0.0:
     resolution: {integrity: sha512-Rx/WycZ60HOaqLKAi6cHRKKI7zxWbJ31MhntmtwMoaTeF7XFH9hhBp8vITaMidfljRQ6eYWCKkaTK+ykVJHP2A==}
@@ -2899,6 +2954,23 @@ packages:
 
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
+
+  motion-dom@13.1.1:
+    resolution: {integrity: sha512-XSf8VYWSB6G/0IY3rWVbyLcxWXtAVHkN1PQE2agTaCv3u8RGvbwu56TyyR/MNzBqqNavEBTZzErcxI1TxBrjcA==}
+
+  motion-utils@13.0.0:
+    resolution: {integrity: sha512-7DnN7TmbLcYXcG4RVadXIihWlyuM9afoUww8Y5Agg431kGKiuL2/OMyP4mJ5wLz+pvN3t5ySClLOaVXJ+wekRQ==}
+
+  motion@13.1.1:
+    resolution: {integrity: sha512-WNZoK6xiF+kkTqkZ5K7FDDh6A8BG4i5Hc7KXtW8gtTxkpJFds+hIOrDaQGKjQj/AE/i4hJqAaUHEqp/Qo02y6Q==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
 
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
@@ -4744,7 +4816,6 @@ snapshots:
       '@floating-ui/dom': 1.8.0
       '@tiptap/core': 3.30.1(@tiptap/pm@3.30.1)
       '@tiptap/pm': 3.30.1
-    optional: true
 
   '@tiptap/extension-bullet-list@3.30.1(@tiptap/extension-list@3.30.1(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))(@tiptap/pm@3.30.1))':
     dependencies:
@@ -4830,6 +4901,10 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.30.1(@tiptap/pm@3.30.1)
       '@tiptap/pm': 3.30.1
+
+  '@tiptap/extension-text-style@3.30.1(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))':
+    dependencies:
+      '@tiptap/core': 3.30.1(@tiptap/pm@3.30.1)
 
   '@tiptap/extension-text@3.30.1(@tiptap/core@3.30.1(@tiptap/pm@3.30.1))':
     dependencies:
@@ -5866,6 +5941,15 @@ snapshots:
 
   forwarded@0.2.0: {}
 
+  framer-motion@13.1.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+    dependencies:
+      motion-dom: 13.1.1
+      motion-utils: 13.0.0
+      tslib: 2.8.1
+    optionalDependencies:
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
+
   fresh@2.0.0: {}
 
   fs-extra@11.4.0:
@@ -6364,6 +6448,20 @@ snapshots:
       brace-expansion: 1.1.15
 
   minimist@1.2.8: {}
+
+  motion-dom@13.1.1:
+    dependencies:
+      motion-utils: 13.0.0
+
+  motion-utils@13.0.0: {}
+
+  motion@13.1.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+    dependencies:
+      framer-motion: 13.1.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      tslib: 2.8.1
+    optionalDependencies:
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
 
   ms@2.1.3: {}
 
