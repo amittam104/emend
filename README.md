@@ -21,9 +21,11 @@ Emend is in active development and has not been released yet. The unpublished
 `@emend/ai` package now includes the provider-neutral protocol, immutable
 proposals, controller, streaming transports, Web Platform server helpers, the
 Markdown content boundary, and the `@emend/ai/tiptap` capture, preview, stale,
-and safe-apply boundary. React integration, shared UI surfaces, provider
-recipes, registry components, and the full editor remain future V0 work. We
-are not accepting contributions until we reach a stable release.
+and safe-apply boundary. The React session and private AI Bubble Menu source are
+implemented for existing-editor verification. Provider recipes, installable
+registry components, the remaining AI surfaces, and the full editor remain
+future V0 work. We are not accepting contributions until we reach a stable
+release.
 
 ## Distribution Model
 
@@ -65,6 +67,17 @@ and context ranges, keeps proposal previews ephemeral, rejects stale content,
 and applies an accepted proposal through one exact-range transaction with one
 isolated Undo event. Cursor and selection changes do not retarget an open
 proposal.
+
+## AI Bubble Menu
+
+The private `AiBubbleMenu` source mounts against a consumer-owned Tiptap editor
+with an explicit transport. `AiBubbleMenuView` can instead use an existing
+`useEditorAi` session so initiation, inline preview, and review share one
+controller. The editor must configure compatible `@tiptap/markdown` support and
+the `EmendAi` extension.
+
+The Bubble Menu is currently internal source for the existing-editor demo.
+Registry installation is not available yet.
 
 ## Development
 

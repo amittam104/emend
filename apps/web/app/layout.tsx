@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono, Manrope } from "next/font/google"
 
 import "@workspace/ui/globals.css"
+import { TooltipProvider } from "@workspace/ui/components/tooltip"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@workspace/ui/lib/utils";
 
@@ -25,7 +26,9 @@ export default function RootLayout({
       className={cn("antialiased", fontMono.variable, "font-sans", geist.variable, manropeHeading.variable)}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
