@@ -133,7 +133,9 @@ export function AiBubbleMenuView({
   const editActionsDisabled =
     requestInProgress || session.pendingProposal !== null
   const customSubmitDisabled = !instruction.trim() || requestInProgress
-  const showReviewInMenu = showReview && session.state !== "idle"
+  const visibleError = session.error ?? session.reviewError
+  const showReviewInMenu =
+    showReview && (session.state !== "idle" || visibleError !== null)
   const reviewRange =
     session.activeRequest?.targetRange ?? session.editorState?.targetRange
   const reviewFrom = reviewRange?.from
@@ -189,8 +191,6 @@ export function AiBubbleMenuView({
     (preparation?.kind === "supported-markdown" ||
       preparation?.kind === "plain-text-fallback") &&
     (!preparation.requiresDocumentConfirmation || confirmDocumentReplacement)
-  const visibleError = session.error ?? session.reviewError
-
   const getReviewReference = useCallback<
     NonNullable<BubbleMenuProps["getReferencedVirtualElement"]>
   >(() => {
@@ -282,6 +282,11 @@ export function AiBubbleMenuView({
       instruction: trimmedInstruction,
     })
     closeCustomInstruction()
+  }
+
+  function acceptProposal() {
+    const result = session.accept(confirmDocumentReplacement)
+    if (result.ok) setOpenAiPanel(false)
   }
 
   function copyValue(session: UseEditorAiResult): string | null {
@@ -748,9 +753,7 @@ export function AiBubbleMenuView({
                                 : "Accept"
                             }
                             disabled={!canApply}
-                            onClick={() =>
-                              session.accept(confirmDocumentReplacement)
-                            }
+                            onClick={acceptProposal}
                           >
                             <Icon icon={CheckmarkCircle01Icon} size={14} />
                           </Button>
@@ -878,7 +881,7 @@ export function AiBubbleMenuView({
                         <TooltipTrigger
                           render={
                             <InputGroupButton
-                              type="submit"
+                              type="button"
                               variant="outline"
                               size="sm"
                               aria-label="Ask with custom instruction"
@@ -898,7 +901,7 @@ export function AiBubbleMenuView({
                         <TooltipTrigger
                           render={
                             <InputGroupButton
-                              type="submit"
+                              type="button"
                               variant="default"
                               size="sm"
                               aria-label="Edit selection with custom instruction"
