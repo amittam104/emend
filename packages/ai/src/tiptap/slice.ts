@@ -223,12 +223,7 @@ function createTextContent(
       const lines = text.split("\n")
       lines.forEach((line, index) => {
         if (line) nodes.push(editor.schema.text(line, marks))
-        if (
-          index < lines.length - 1 &&
-          nodes[nodes.length - 1]?.type !== hardBreak
-        ) {
-          nodes.push(hardBreak.create())
-        }
+        if (index < lines.length - 1) nodes.push(hardBreak.create())
       })
       content = Fragment.fromArray(nodes)
     }
