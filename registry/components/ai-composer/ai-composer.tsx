@@ -268,11 +268,13 @@ export function AiComposerView({
       : allowedContextScopes.includes(configuredContext)
         ? configuredContext
         : null
+  const contextOverride =
+    contextTouched && allowedContextScopes.includes(chosenContext)
+      ? chosenContext
+      : null
   const contextScope = builtInSelected
     ? selectedAction.contextScope
-    : contextTouched
-      ? chosenContext
-      : policyContext
+    : (contextOverride ?? policyContext)
   const configuredMutation = policy?.defaultMutationOperation ?? "adaptive"
   const adaptiveMutation =
     selection.hasText && allowedMutationOperations.includes("replace-selection")
@@ -284,11 +286,15 @@ export function AiComposerView({
       : allowedMutationOperations.includes(configuredMutation)
         ? configuredMutation
         : null
+  const mutationOverride =
+    changeTouched &&
+    chosenChange !== null &&
+    allowedMutationOperations.includes(chosenChange)
+      ? chosenChange
+      : null
   const mutationOperation = builtInSelected
     ? selectedAction.mutationOperation
-    : changeTouched
-      ? chosenChange
-      : policyMutation
+    : (mutationOverride ?? policyMutation)
   const change = changes.find(
     (candidate) => candidate.operation === mutationOperation
   )
@@ -387,11 +393,11 @@ export function AiComposerView({
     input.style.overflowY = contentHeight > maxHeight ? "auto" : "hidden"
   }, [
     builtInSelected,
-    changeTouched,
-    contextTouched,
+    contextOverride,
     expanded,
     inputValue,
     isCustom,
+    mutationOverride,
   ])
 
   useEffect(() => {
@@ -672,7 +678,7 @@ export function AiComposerView({
             >
               {showContextControl && (
                 <Select
-                  value={contextTouched ? chosenContext : null}
+                  value={contextOverride}
                   disabled={!editor || requestInProgress}
                   onValueChange={(value) => {
                     if (!value) return
@@ -690,12 +696,12 @@ export function AiComposerView({
                     size="sm"
                     className={cn(
                       "border-0 bg-transparent text-[11px] shadow-none hover:bg-accent data-[size=sm]:rounded-full dark:bg-transparent dark:hover:bg-accent",
-                      contextTouched
+                      contextOverride !== null
                         ? "max-w-32 px-2"
                         : "size-7 justify-center gap-0 p-0 [&>svg:last-child]:hidden"
                     )}
                   >
-                    {contextTouched ? (
+                    {contextOverride !== null ? (
                       <SelectValue>{scopeLabel(chosenContext)}</SelectValue>
                     ) : (
                       <HugeiconsIcon icon={BookOpenTextIcon} size={14} />
@@ -737,7 +743,7 @@ export function AiComposerView({
 
               {showChangeControl && (
                 <Select
-                  value={changeTouched ? chosenChange : null}
+                  value={mutationOverride}
                   disabled={!editor || requestInProgress}
                   onValueChange={(value) => {
                     if (!value) return
@@ -755,12 +761,12 @@ export function AiComposerView({
                     size="sm"
                     className={cn(
                       "border-0 bg-transparent text-[11px] shadow-none hover:bg-accent data-[size=sm]:rounded-full dark:bg-transparent dark:hover:bg-accent",
-                      changeTouched && change
+                      mutationOverride !== null && change
                         ? "max-w-40 px-2"
                         : "size-7 justify-center gap-0 p-0 [&>svg:last-child]:hidden"
                     )}
                   >
-                    {changeTouched && change ? (
+                    {mutationOverride !== null && change ? (
                       <SelectValue>{change.label}</SelectValue>
                     ) : (
                       <HugeiconsIcon icon={Edit02Icon} size={14} />
