@@ -1,6 +1,5 @@
 "use client"
 
-import type { JSONContent } from "@tiptap/core"
 import { TaskItem, TaskList } from "@tiptap/extension-list"
 import { TableKit } from "@tiptap/extension-table"
 import { BackgroundColor, Color, TextStyle } from "@tiptap/extension-text-style"
@@ -10,8 +9,13 @@ import StarterKit from "@tiptap/starter-kit"
 import { useEffect, useMemo, useState } from "react"
 import { useEditorAi } from "@emend/registry-components/components/_shared/use-emend-ai-session"
 import { createFetchTransport } from "@emend/ai/transport"
-import { EmendAi, getTiptapSourceRevision } from "@emend/ai/tiptap"
+import {
+  EmendAi,
+  // getTiptapSourceRevision,
+} from "@emend/ai/tiptap"
 import { AiBubbleMenuView } from "@emend/registry-components/components/ai-bubble-menu"
+import { AiComposerView } from "@emend/registry-components/components/ai-composer"
+import { Phase5EditorToolbar } from "./phase-5-editor-toolbar"
 
 type MockMode = "normal" | "delayed" | "failing"
 
@@ -27,61 +31,22 @@ const editorExtensions = [
   EmendAi,
 ]
 
-const demoDocument: JSONContent = {
-  type: "doc",
-  content: [
-    {
-      type: "heading",
-      attrs: { level: 2 },
-      content: [{ type: "text", text: "Existing editor integration" }],
-    },
-    {
-      type: "paragraph",
-      content: [
-        {
-          type: "text",
-          text: "Select this paragraph, run Edit, and review the proposal carefully before accepting it in one deliberate step.",
-        },
-      ],
-    },
-    {
-      type: "taskList",
-      content: [
-        {
-          type: "taskItem",
-          attrs: { checked: false },
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                { type: "text", text: "Preview remains outside the document." },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      type: "table",
-      content: [
-        {
-          type: "tableRow",
-          content: [
-            tableCell("tableHeader", "Check"),
-            tableCell("tableHeader", "Result"),
-          ],
-        },
-        {
-          type: "tableRow",
-          content: [
-            tableCell("tableCell", "Accept"),
-            tableCell("tableCell", "One undoable change"),
-          ],
-        },
-      ],
-    },
-  ],
-}
+const demoDocument = `
+  <h1>Editing for clarity, not perfection</h1>
+  <p>A strong draft does not need more words. It needs <strong>one clear idea</strong>, a useful structure, and enough space for the reader to follow along.</p>
+  <h2>Find the central idea</h2>
+  <p>Before polishing sentences, decide what the reader should remember. Every section should support that outcome or make way for something that does.</p>
+  <blockquote>A useful edit makes the next thought easier to understand.</blockquote>
+  <h2>Make one deliberate pass</h2>
+  <p>Work from the largest decisions to the smallest details:</p>
+  <ol>
+    <li><p>Clarify the main point.</p></li>
+    <li><p>Arrange ideas in a natural order.</p></li>
+    <li><p>Trim words that do not add meaning.</p></li>
+  </ol>
+  <h3>Know when to stop</h3>
+  <p>Read the piece once more, fix what interrupts the flow, and publish while the writing still feels human.</p>
+`
 
 export function Phase5ExistingEditorDemo() {
   const [mockMode, setMockMode] = useState<MockMode>("normal")
@@ -120,10 +85,10 @@ export function Phase5ExistingEditorDemo() {
   }
 
   const configuredEditor = editor
-  const currentRevision = getTiptapSourceRevision(configuredEditor)
-  const currentJson = JSON.stringify(configuredEditor.getJSON(), null, 2)
-  const capturedRange = session.activeRequest?.targetRange
-  const pinnedRange = session.editorState?.targetRange
+  // const currentRevision = getTiptapSourceRevision(configuredEditor)
+  // const currentJson = JSON.stringify(configuredEditor.getJSON(), null, 2)
+  // const capturedRange = session.activeRequest?.targetRange
+  // const pinnedRange = session.editorState?.targetRange
 
   function selectFirstParagraph() {
     const range = findFirstTextRange(configuredEditor)
@@ -157,22 +122,19 @@ export function Phase5ExistingEditorDemo() {
   return (
     <div className="space-y-6" data-editor-version={editorVersion}>
       <section className="space-y-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
-        <div>
-          <p className="font-mono text-xs tracking-widest text-muted-foreground uppercase">
-            Consumer-owned editor
-          </p>
-          <h2 className="mt-1 font-heading text-xl font-semibold">
-            Existing-editor onboarding
-          </h2>
-          <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-            This demo owns the editor and transport. Emend only adds its
-            extension, session hook, target decoration, and review workflow.
-          </p>
-        </div>
-
-        <div className="phase-5-editor rounded-xl border border-input bg-background p-4">
-          <EditorContent editor={configuredEditor} />
-          <AiBubbleMenuView editor={configuredEditor} session={session} />
+        <div className="phase-5-editor relative overflow-hidden rounded-xl border border-input bg-background">
+          <Phase5EditorToolbar editor={configuredEditor} />
+          <div className="p-4 pb-36">
+            <EditorContent editor={configuredEditor} />
+          </div>
+          <AiBubbleMenuView
+            editor={configuredEditor}
+            session={session}
+            showReview={false}
+          />
+          <div className="absolute inset-x-0 bottom-4 z-10 mx-auto w-[calc(100%-2rem)] md:w-[52%]">
+            <AiComposerView editor={configuredEditor} session={session} />
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -278,7 +240,7 @@ export function Phase5ExistingEditorDemo() {
         </div>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+      {/* <section className="grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
         <div className="space-y-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
           <h2 className="font-heading text-lg font-semibold">
             Revision evidence
@@ -341,25 +303,9 @@ export function Phase5ExistingEditorDemo() {
             {currentJson}
           </pre>
         </div>
-      </section>
+      </section> */}
     </div>
   )
-}
-
-export function tableCell(
-  type: "tableCell" | "tableHeader",
-  value: string
-): JSONContent {
-  return {
-    type,
-    attrs: { colspan: 1, rowspan: 1, colwidth: null, align: null },
-    content: [
-      {
-        type: "paragraph",
-        content: [{ type: "text", text: value }],
-      },
-    ],
-  }
 }
 
 function findFirstTextRange(
@@ -383,7 +329,7 @@ function findFirstTextRange(
   return result ?? fallback
 }
 
-function formatRange(
+/* function formatRange(
   range: { readonly from: number; readonly to: number } | null | undefined
 ): string {
   return range ? `${range.from}–${range.to}` : "none"
@@ -396,7 +342,7 @@ function EvidenceRow({ label, value }: { label: string; value: string }) {
       <dd className="font-mono text-xs wrap-break-word">{value}</dd>
     </div>
   )
-}
+} */
 
 const selectClass =
   "h-9 rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30"
