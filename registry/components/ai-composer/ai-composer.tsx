@@ -269,7 +269,9 @@ export function AiComposerView({
         ? configuredContext
         : null
   const contextOverride =
-    contextTouched && allowedContextScopes.includes(chosenContext)
+    policy?.allowContextOverride !== false &&
+    contextTouched &&
+    allowedContextScopes.includes(chosenContext)
       ? chosenContext
       : null
   const contextScope = builtInSelected
@@ -287,6 +289,7 @@ export function AiComposerView({
         ? configuredMutation
         : null
   const mutationOverride =
+    policy?.allowMutationOverride !== false &&
     changeTouched &&
     chosenChange !== null &&
     allowedMutationOperations.includes(chosenChange)
