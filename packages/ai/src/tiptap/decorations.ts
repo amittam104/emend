@@ -1,6 +1,7 @@
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model"
 import { DOMSerializer } from "@tiptap/pm/model"
 import { Decoration, DecorationSet, type EditorView } from "@tiptap/pm/view"
+import type { EmendSelectionRange } from "../protocol/types.js"
 import type {
   EmendTiptapPreviewPlacement,
   EmendTiptapShowProposalOptions,
@@ -17,6 +18,28 @@ export function createTiptapProposalDecorations(
 
   if (preview) decorations.push(preview)
 
+  return createDecorationSet(doc, decorations)
+}
+
+export function createTiptapSelectionDecorations(
+  doc: ProseMirrorNode,
+  range: EmendSelectionRange
+): DecorationSet {
+  if (range.from >= range.to) return DecorationSet.empty
+
+  return createDecorationSet(
+    doc,
+    createRangeDecorations(doc, range.from, range.to, {
+      class: targetClassName,
+      "data-emend-selection": "true",
+    })
+  )
+}
+
+function createDecorationSet(
+  doc: ProseMirrorNode,
+  decorations: Decoration[]
+): DecorationSet {
   try {
     return DecorationSet.create(doc, decorations)
   } catch {
@@ -47,6 +70,15 @@ function createTargetDecorations(
     ]
   }
 
+  return createRangeDecorations(doc, from, to, attrs)
+}
+
+function createRangeDecorations(
+  doc: ProseMirrorNode,
+  from: number,
+  to: number,
+  attrs: Readonly<Record<string, string>>
+): Decoration[] {
   if (from === 0 && to === doc.content.size) {
     const decorations: Decoration[] = []
     doc.forEach((node, offset) => {
