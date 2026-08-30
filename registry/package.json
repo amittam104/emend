@@ -9,10 +9,10 @@
     "typecheck": "tsc --noEmit"
   },
   "exports": {
-    "./components/_shared/icon": "./components/_shared/icon.tsx",
     "./components/_shared/use-emend-ai-session": "./components/_shared/use-emend-ai-session.ts",
     "./components/_shared/ai-review-card": "./components/_shared/ai-review-card.tsx",
-    "./components/ai-bubble-menu": "./components/ai-bubble-menu/index.ts"
+    "./components/ai-bubble-menu": "./components/ai-bubble-menu/index.ts",
+    "./components/ai-composer": "./components/ai-composer/index.tsx"
   },
   "dependencies": {
     "@emend/ai": "workspace:*",
