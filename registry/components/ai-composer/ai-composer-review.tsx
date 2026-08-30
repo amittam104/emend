@@ -24,9 +24,13 @@ import { useState } from "react"
 
 export interface AiComposerReviewProps {
   readonly session: UseEditorAiResult
+  readonly replayAllowed: boolean
 }
 
-export function AiComposerReview({ session }: AiComposerReviewProps) {
+export function AiComposerReview({
+  session,
+  replayAllowed,
+}: AiComposerReviewProps) {
   const [confirmation, setConfirmation] = useState<{
     readonly key: string
     readonly checked: boolean
@@ -65,11 +69,12 @@ export function AiComposerReview({ session }: AiComposerReviewProps) {
         !isStale
       ))
   const canRetry =
+    replayAllowed &&
     !isStale &&
     !isRunning &&
     (session.state === "error" || session.state === "aborted") &&
     session.error?.retryable === true
-  const canRegenerate = Boolean(session.activeRequest) && !isRunning
+  const canRegenerate = replayAllowed && !isRunning
   const canApply =
     isEditReview &&
     !isStale &&
@@ -272,7 +277,7 @@ export function AiComposerReview({ session }: AiComposerReviewProps) {
               size="icon-sm"
               onClick={() => session.reject()}
             />
-            {isStale ? (
+            {isStale && canRegenerate ? (
               <ReviewAction
                 label="Run again with current document"
                 icon={Refresh01Icon}
@@ -280,7 +285,7 @@ export function AiComposerReview({ session }: AiComposerReviewProps) {
                 size="icon-sm"
                 onClick={() => void session.regenerate()}
               />
-            ) : !isBlocked ? (
+            ) : !isStale && !isBlocked ? (
               <ReviewAction
                 label={isPlainTextFallback ? "Apply as plain text" : "Accept"}
                 icon={CheckmarkCircle01Icon}

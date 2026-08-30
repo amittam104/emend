@@ -295,6 +295,13 @@ export function AiComposerView({
   const mutationOperation = builtInSelected
     ? selectedAction.mutationOperation
     : (mutationOverride ?? policyMutation)
+  const replayAllowed =
+    session.activeRequest !== null &&
+    allowedContextScopes.includes(session.activeRequest.contextScope) &&
+    (session.activeRequest.mutationOperation === null ||
+      allowedMutationOperations.includes(
+        session.activeRequest.mutationOperation
+      ))
   const change = changes.find(
     (candidate) => candidate.operation === mutationOperation
   )
@@ -481,7 +488,9 @@ export function AiComposerView({
       }}
       className={cn("w-full space-y-2", className)}
     >
-      {showReview && <AiComposerReview session={session} />}
+      {showReview && (
+        <AiComposerReview session={session} replayAllowed={replayAllowed} />
+      )}
 
       <div className="relative">
         {menuOpen && (
