@@ -79,6 +79,24 @@ the `EmendAi` extension.
 The Bubble Menu is currently internal source for the existing-editor demo.
 Registry installation is not available yet.
 
+## AI Composer
+
+The private `AiComposer` source provides one instruction followed by either an
+informational Ask response or a deliberate Edit proposal. `AiComposer` mounts
+against a consumer-owned Tiptap `editor` and `transport`; `AiComposerView`
+composes with an existing `useEditorAi` session so Bubble Menu and Composer can
+share one controller, preview, review, and apply lifecycle.
+
+Composer keeps read context separate from mutation authority. Read scopes are
+Selection, Current block, and Document. Edit changes are Replace Selection,
+Replace Current block, Replace Document, and Insert at cursor. Typed text with
+no selected action is Ask and cannot change the document; Custom instruction is
+the intentional Edit path. `AiComposerPolicy` can narrow allowed scopes and
+operations, set adaptive or fixed defaults, and show or hide user overrides.
+
+The Composer is currently internal source for the existing-editor demo.
+Registry installation and real provider wiring remain future work.
+
 ## Development
 
 ```bash

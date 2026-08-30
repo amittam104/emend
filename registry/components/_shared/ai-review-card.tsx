@@ -60,26 +60,13 @@ export function AiReviewCard({ session }: AiReviewCardProps) {
 
   return (
     <section
-      className="space-y-4 rounded-2xl border border-border bg-card p-5 shadow-sm"
+      className="space-y-4 rounded-2xl border border-border bg-card p-4 shadow-sm"
       data-emend-review
       aria-label="AI review"
     >
-      <header className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className="font-mono text-xs tracking-widest text-muted-foreground uppercase">
-            {isEditReview ? "Proposal" : "AI response"}
-          </p>
-          <h2 className="mt-1 font-heading text-lg font-semibold">
-            {statusMessage}
-          </h2>
-        </div>
-        <p
-          className="rounded-full bg-secondary px-3 py-1 font-mono text-xs font-medium"
-          aria-live="polite"
-        >
-          {session.state}
-        </p>
-      </header>
+      <p className="sr-only" aria-live="polite">
+        {statusMessage}
+      </p>
 
       {visibleError && (
         <p

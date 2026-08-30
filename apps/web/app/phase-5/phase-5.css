@@ -7,6 +7,48 @@
   margin-top: 0.75rem;
 }
 
+.phase-5-editor .ProseMirror h1 {
+  font-size: 1.75rem;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.phase-5-editor .ProseMirror h2 {
+  margin-top: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 650;
+}
+
+.phase-5-editor .ProseMirror h3 {
+  margin-top: 1.25rem;
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+
+.phase-5-editor .ProseMirror blockquote {
+  border-left: 3px solid var(--border);
+  padding-left: 1rem;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+.phase-5-editor .ProseMirror ul,
+.phase-5-editor .ProseMirror ol {
+  padding-left: 1.5rem;
+}
+
+.phase-5-editor .ProseMirror ul {
+  list-style: disc;
+}
+
+.phase-5-editor .ProseMirror ol {
+  list-style: decimal;
+}
+
+.phase-5-editor .ProseMirror li + li {
+  margin-top: 0.25rem;
+}
+
 .phase-5-editor .emend-ai-target {
   border-radius: 0.25rem;
   background: color-mix(in oklch, var(--primary) 14%, transparent);

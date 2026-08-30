@@ -25,7 +25,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@workspace/ui/components/tooltip"
-import { Icon } from "../_shared/icon"
 import TextBoldIcon from "@hugeicons/core-free-icons/TextBoldIcon"
 import TextItalicIcon from "@hugeicons/core-free-icons/TextItalicIcon"
 import AiBeautifyIcon from "@hugeicons/core-free-icons/AiBeautifyIcon"
@@ -50,7 +49,8 @@ import TextIndent01Icon from "@hugeicons/core-free-icons/TextIndent01Icon"
 import TextUnderlineIcon from "@hugeicons/core-free-icons/TextUnderlineIcon"
 import TypeCursorIcon from "@hugeicons/core-free-icons/TypeCursorIcon"
 import UnfoldLessIcon from "@hugeicons/core-free-icons/UnfoldLessIcon"
-import { useCallback, useRef, useState } from "react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { type ComponentProps, useCallback, useRef, useState } from "react"
 
 type Editor = NonNullable<BubbleMenuProps["editor"]>
 
@@ -947,5 +947,23 @@ export function AiBubbleMenuView({
         )}
       </div>
     </BubbleMenu>
+  )
+}
+
+type IconProps = ComponentProps<typeof HugeiconsIcon>
+
+function Icon({
+  size = 16,
+  color = "currentColor",
+  strokeWidth = 1.5,
+  ...rest
+}: IconProps) {
+  return (
+    <HugeiconsIcon
+      size={size}
+      color={color}
+      strokeWidth={strokeWidth}
+      {...rest}
+    />
   )
 }
