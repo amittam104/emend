@@ -2,6 +2,7 @@ import { Extension, type CommandProps, type Editor } from "@tiptap/core"
 import { Fragment } from "@tiptap/pm/model"
 import { Plugin } from "@tiptap/pm/state"
 import { DecorationSet } from "@tiptap/pm/view"
+import type { EmendSelectionRange } from "../protocol/types.js"
 import type {
   EmendTiptapClearProposalOptions,
   EmendTiptapEditorState,
@@ -15,7 +16,10 @@ import {
   toEmendAiEditorState,
   type EmendAiPluginState,
 } from "./revision.js"
-import { createTiptapProposalDecorations } from "./decorations.js"
+import {
+  createTiptapProposalDecorations,
+  createTiptapSelectionDecorations,
+} from "./decorations.js"
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -41,6 +45,10 @@ type EmendAiLifecycleMeta =
       readonly type: "accept"
       readonly proposalId: string
     }
+  | {
+      readonly type: "selection-decoration"
+      readonly range: EmendSelectionRange | null
+    }
 
 const emendAiPluginKey = getEmendAiPluginKey()
 
@@ -58,6 +66,7 @@ export const EmendAi = Extension.create({
               ? {
                   ...previous,
                   revisionCounter: previous.revisionCounter + 1,
+                  decorations: DecorationSet.empty,
                 }
               : previous
             const meta = readLifecycleMeta(
@@ -104,6 +113,24 @@ export const EmendAi = Extension.create({
                   newState.doc,
                   meta.options
                 ),
+              }
+            }
+
+            if (meta.type === "selection-decoration") {
+              if (
+                next.activeProposalId !== null ||
+                (meta.range !== null &&
+                  (meta.range.from >= meta.range.to ||
+                    meta.range.to > newState.doc.content.size))
+              ) {
+                return next
+              }
+
+              return {
+                ...next,
+                decorations: meta.range
+                  ? createTiptapSelectionDecorations(newState.doc, meta.range)
+                  : DecorationSet.empty,
               }
             }
 
@@ -189,6 +216,38 @@ export function getEmendAiEditorState(
   return pluginState ? toEmendAiEditorState(pluginState) : null
 }
 
+export function setEmendSelectionDecoration(
+  editor: Editor | null | undefined,
+  range: EmendSelectionRange | null
+): boolean {
+  if (
+    !editor ||
+    editor.isDestroyed ||
+    (range !== null &&
+      (!isValidRange(range) ||
+        range.from >= range.to ||
+        range.to > editor.state.doc.content.size))
+  ) {
+    return false
+  }
+
+  const pluginState = getInternalEmendAiPluginState(editor)
+  if (
+    !pluginState ||
+    pluginState.activeProposalId !== null ||
+    (range === null && pluginState.decorations === DecorationSet.empty)
+  ) {
+    return false
+  }
+
+  editor.view.dispatch(
+    editor.state.tr
+      .setMeta(emendAiPluginKey, { type: "selection-decoration", range })
+      .setMeta("addToHistory", false)
+  )
+  return true
+}
+
 function createInitialState(): EmendAiPluginState {
   return {
     revisionCounter: 0,
@@ -218,6 +277,13 @@ function readLifecycleMeta(value: unknown): EmendAiLifecycleMeta | undefined {
 
   if (value.type === "show" && isValidShowOptionsValue(value.options)) {
     return { type: "show", options: value.options }
+  }
+
+  if (
+    value.type === "selection-decoration" &&
+    (value.range === null || isValidRange(value.range))
+  ) {
+    return { type: "selection-decoration", range: value.range }
   }
 
   if (value.type === "clear") {

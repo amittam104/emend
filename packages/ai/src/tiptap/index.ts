@@ -12,7 +12,11 @@ export {
   type EmendTiptapAdapter,
   type EmendTiptapAdapterOptions,
 } from "./adapter.js"
-export { EmendAi, getEmendAiEditorState } from "./extension.js"
+export {
+  EmendAi,
+  getEmendAiEditorState,
+  setEmendSelectionDecoration,
+} from "./extension.js"
 export { prepareTiptapProposal } from "./prepare.js"
 export {
   getTiptapSourceRevision,
