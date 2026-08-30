@@ -76,6 +76,7 @@ export function AiComposerReview({
     session.error?.retryable === true
   const canRegenerate = replayAllowed && !isRunning
   const canApply =
+    replayAllowed &&
     isEditReview &&
     !isStale &&
     session.streamCompleted &&
