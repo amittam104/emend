@@ -13,6 +13,7 @@ import {
   DEFAULT_REQUEST_LIMITS,
   PROTOCOL_VERSION,
   type EmendAiRequest,
+  type EmendConversationMessage,
   type EmendRequestLimits,
   type EmendSchemaCapabilities,
   type EmendSelectionRange,
@@ -43,7 +44,7 @@ const requestRequiredKeys = [
   "schemaCapabilities",
 ] as const
 
-const requestOptionalKeys = ["instruction"] as const
+const requestOptionalKeys = ["instruction", "messages"] as const
 
 const interactionModes = ["ask", "edit"] as const
 const contextScopes = ["selection", "current-block", "document"] as const
@@ -121,6 +122,13 @@ export function parseRequest(
     }
   }
 
+  const hasMessages = Object.hasOwn(input, "messages")
+  const messages = input.messages
+  if (hasMessages) {
+    const messageError = validateConversationMessages(messages, limits)
+    if (messageError) return invalid(messageError)
+  }
+
   if (!isSourceRevision(input.sourceRevision)) {
     return invalid("invalid_request")
   }
@@ -141,6 +149,9 @@ export function parseRequest(
     targetMarkdown: input.targetMarkdown,
     contextMarkdown: input.contextMarkdown,
     ...(hasInstruction ? { instruction: instruction as string } : {}),
+    ...(hasMessages
+      ? { messages: messages as readonly EmendConversationMessage[] }
+      : {}),
     sourceRevision: input.sourceRevision,
     schemaCapabilities: input.schemaCapabilities,
   }
@@ -267,6 +278,35 @@ function isSourceRevision(value: unknown): value is EmendSourceRevision {
     typeof value.fingerprint === "string" &&
     value.fingerprint.trim().length > 0
   )
+}
+
+function validateConversationMessages(
+  value: unknown,
+  limits: EmendRequestLimits
+): "context_too_large" | "invalid_request" | null {
+  if (!Array.isArray(value)) return "invalid_request"
+  if (value.length > limits.maxConversationMessages) {
+    return "context_too_large"
+  }
+
+  let totalLength = 0
+  for (const message of value) {
+    if (
+      !isRecord(message) ||
+      !hasExactKeys(message, ["role", "content"]) ||
+      !isOneOf(message.role, ["user", "assistant"]) ||
+      typeof message.content !== "string" ||
+      message.content.trim().length === 0
+    ) {
+      return "invalid_request"
+    }
+    if (message.content.length > limits.maxConversationMessageLength) {
+      return "context_too_large"
+    }
+    totalLength += message.content.length
+  }
+
+  return totalLength > limits.maxConversationLength ? "context_too_large" : null
 }
 
 function isSchemaCapabilities(

@@ -476,6 +476,9 @@ function getLimitsKey(limits?: Partial<EmendRequestLimits>): string {
     limits?.maxTargetMarkdownLength ?? "",
     limits?.maxContextMarkdownLength ?? "",
     limits?.maxInstructionLength ?? "",
+    limits?.maxConversationMessages ?? "",
+    limits?.maxConversationMessageLength ?? "",
+    limits?.maxConversationLength ?? "",
     limits?.maxActionIdLength ?? "",
     limits?.maxCapabilityNameLength ?? "",
   ].join("|")
