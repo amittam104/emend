@@ -115,40 +115,58 @@ export function AiSideChatView({
     request !== null && request.requestId !== hiddenRequestId
   const requestLabel = request ? getRequestLabel(request) : ""
   const assistantContent = getAssistantContent(session)
+  const currentRequestArchived =
+    request !== null &&
+    messages.some((message) => message.requestId === request.requestId)
+  const lastMessage = messages[messages.length - 1]
+  const currentUserStored =
+    lastMessage?.role === "user" &&
+    lastMessage.requestId.startsWith("local-") &&
+    lastMessage.content === requestLabel
   const currentTurn =
-    showCurrentTurn &&
-    request &&
-    !messages.some((message) => message.requestId === request.requestId)
-      ? createTurn(request.requestId, requestLabel, assistantContent)
+    showCurrentTurn && request && !currentRequestArchived
+      ? createTurn(request.requestId, requestLabel, assistantContent).slice(
+          currentUserStored ? 1 : 0
+        )
       : []
   const visibleMessages = [...messages, ...currentTurn]
   const detachedError =
-    request === null ? (session.error ?? session.reviewError) : null
+    request === null || currentRequestArchived
+      ? (session.error ?? session.reviewError)
+      : null
 
-  function archiveCurrentTurn() {
-    if (!request || currentTurn.length === 0) return
-    setMessages((current) =>
-      current.some((message) => message.requestId === request.requestId)
-        ? current
-        : [...current, ...currentTurn]
-    )
+  function archiveCurrentTurn(nextMessage?: SideChatMessage) {
+    if ((!request || currentTurn.length === 0) && !nextMessage) return
+    setMessages((current) => {
+      const archived =
+        request &&
+        currentTurn.length > 0 &&
+        !current.some((message) => message.requestId === request.requestId)
+          ? [...current, ...currentTurn]
+          : current
+
+      return nextMessage ? [...archived, nextMessage] : archived
+    })
   }
 
   const chatSession: UseEditorAiResult = {
     ...session,
     run: (actionId, options) => {
+      const userMessage = createUserMessage(
+        getMessageLabel(actionId, options?.instruction)
+      )
       const history = visibleMessages.map(({ role, content }) => ({
         role,
         content,
       }))
-      archiveCurrentTurn()
+      archiveCurrentTurn(userMessage)
       return session.run(actionId, {
         ...options,
         messages: [
           ...history,
           {
             role: "user",
-            content: getMessageLabel(actionId, options?.instruction),
+            content: userMessage.content,
           },
         ],
       })
@@ -254,6 +272,7 @@ export function AiSideChatView({
                 {visibleMessages.map((message) => {
                   const currentAssistant =
                     showCurrentTurn &&
+                    !currentRequestArchived &&
                     message.role === "assistant" &&
                     message.requestId === request?.requestId
 
@@ -264,7 +283,8 @@ export function AiSideChatView({
                       scrollAnchor={
                         showCurrentTurn &&
                         message.role === "user" &&
-                        message.requestId === request?.requestId
+                        (message.requestId === request?.requestId ||
+                          (currentUserStored && message.id === lastMessage?.id))
                       }
                     >
                       {message.role === "user" ? (
@@ -393,6 +413,17 @@ function createTurn(
       content: assistantContent,
     },
   ]
+}
+
+function createUserMessage(content: string): SideChatMessage {
+  const requestId = `local-${crypto.randomUUID()}`
+
+  return {
+    id: `user-${requestId}`,
+    requestId,
+    role: "user",
+    content,
+  }
 }
 
 function getMessageLabel(
