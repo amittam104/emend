@@ -36,6 +36,13 @@ function freezeRequest(request: EmendAiRequest): EmendAiRequest {
     targetRange: request.targetRange
       ? Object.freeze({ ...request.targetRange })
       : null,
+    ...(request.messages
+      ? {
+          messages: Object.freeze(
+            request.messages.map((message) => Object.freeze({ ...message }))
+          ),
+        }
+      : {}),
     sourceRevision: Object.freeze({ ...request.sourceRevision }),
     schemaCapabilities: Object.freeze({
       ...request.schemaCapabilities,

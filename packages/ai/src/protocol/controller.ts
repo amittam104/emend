@@ -13,6 +13,7 @@ import {
   type EmendAiRequest,
   type EmendAiState,
   type EmendCaptureResult,
+  type EmendConversationMessage,
   type EmendContextScope,
   type EmendInteractionMode,
   type EmendMutationOperation,
@@ -42,6 +43,7 @@ export interface EmendRunOptions {
   readonly contextScope?: EmendContextScope
   readonly mutationOperation?: EmendMutationOperation | null
   readonly instruction?: string
+  readonly messages?: readonly EmendConversationMessage[]
 }
 
 export interface EmendAiControllerOptions {
@@ -338,6 +340,9 @@ export class EmendAiController {
           contextMarkdown: captured.contextMarkdown,
           ...(options.instruction !== undefined
             ? { instruction: options.instruction }
+            : {}),
+          ...(options.messages !== undefined
+            ? { messages: options.messages }
             : {}),
           sourceRevision: captured.sourceRevision,
           schemaCapabilities: captured.schemaCapabilities,

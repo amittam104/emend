@@ -151,6 +151,7 @@ export interface AiComposerProps {
   readonly transport: UseEditorAiOptions["transport"]
   readonly policy?: AiComposerPolicy
   readonly showReview?: boolean
+  readonly variant?: "default" | "side-chat"
   readonly className?: string
 }
 
@@ -159,6 +160,7 @@ export interface AiComposerViewProps {
   readonly session: UseEditorAiResult
   readonly policy?: AiComposerPolicy
   readonly showReview?: boolean
+  readonly variant?: "default" | "side-chat"
   readonly className?: string
 }
 
@@ -167,6 +169,7 @@ export function AiComposer({
   transport,
   policy,
   showReview = true,
+  variant,
   className,
 }: AiComposerProps) {
   const session = useEditorAi({ editor, transport, previewMode: "inline" })
@@ -177,6 +180,7 @@ export function AiComposer({
       session={session}
       policy={policy}
       showReview={showReview}
+      variant={variant}
       className={className}
     />
   )
@@ -187,6 +191,7 @@ export function AiComposerView({
   session,
   policy,
   showReview = true,
+  variant = "default",
   className,
 }: AiComposerViewProps) {
   const menuId = useId()
@@ -334,6 +339,8 @@ export function AiComposerView({
     hasSelection: selection.hasText,
     instruction,
     instructionTooLong,
+    pendingProposal:
+      variant === "side-chat" && session.pendingProposal !== null,
     requestInProgress,
   })
   const editBlockReason = getEditBlockReason({
@@ -349,7 +356,9 @@ export function AiComposerView({
     selectedActionId,
     selectionCollapsed: selection.collapsed,
   })
-  const wide = !builtInSelected && expanded
+  const sideChat = variant === "side-chat"
+  const stackedAction = sideChat && builtInSelected
+  const wide = stackedAction || (!builtInSelected && expanded)
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -433,6 +442,17 @@ export function AiComposerView({
     requestAnimationFrame(() => inputRef.current?.focus())
   }
 
+  function resetRequest() {
+    setDraft("")
+    setSelectedActionId(null)
+    setChosenContext("document")
+    setContextTouched(false)
+    setChosenChange(null)
+    setChangeTouched(false)
+    setDismissed(false)
+    closeMenu()
+  }
+
   function pick(action: (typeof actions)[number]) {
     if (action.actionId === "custom") {
       if (token) setDraft(draft.slice(0, token.start).trimEnd())
@@ -455,7 +475,7 @@ export function AiComposerView({
         mutationOperation: null,
         instruction,
       })
-      closeMenu()
+      resetRequest()
       return
     }
 
@@ -476,7 +496,7 @@ export function AiComposerView({
       mutationOperation: actionChange.mutationOperation,
       ...(selectedAction.actionId === "custom" ? { instruction } : {}),
     })
-    closeMenu()
+    resetRequest()
   }
 
   return (
@@ -553,6 +573,7 @@ export function AiComposerView({
         <div
           className={cn(
             "relative isolate flex max-w-lg flex-col gap-1.5 overflow-hidden rounded-3xl border border-border/60 bg-card p-1.5 text-card-foreground shadow-md focus-within:border-border",
+            sideChat && "max-w-none shadow-none",
             wide && "rounded-[20px] p-2"
           )}
         >
@@ -590,7 +611,14 @@ export function AiComposerView({
             </Button>
 
             {builtInSelected ? (
-              <div className="col-start-2 row-start-1 flex min-w-0 items-center gap-2 self-center overflow-hidden">
+              <div
+                className={cn(
+                  "min-w-0 overflow-hidden",
+                  stackedAction
+                    ? "col-span-full col-start-1 row-start-1 flex flex-col items-start gap-1 px-1"
+                    : "col-start-2 row-start-1 flex items-center gap-2 self-center"
+                )}
+              >
                 <Badge
                   variant="secondary"
                   className="h-6 max-w-full gap-1 pr-1 text-[12px]"
@@ -611,7 +639,12 @@ export function AiComposerView({
                     <HugeiconsIcon icon={Cancel01Icon} size={10} />
                   </Button>
                 </Badge>
-                <span className="min-w-0 truncate text-[12px] text-muted-foreground">
+                <span
+                  className={cn(
+                    "min-w-0 text-[12px] text-muted-foreground",
+                    !stackedAction && "truncate"
+                  )}
+                >
                   {selectedAction.description}
                 </span>
               </div>
@@ -893,10 +926,12 @@ function getAskBlockReason(input: {
   readonly hasSelection: boolean
   readonly instruction: string
   readonly instructionTooLong: boolean
+  readonly pendingProposal: boolean
   readonly requestInProgress: boolean
 }): string | null {
   if (!input.editorReady) return "The editor is still mounting."
   if (input.requestInProgress) return "Wait for the current request to finish."
+  if (input.pendingProposal) return "Review the current proposal first."
   if (!input.instruction) return "Enter a prompt."
   if (input.instructionTooLong) return "The instruction is too long."
   if (!input.contextScope) return "Choose what Emend may read."

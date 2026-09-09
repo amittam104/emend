@@ -50,6 +50,11 @@ export interface EmendSchemaCapabilities {
   readonly markdown: boolean
 }
 
+export interface EmendConversationMessage {
+  readonly role: "user" | "assistant"
+  readonly content: string
+}
+
 export interface EmendCaptureResult {
   readonly targetRange: EmendSelectionRange | null
   readonly targetScope: EmendTargetScope
@@ -73,6 +78,7 @@ export interface EmendAiRequest {
   readonly targetMarkdown: string
   readonly contextMarkdown: string
   readonly instruction?: string
+  readonly messages?: readonly EmendConversationMessage[]
   readonly sourceRevision: EmendSourceRevision
   readonly schemaCapabilities: EmendSchemaCapabilities
 }
@@ -82,6 +88,9 @@ export interface EmendRequestLimits {
   readonly maxTargetMarkdownLength: number
   readonly maxContextMarkdownLength: number
   readonly maxInstructionLength: number
+  readonly maxConversationMessages: number
+  readonly maxConversationMessageLength: number
+  readonly maxConversationLength: number
   readonly maxActionIdLength: number
   readonly maxCapabilityNameLength: number
 }
@@ -91,6 +100,9 @@ export const DEFAULT_REQUEST_LIMITS: EmendRequestLimits = {
   maxTargetMarkdownLength: 8_000,
   maxContextMarkdownLength: 12_000,
   maxInstructionLength: 1_000,
+  maxConversationMessages: 48,
+  maxConversationMessageLength: 4_000,
+  maxConversationLength: 24_000,
   maxActionIdLength: 100,
   maxCapabilityNameLength: 100,
 }
