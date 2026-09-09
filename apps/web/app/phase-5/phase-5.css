@@ -1,5 +1,7 @@
 .phase-5-editor .ProseMirror {
-  min-height: 18rem;
+  min-height: 34rem;
+  margin-inline: auto;
+  max-width: 52rem;
   outline: none;
 }
 
@@ -47,6 +49,36 @@
 
 .phase-5-editor .ProseMirror li + li {
   margin-top: 0.25rem;
+}
+
+.phase-5-editor .ProseMirror a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.phase-5-editor .ProseMirror code {
+  border-radius: 0.25rem;
+  background: var(--muted);
+  padding: 0.125rem 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.phase-5-editor .ProseMirror pre {
+  overflow-x: auto;
+  border-radius: 0.75rem;
+  background: var(--muted);
+  padding: 1rem;
+}
+
+.phase-5-editor .ProseMirror pre code {
+  padding: 0;
+}
+
+.phase-5-editor .ProseMirror hr {
+  margin-block: 2rem;
+  border-color: var(--border);
 }
 
 .phase-5-editor .emend-ai-target {

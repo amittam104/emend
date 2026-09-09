@@ -6,6 +6,8 @@ import { BackgroundColor, Color, TextStyle } from "@tiptap/extension-text-style"
 import { Markdown } from "@tiptap/markdown"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
+import AiChat02Icon from "@hugeicons/core-free-icons/AiChat02Icon"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useEffect, useMemo, useState } from "react"
 import { useEditorAi } from "@emend/registry-components/components/_shared/use-emend-ai-session"
 import { createFetchTransport } from "@emend/ai/transport"
@@ -15,6 +17,8 @@ import {
 } from "@emend/ai/tiptap"
 import { AiBubbleMenuView } from "@emend/registry-components/components/ai-bubble-menu"
 import { AiComposerView } from "@emend/registry-components/components/ai-composer"
+import { AiSideChatView } from "@emend/registry-components/components/ai-side-chat"
+import { Button } from "@workspace/ui/components/button"
 import { Phase5EditorToolbar } from "./phase-5-editor-toolbar"
 
 type MockMode = "normal" | "delayed" | "failing"
@@ -32,25 +36,49 @@ const editorExtensions = [
 ]
 
 const demoDocument = `
-  <h1>Editing for clarity, not perfection</h1>
-  <p>A strong draft does not need more words. It needs <strong>one clear idea</strong>, a useful structure, and enough space for the reader to follow along.</p>
-  <h2>Find the central idea</h2>
-  <p>Before polishing sentences, decide what the reader should remember. Every section should support that outcome or make way for something that does.</p>
-  <blockquote>A useful edit makes the next thought easier to understand.</blockquote>
-  <h2>Make one deliberate pass</h2>
-  <p>Work from the largest decisions to the smallest details:</p>
+  <h1>Designing a calmer AI editing workflow</h1>
+  <p>Writers rarely need another blank page. They need a reliable way to improve a draft without losing its meaning, structure, or voice. Our goal is to make every AI-assisted edit feel <strong>clear, deliberate, and reversible</strong>.</p>
+  <p>The first release focuses on reviewable changes inside an existing editor. It keeps the document in the writer's hands while using AI for the parts that benefit from a second perspective: clarity, structure, tone, and grammar.</p>
+
+  <h2>The problem we are solving</h2>
+  <p>Many writing tools make a change before the writer can understand its effect. That approach is fast, but it also creates uncertainty. A user should be able to ask a question, compare a proposal, and decide what belongs in the document.</p>
+  <blockquote>A useful AI edit should reduce uncertainty, not move it somewhere else.</blockquote>
+  <p>That principle leads to a simple boundary: <u>informational answers never change the document</u>, and <s>silent replacement</s> is not part of the workflow. An edit becomes real only after the writer accepts it.</p>
+
+  <h2>Product principles</h2>
+  <ul>
+    <li><p><strong>Keep context visible.</strong> The writer should see the source text and the proposed change together.</p></li>
+    <li><p><strong>Preserve intent.</strong> Broader reading context may improve an answer, but it must not widen what the AI is allowed to replace.</p></li>
+    <li><p><strong>Make recovery ordinary.</strong> Reject, retry, undo, and redo should feel like normal editing actions.</p></li>
+    <li><p><strong>Use familiar controls.</strong> Keyboard navigation and accessible labels matter as much as visual polish.</p></li>
+  </ul>
+
+  <h3>A reviewable edit in four steps</h3>
   <ol>
-    <li><p>Clarify the main point.</p></li>
-    <li><p>Arrange ideas in a natural order.</p></li>
-    <li><p>Trim words that do not add meaning.</p></li>
+    <li><p>Select the sentence or section that needs attention.</p></li>
+    <li><p>Choose a writing action or enter a custom instruction.</p></li>
+    <li><p>Review the response in context, including any warnings or fallback behavior.</p></li>
+    <li><p>Accept the proposal once, or reject it without changing the document.</p></li>
   </ol>
-  <h3>Know when to stop</h3>
-  <p>Read the piece once more, fix what interrupts the flow, and publish while the writing still feels human.</p>
+
+  <h2>Interaction notes for the first release</h2>
+  <p>The Bubble Menu is best for focused selection edits. AI Composer handles broader instructions. AI Side Chat adds a conversational place to ask follow-up questions while sharing the same proposal and apply path.</p>
+  <p>Consumers configure the transport with a small, provider-neutral endpoint such as <code>/api/edit</code>. The editor keeps canonical content; streamed Markdown remains a proposal until acceptance.</p>
+  <pre><code>const session = useEditorAi({
+  editor,
+  transport,
+  previewMode: "inline",
+})</code></pre>
+
+  <hr>
+  <h2>What success looks like</h2>
+  <p>A writer can move from a rough paragraph to a stronger one without wondering what changed or how to get back. The interface stays quiet when it is not needed and gives the writer <em>just enough control</em> when a decision matters. Read more in the <a href="https://tiptap.dev/">editor documentation</a>.</p>
 `
 
 export function Phase5ExistingEditorDemo() {
   const [mockMode, setMockMode] = useState<MockMode>("normal")
   const [previewMode, setPreviewMode] = useState<"inline" | "card">("card")
+  const [sideChatOpen, setSideChatOpen] = useState(false)
   const [editorVersion, setEditorVersion] = useState(0)
   const transport = useMemo(
     () =>
@@ -90,17 +118,6 @@ export function Phase5ExistingEditorDemo() {
   // const capturedRange = session.activeRequest?.targetRange
   // const pinnedRange = session.editorState?.targetRange
 
-  function selectFirstParagraph() {
-    const range = findFirstTextRange(configuredEditor)
-    if (range) configuredEditor.commands.setTextSelection(range)
-  }
-
-  function moveSelectionWithoutEditing() {
-    configuredEditor.commands.setTextSelection(
-      configuredEditor.state.doc.content.size
-    )
-  }
-
   function runEdit() {
     void session.run("shorten", {
       interactionMode: "edit",
@@ -121,60 +138,54 @@ export function Phase5ExistingEditorDemo() {
 
   return (
     <div className="space-y-6" data-editor-version={editorVersion}>
-      <section className="space-y-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
-        <div className="phase-5-editor relative overflow-hidden rounded-xl border border-input bg-background">
-          <Phase5EditorToolbar editor={configuredEditor} />
-          <div className="p-4 pb-36">
-            <EditorContent editor={configuredEditor} />
+      <section className="phase-5-editor relative h-[calc(100svh-10rem)] max-h-208 min-h-168 overflow-hidden border border-border bg-background">
+        <div
+          className={`grid h-full min-w-0 ${
+            sideChatOpen
+              ? "md:grid-cols-[minmax(0,1fr)_minmax(20rem,40%)] lg:grid-cols-[minmax(0,1fr)_28rem]"
+              : ""
+          }`}
+        >
+          <div className="relative min-w-0 overflow-hidden">
+            <Phase5EditorToolbar
+              editor={configuredEditor}
+              actions={
+                <Button
+                  type="button"
+                  variant="outline"
+                  aria-expanded={sideChatOpen}
+                  className="h-8 gap-2 bg-background shadow-none"
+                  onClick={() => setSideChatOpen((current) => !current)}
+                >
+                  <HugeiconsIcon icon={AiChat02Icon} size={16} />
+                  AI Chat
+                </Button>
+              }
+            />
+            <div className="h-[calc(100%-2.5rem)] overflow-y-auto px-2 pt-8 pb-36 sm:px-6 lg:px-10">
+              <EditorContent editor={configuredEditor} />
+            </div>
+            <AiBubbleMenuView
+              editor={configuredEditor}
+              session={session}
+              showReview={false}
+            />
+            <div className="absolute inset-x-0 bottom-4 z-10 mx-auto w-[calc(100%-2rem)] md:w-[52%]">
+              <AiComposerView
+                editor={configuredEditor}
+                session={session}
+                showReview={!sideChatOpen}
+              />
+            </div>
           </div>
-          <AiBubbleMenuView
+          <AiSideChatView
             editor={configuredEditor}
             session={session}
-            showReview={false}
+            inline
+            open={sideChatOpen}
+            onOpenChange={setSideChatOpen}
+            panelClassName="absolute inset-0 z-20 border-l border-border md:static md:z-auto"
           />
-          <div className="absolute inset-x-0 bottom-4 z-10 mx-auto w-[calc(100%-2rem)] md:w-[52%]">
-            <AiComposerView editor={configuredEditor} session={session} />
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            className={buttonClass("outline")}
-            onClick={selectFirstParagraph}
-          >
-            Select sample paragraph
-          </button>
-          <button
-            type="button"
-            className={buttonClass("outline")}
-            onClick={moveSelectionWithoutEditing}
-          >
-            Move focus/selection without editing
-          </button>
-          <button
-            type="button"
-            className={buttonClass("outline")}
-            onClick={() =>
-              configuredEditor.commands.insertContent(" ordinary edit")
-            }
-          >
-            Make ordinary edit
-          </button>
-          <button
-            type="button"
-            className={buttonClass("outline")}
-            onClick={() => configuredEditor.commands.undo()}
-          >
-            Undo
-          </button>
-          <button
-            type="button"
-            className={buttonClass("outline")}
-            onClick={() => configuredEditor.commands.redo()}
-          >
-            Redo
-          </button>
         </div>
       </section>
 
