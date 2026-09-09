@@ -116,7 +116,9 @@ export function AiSideChatView({
   const requestLabel = request ? getRequestLabel(request) : ""
   const assistantContent = getAssistantContent(session)
   const currentTurn =
-    showCurrentTurn && request
+    showCurrentTurn &&
+    request &&
+    !messages.some((message) => message.requestId === request.requestId)
       ? createTurn(request.requestId, requestLabel, assistantContent)
       : []
   const visibleMessages = [...messages, ...currentTurn]
