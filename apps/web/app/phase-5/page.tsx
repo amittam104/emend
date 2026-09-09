@@ -13,9 +13,8 @@ export default function Phase5Page() {
           Emend existing-editor review workflow
         </h1>
         <p className="text-muted-foreground">
-          Mount a consumer-owned Tiptap editor, stream a deterministic proposal,
-          review its Markdown, and verify preview, stale, Accept, Reject, Undo,
-          and Ask behavior.
+          Edit a realistic document, ask follow-up questions in AI Side Chat,
+          and review every suggested change before it reaches the editor.
         </p>
       </header>
 

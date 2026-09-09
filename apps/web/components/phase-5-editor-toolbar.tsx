@@ -22,7 +22,13 @@ import type { ReactNode } from "react"
 
 const headingLevels = [1, 2, 3, 4, 5, 6] as const
 
-export function Phase5EditorToolbar({ editor }: { readonly editor: Editor }) {
+export function Phase5EditorToolbar({
+  editor,
+  actions,
+}: {
+  readonly editor: Editor
+  readonly actions?: ReactNode
+}) {
   const state = useEditorState({
     editor,
     selector: ({ editor: currentEditor }) => ({
@@ -59,129 +65,135 @@ export function Phase5EditorToolbar({ editor }: { readonly editor: Editor }) {
     <div
       role="toolbar"
       aria-label="Editor formatting"
-      className="flex w-full flex-nowrap items-center gap-1 overflow-x-auto border-b border-border bg-muted/30 p-1"
+      className="flex h-10 w-full items-center border-b border-border bg-muted/30"
     >
-      <ToolbarButton
-        label="Undo"
-        disabled={!state.canUndo}
-        onClick={() => editor.chain().focus().undo().run()}
-      >
-        <HugeiconsIcon icon={UndoIcon} size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        label="Redo"
-        disabled={!state.canRedo}
-        onClick={() => editor.chain().focus().redo().run()}
-      >
-        <HugeiconsIcon icon={RedoIcon} size={16} />
-      </ToolbarButton>
-
-      <ToolbarDivider />
-
-      <ToolbarButton
-        label="Paragraph"
-        active={state.paragraph}
-        onClick={() => editor.chain().focus().setParagraph().run()}
-      >
-        <HugeiconsIcon icon={ParagraphIcon} size={16} />
-      </ToolbarButton>
-      {headingLevels.map((level, index) => (
+      <div className="flex min-w-0 flex-1 flex-nowrap items-center gap-1 overflow-x-auto p-1">
         <ToolbarButton
-          key={level}
-          label={`Heading ${level}`}
-          active={state.headings[index]}
-          onClick={() => editor.chain().focus().toggleHeading({ level }).run()}
+          label="Undo"
+          disabled={!state.canUndo}
+          onClick={() => editor.chain().focus().undo().run()}
         >
-          H{level}
+          <HugeiconsIcon icon={UndoIcon} size={16} />
         </ToolbarButton>
-      ))}
+        <ToolbarButton
+          label="Redo"
+          disabled={!state.canRedo}
+          onClick={() => editor.chain().focus().redo().run()}
+        >
+          <HugeiconsIcon icon={RedoIcon} size={16} />
+        </ToolbarButton>
 
-      <ToolbarDivider />
+        <ToolbarDivider />
 
-      <ToolbarButton
-        label="Bold"
-        active={state.bold}
-        onClick={() => editor.chain().focus().toggleBold().run()}
-      >
-        <HugeiconsIcon icon={TextBoldIcon} size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        label="Italic"
-        active={state.italic}
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-      >
-        <HugeiconsIcon icon={TextItalicIcon} size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        label="Underline"
-        active={state.underline}
-        onClick={() => editor.chain().focus().toggleUnderline().run()}
-      >
-        <HugeiconsIcon icon={TextUnderlineIcon} size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        label="Strikethrough"
-        active={state.strike}
-        onClick={() => editor.chain().focus().toggleStrike().run()}
-      >
-        <HugeiconsIcon icon={TextStrikethroughIcon} size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        label="Inline code"
-        active={state.code}
-        onClick={() => editor.chain().focus().toggleCode().run()}
-      >
-        <HugeiconsIcon icon={CodeSimpleIcon} size={16} />
-      </ToolbarButton>
-      <ToolbarButton label="Link" active={state.link} onClick={toggleLink}>
-        <HugeiconsIcon icon={Link01Icon} size={16} />
-      </ToolbarButton>
+        <ToolbarButton
+          label="Paragraph"
+          active={state.paragraph}
+          onClick={() => editor.chain().focus().setParagraph().run()}
+        >
+          <HugeiconsIcon icon={ParagraphIcon} size={16} />
+        </ToolbarButton>
+        {headingLevels.map((level, index) => (
+          <ToolbarButton
+            key={level}
+            label={`Heading ${level}`}
+            active={state.headings[index]}
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level }).run()
+            }
+          >
+            H{level}
+          </ToolbarButton>
+        ))}
 
-      <ToolbarDivider />
+        <ToolbarDivider />
 
-      <ToolbarButton
-        label="Bullet list"
-        active={state.bulletList}
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
-      >
-        <HugeiconsIcon icon={LeftToRightListBulletIcon} size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        label="Numbered list"
-        active={state.orderedList}
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
-      >
-        <HugeiconsIcon icon={LeftToRightListNumberIcon} size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        label="Blockquote"
-        active={state.blockquote}
-        onClick={() => editor.chain().focus().toggleBlockquote().run()}
-      >
-        <HugeiconsIcon icon={LeftToRightBlockQuoteIcon} size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        label="Code block"
-        active={state.codeBlock}
-        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-      >
-        <HugeiconsIcon icon={SourceCodeIcon} size={16} />
-      </ToolbarButton>
+        <ToolbarButton
+          label="Bold"
+          active={state.bold}
+          onClick={() => editor.chain().focus().toggleBold().run()}
+        >
+          <HugeiconsIcon icon={TextBoldIcon} size={16} />
+        </ToolbarButton>
+        <ToolbarButton
+          label="Italic"
+          active={state.italic}
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+        >
+          <HugeiconsIcon icon={TextItalicIcon} size={16} />
+        </ToolbarButton>
+        <ToolbarButton
+          label="Underline"
+          active={state.underline}
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
+        >
+          <HugeiconsIcon icon={TextUnderlineIcon} size={16} />
+        </ToolbarButton>
+        <ToolbarButton
+          label="Strikethrough"
+          active={state.strike}
+          onClick={() => editor.chain().focus().toggleStrike().run()}
+        >
+          <HugeiconsIcon icon={TextStrikethroughIcon} size={16} />
+        </ToolbarButton>
+        <ToolbarButton
+          label="Inline code"
+          active={state.code}
+          onClick={() => editor.chain().focus().toggleCode().run()}
+        >
+          <HugeiconsIcon icon={CodeSimpleIcon} size={16} />
+        </ToolbarButton>
+        <ToolbarButton label="Link" active={state.link} onClick={toggleLink}>
+          <HugeiconsIcon icon={Link01Icon} size={16} />
+        </ToolbarButton>
 
-      <ToolbarDivider />
+        <ToolbarDivider />
 
-      <ToolbarButton
-        label="Horizontal rule"
-        onClick={() => editor.chain().focus().setHorizontalRule().run()}
-      >
-        <HugeiconsIcon icon={SeparatorHorizontalIcon} size={16} />
-      </ToolbarButton>
-      <ToolbarButton
-        label="Hard break"
-        onClick={() => editor.chain().focus().setHardBreak().run()}
-      >
-        <HugeiconsIcon icon={CornerDownLeftIcon} size={16} />
-      </ToolbarButton>
+        <ToolbarButton
+          label="Bullet list"
+          active={state.bulletList}
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+        >
+          <HugeiconsIcon icon={LeftToRightListBulletIcon} size={16} />
+        </ToolbarButton>
+        <ToolbarButton
+          label="Numbered list"
+          active={state.orderedList}
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        >
+          <HugeiconsIcon icon={LeftToRightListNumberIcon} size={16} />
+        </ToolbarButton>
+        <ToolbarButton
+          label="Blockquote"
+          active={state.blockquote}
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+        >
+          <HugeiconsIcon icon={LeftToRightBlockQuoteIcon} size={16} />
+        </ToolbarButton>
+        <ToolbarButton
+          label="Code block"
+          active={state.codeBlock}
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+        >
+          <HugeiconsIcon icon={SourceCodeIcon} size={16} />
+        </ToolbarButton>
+
+        <ToolbarDivider />
+
+        <ToolbarButton
+          label="Horizontal rule"
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+        >
+          <HugeiconsIcon icon={SeparatorHorizontalIcon} size={16} />
+        </ToolbarButton>
+        <ToolbarButton
+          label="Hard break"
+          onClick={() => editor.chain().focus().setHardBreak().run()}
+        >
+          <HugeiconsIcon icon={CornerDownLeftIcon} size={16} />
+        </ToolbarButton>
+      </div>
+
+      {actions && <div className="shrink-0 p-1">{actions}</div>}
     </div>
   )
 }
