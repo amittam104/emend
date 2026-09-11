@@ -347,7 +347,7 @@ export function AiSideChatView({
       <aside
         aria-label="AI Side Chat"
         className={cn(
-          "flex h-full min-h-0 flex-col bg-popover text-sm text-popover-foreground",
+          "flex h-full min-h-0 min-w-0 flex-col overflow-hidden bg-popover text-sm [overflow-wrap:anywhere] text-popover-foreground",
           panelClassName
         )}
       >

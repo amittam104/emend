@@ -242,13 +242,11 @@ export function AiComposerReview({
               />
             )}
           </div>
-          {isAsk && (
-            <ReviewAction
-              label="Close"
-              icon={Cancel01Icon}
-              onClick={session.dismissInformationalResult}
-            />
-          )}
+          <ReviewAction
+            label="Close"
+            icon={Cancel01Icon}
+            onClick={session.dismissInformationalResult}
+          />
         </div>
       )}
 

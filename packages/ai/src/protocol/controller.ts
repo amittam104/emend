@@ -259,9 +259,11 @@ export class EmendAiController {
   }
 
   dismissInformationalResult(): void {
+    const dismissibleError = this.snapshot.error !== null && !this.isRunning()
     if (
-      this.snapshot.activeRequest?.interactionMode !== "ask" ||
-      !["reviewing", "error", "aborted"].includes(this.snapshot.state)
+      !dismissibleError &&
+      (this.snapshot.activeRequest?.interactionMode !== "ask" ||
+        !["reviewing", "error", "aborted"].includes(this.snapshot.state))
     ) {
       return
     }
