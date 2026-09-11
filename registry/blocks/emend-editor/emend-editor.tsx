@@ -12,6 +12,7 @@ import { EditorContent, useEditor } from "@tiptap/react"
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
   type KeyboardEvent,
   type ReactNode,
@@ -54,6 +55,8 @@ export function EmendEditor({
   const [saveStatus, setSaveStatus] = useState<
     "idle" | "saving" | "success" | "error"
   >("idle")
+  const documentVersion = useRef(0)
+  const saveInFlight = useRef(false)
   const [sideChatOpen, setSideChatOpen] = useState(false)
   const configuredExtensions = useMemo(
     () => [...createEmendEditorExtensions(placeholder), ...(extensions ?? [])],
@@ -70,8 +73,9 @@ export function EmendEditor({
       onEditorReady?.(currentEditor)
     },
     onUpdate: ({ editor: currentEditor }) => {
+      documentVersion.current += 1
       setCharacterCount(currentEditor.storage.characterCount.characters())
-      setSaveStatus("idle")
+      if (!saveInFlight.current) setSaveStatus("idle")
       onChange?.({
         json: currentEditor.getJSON(),
         html: currentEditor.getHTML(),
@@ -86,14 +90,19 @@ export function EmendEditor({
   }, [editable, editor])
 
   async function save() {
-    if (!editor || !onSave || !editable || saveStatus === "saving") return
+    if (!editor || !onSave || !editable || saveInFlight.current) return
 
+    const savedVersion = documentVersion.current
+    saveInFlight.current = true
     setSaveStatus("saving")
     try {
       await onSave(editor)
-      setSaveStatus("success")
+      if (savedVersion === documentVersion.current) setSaveStatus("success")
     } catch {
-      setSaveStatus("error")
+      if (savedVersion === documentVersion.current) setSaveStatus("error")
+    } finally {
+      saveInFlight.current = false
+      if (savedVersion !== documentVersion.current) setSaveStatus("idle")
     }
   }
 
