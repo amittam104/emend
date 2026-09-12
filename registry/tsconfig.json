@@ -4,6 +4,6 @@
     "module": "ESNext",
     "moduleResolution": "Bundler"
   },
-  "include": ["blocks", "components"],
+  "include": ["blocks", "components", "recipes"],
   "exclude": ["node_modules", "dist"]
 }
