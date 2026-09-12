@@ -4,7 +4,7 @@ import type { JSONContent } from "@tiptap/core"
 import { createFetchTransport } from "@emend/ai/transport"
 import { EmendEditor } from "@emend/registry-components/blocks/emend-editor"
 
-const transport = createFetchTransport({ url: "/api/phase-2" })
+const transport = createFetchTransport({ url: "/api/editor-ai" })
 
 const initialContent: JSONContent = {
   type: "doc",
