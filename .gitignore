@@ -41,6 +41,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local-only AI route
+/apps/web/app/api/editor-ai/route.ts
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
