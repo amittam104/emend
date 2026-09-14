@@ -5,17 +5,21 @@ import type { EmendTransport } from "@emend/ai"
 import { useEditorAi } from "@emend/ai/react"
 import { EmendAi } from "@emend/ai/tiptap"
 import { useMemo, type ReactNode } from "react"
-import { AiBubbleMenuView } from "@/components/emend/ai-bubble-menu"
+import { AiComposerView } from "@/components/emend/ai-composer"
 import { EmendEditorBase, type EmendEditorBaseProps } from "./emend-editor-base"
+import { EditorBubbleMenu } from "./editor-bubble-menu"
 
-export interface EmendEditorProps extends Omit<
+export interface EmendEditorComposerProps extends Omit<
   EmendEditorBaseProps,
   "renderWorkspace" | "onSideChatToggle" | "sideChatOpen"
 > {
   readonly transport?: EmendTransport
 }
 
-export function EmendEditor({ transport, ...props }: EmendEditorProps) {
+export function EmendEditorComposer({
+  transport,
+  ...props
+}: EmendEditorComposerProps) {
   const extensions = useMemo(
     () => [EmendAi, ...(props.extensions ?? [])],
     [props.extensions]
@@ -49,9 +53,12 @@ function EditorAi({
   const session = useEditorAi({ editor, transport, previewMode: "inline" })
   return (
     <div className="emend-editor__workspace">
-      <div className="emend-editor__main">
+      <div className="emend-editor__main emend-editor__main--ai">
         <div className="emend-editor__content">{children}</div>
-        <AiBubbleMenuView editor={editor} session={session} />
+        <EditorBubbleMenu editor={editor} />
+        <div className="emend-editor__ai-tools">
+          <AiComposerView editor={editor} session={session} />
+        </div>
       </div>
     </div>
   )

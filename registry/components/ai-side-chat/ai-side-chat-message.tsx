@@ -10,15 +10,15 @@ import Refresh01Icon from "@hugeicons/core-free-icons/Refresh01Icon"
 import ReloadIcon from "@hugeicons/core-free-icons/ReloadIcon"
 import StopIcon from "@hugeicons/core-free-icons/StopIcon"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
-import { Button } from "@workspace/ui/components/button"
-import { Checkbox } from "@workspace/ui/components/checkbox"
-import { Label } from "@workspace/ui/components/label"
-import { Textarea } from "@workspace/ui/components/textarea"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@workspace/ui/components/tooltip"
+} from "@/components/ui/tooltip"
 import { useEffect, useState } from "react"
 
 export function AiSideChatMessage({

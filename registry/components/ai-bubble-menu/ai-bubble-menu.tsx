@@ -7,24 +7,24 @@ import "@tiptap/extension-text-style"
 import "@tiptap/extension-underline"
 import { isTextSelection, posToDOMRect, useEditorState } from "@tiptap/react"
 import { BubbleMenu, type BubbleMenuProps } from "@tiptap/react/menus"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@/lib/utils"
 import {
   type UseEditorAiOptions,
   type UseEditorAiResult,
   useEditorAi,
-} from "../_shared/use-emend-ai-session"
-import { Button } from "@workspace/ui/components/button"
+} from "@/components/emend/_shared/use-emend-ai-session"
+import { Button } from "@/components/ui/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupTextarea,
-} from "@workspace/ui/components/input-group"
+} from "@/components/ui/input-group"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@workspace/ui/components/tooltip"
+} from "@/components/ui/tooltip"
 import TextBoldIcon from "@hugeicons/core-free-icons/TextBoldIcon"
 import TextItalicIcon from "@hugeicons/core-free-icons/TextItalicIcon"
 import AiBeautifyIcon from "@hugeicons/core-free-icons/AiBeautifyIcon"

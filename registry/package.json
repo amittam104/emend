@@ -15,7 +15,10 @@
     "./components/ai-bubble-menu": "./components/ai-bubble-menu/index.ts",
     "./components/ai-composer": "./components/ai-composer/index.tsx",
     "./components/ai-side-chat": "./components/ai-side-chat/index.ts",
-    "./recipes/vercel-ai-gateway": "./recipes/vercel-ai-gateway/route.ts"
+    "./recipes/vercel-ai-gateway": "./recipes/vercel-ai-gateway/route.ts",
+    "./blocks/emend-editor-base": "./blocks/emend-editor/emend-editor-base.tsx",
+    "./blocks/emend-editor-composer": "./blocks/emend-editor/emend-editor-composer.tsx",
+    "./blocks/emend-editor-side-chat": "./blocks/emend-editor/emend-editor-side-chat.tsx"
   },
   "dependencies": {
     "@emend/ai": "workspace:*",
