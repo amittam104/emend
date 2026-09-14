@@ -4,6 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "prebuild": "pnpm --dir ../.. registry:build",
+    "predev": "pnpm --dir ../.. registry:build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
