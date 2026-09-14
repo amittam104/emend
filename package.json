@@ -8,7 +8,7 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "turbo format",
-    "registry:build": "packages/ui/node_modules/.bin/shadcn build registry/registry.json -o apps/web/public/r",
+    "registry:build": "pnpm --filter @workspace/ui exec shadcn build registry/registry.json -o apps/web/public/r --cwd ../..",
     "registry:validate": "pnpm registry:build",
     "typecheck": "turbo typecheck"
   },
