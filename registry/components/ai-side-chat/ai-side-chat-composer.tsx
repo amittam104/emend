@@ -42,9 +42,7 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from "react"
 import {
   type UseEditorAiOptions,
   type UseEditorAiResult,
-  useEditorAi,
 } from "@emend/ai/react"
-import { AiComposerReview } from "./ai-composer-review"
 
 const actions = [
   {
@@ -137,7 +135,7 @@ const defaultContextScopes: readonly EmendContextScope[] = [
 const defaultMutationOperations: readonly EmendMutationOperation[] =
   changes.map(({ operation }) => operation)
 
-export interface AiComposerPolicy {
+export interface AiSideChatPolicy {
   readonly allowedContextScopes?: readonly EmendContextScope[]
   readonly defaultContextScope?: "adaptive" | EmendContextScope
   readonly allowContextOverride?: boolean
@@ -146,49 +144,19 @@ export interface AiComposerPolicy {
   readonly allowMutationOverride?: boolean
 }
 
-export interface AiComposerProps {
-  readonly editor: UseEditorAiOptions["editor"]
-  readonly transport: UseEditorAiOptions["transport"]
-  readonly policy?: AiComposerPolicy
-  readonly showReview?: boolean
-  readonly className?: string
-}
-
-export interface AiComposerViewProps {
+export interface AiSideChatComposerProps {
   readonly editor: UseEditorAiOptions["editor"]
   readonly session: UseEditorAiResult
-  readonly policy?: AiComposerPolicy
-  readonly showReview?: boolean
+  readonly policy?: AiSideChatPolicy
   readonly className?: string
 }
 
-export function AiComposer({
-  editor,
-  transport,
-  policy,
-  showReview = true,
-  className,
-}: AiComposerProps) {
-  const session = useEditorAi({ editor, transport, previewMode: "inline" })
-
-  return (
-    <AiComposerView
-      editor={editor}
-      session={session}
-      policy={policy}
-      showReview={showReview}
-      className={className}
-    />
-  )
-}
-
-export function AiComposerView({
+export function AiSideChatComposer({
   editor,
   session,
   policy,
-  showReview = true,
   className,
-}: AiComposerViewProps) {
+}: AiSideChatComposerProps) {
   const menuId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
   const controlsRef = useRef<HTMLDivElement>(null)
@@ -298,13 +266,6 @@ export function AiComposerView({
   const mutationOperation = builtInSelected
     ? selectedAction.mutationOperation
     : (mutationOverride ?? policyMutation)
-  const replayAllowed =
-    session.activeRequest !== null &&
-    allowedContextScopes.includes(session.activeRequest.contextScope) &&
-    (session.activeRequest.mutationOperation === null ||
-      allowedMutationOperations.includes(
-        session.activeRequest.mutationOperation
-      ))
   const change = changes.find(
     (candidate) => candidate.operation === mutationOperation
   )
@@ -334,7 +295,7 @@ export function AiComposerView({
     hasSelection: selection.hasText,
     instruction,
     instructionTooLong,
-    pendingProposal: false,
+    pendingProposal: session.pendingProposal !== null,
     requestInProgress,
   })
   const editBlockReason = getEditBlockReason({
@@ -350,7 +311,8 @@ export function AiComposerView({
     selectedActionId,
     selectionCollapsed: selection.collapsed,
   })
-  const wide = !builtInSelected && expanded
+  const stackedAction = builtInSelected
+  const wide = stackedAction || (!builtInSelected && expanded)
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -503,10 +465,6 @@ export function AiComposerView({
       }}
       className={cn("w-full space-y-2", className)}
     >
-      {showReview && (
-        <AiComposerReview session={session} replayAllowed={replayAllowed} />
-      )}
-
       <div className="relative">
         {menuOpen && (
           <div
@@ -565,6 +523,7 @@ export function AiComposerView({
         <div
           className={cn(
             "relative isolate flex max-w-lg flex-col gap-1.5 overflow-hidden rounded-3xl border border-border/60 bg-card p-1.5 text-card-foreground shadow-md focus-within:border-border",
+            "max-w-none shadow-none",
             wide && "rounded-[20px] p-2"
           )}
         >
@@ -605,7 +564,9 @@ export function AiComposerView({
               <div
                 className={cn(
                   "min-w-0 overflow-hidden",
-                  "col-start-2 row-start-1 flex items-center gap-2 self-center"
+                  stackedAction
+                    ? "col-span-full col-start-1 row-start-1 flex flex-col items-start gap-1 px-1"
+                    : "col-start-2 row-start-1 flex items-center gap-2 self-center"
                 )}
               >
                 <Badge
@@ -631,7 +592,7 @@ export function AiComposerView({
                 <span
                   className={cn(
                     "min-w-0 text-[12px] text-muted-foreground",
-                    "truncate"
+                    !stackedAction && "truncate"
                   )}
                 >
                   {selectedAction.description}

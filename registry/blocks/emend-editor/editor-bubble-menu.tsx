@@ -11,6 +11,13 @@ import {
 } from "@hugeicons/core-free-icons"
 import { EditorControl, updateLink } from "./editor-toolbar"
 
+const bubbleMenuOptions = {
+  placement: "top" as const,
+  offset: 8,
+  flip: true,
+  shift: true,
+}
+
 export function EditorBubbleMenu({ editor }: { readonly editor: Editor }) {
   const active = useEditorState({
     editor,
@@ -26,7 +33,7 @@ export function EditorBubbleMenu({ editor }: { readonly editor: Editor }) {
     <BubbleMenu
       editor={editor}
       pluginKey="emendEditorBubbleMenu"
-      options={{ placement: "top", offset: 8, flip: true, shift: true }}
+      options={bubbleMenuOptions}
     >
       <div className="flex items-center gap-1 rounded-xl border border-border bg-background p-1 shadow-lg">
         <EditorControl

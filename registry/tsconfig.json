@@ -2,7 +2,13 @@
   "extends": "@workspace/typescript-config/react-library.json",
   "compilerOptions": {
     "module": "ESNext",
-    "moduleResolution": "Bundler"
+    "moduleResolution": "Bundler",
+    "baseUrl": "..",
+    "paths": {
+      "@/components/emend/*": ["registry/components/*"],
+      "@/components/ui/*": ["packages/ui/src/components/*"],
+      "@/lib/utils": ["packages/ui/src/lib/utils.ts"]
+    }
   },
   "include": ["blocks", "components", "recipes"],
   "exclude": ["node_modules", "dist"]

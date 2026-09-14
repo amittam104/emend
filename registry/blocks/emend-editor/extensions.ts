@@ -4,7 +4,6 @@ import { TableKit } from "@tiptap/extension-table"
 import { CharacterCount, Placeholder } from "@tiptap/extensions"
 import { Markdown } from "@tiptap/markdown"
 import StarterKit from "@tiptap/starter-kit"
-import { EmendAi } from "@emend/ai/tiptap"
 
 export function createEmendEditorExtensions(
   placeholder = "Start writing…"
@@ -17,6 +16,5 @@ export function createEmendEditorExtensions(
     Markdown.configure({ markedOptions: { gfm: true } }),
     Placeholder.configure({ placeholder }),
     CharacterCount,
-    EmendAi,
   ]
 }

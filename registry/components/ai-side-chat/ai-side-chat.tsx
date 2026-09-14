@@ -11,7 +11,7 @@ import AiChat02Icon from "@hugeicons/core-free-icons/AiChat02Icon"
 import BubbleChatAddIcon from "@hugeicons/core-free-icons/BubbleChatAddIcon"
 import Cancel01Icon from "@hugeicons/core-free-icons/Cancel01Icon"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@/components/ui/button"
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -19,25 +19,25 @@ import {
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
-} from "@workspace/ui/components/message-scroller"
+} from "@/components/ui/message-scroller"
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@workspace/ui/components/sheet"
+} from "@/components/ui/sheet"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@workspace/ui/components/tooltip"
-import { cn } from "@workspace/ui/lib/utils"
+} from "@/components/ui/tooltip"
+import { cn } from "@/lib/utils"
 import { useState } from "react"
 import {
-  AiComposerView,
-  type AiComposerPolicy,
-} from "../ai-composer/ai-composer"
+  AiSideChatComposer,
+  type AiSideChatPolicy,
+} from "./ai-side-chat-composer"
 import { AiSideChatMessage } from "./ai-side-chat-message"
 
 interface SideChatMessage extends EmendConversationMessage {
@@ -48,7 +48,7 @@ interface SideChatMessage extends EmendConversationMessage {
 export interface AiSideChatProps {
   readonly editor: UseEditorAiOptions["editor"]
   readonly transport: UseEditorAiOptions["transport"]
-  readonly policy?: AiComposerPolicy
+  readonly policy?: AiSideChatPolicy
   readonly open?: boolean
   readonly onOpenChange?: (open: boolean) => void
   readonly defaultOpen?: boolean
@@ -60,7 +60,7 @@ export interface AiSideChatProps {
 export interface AiSideChatViewProps {
   readonly editor: UseEditorAiOptions["editor"]
   readonly session: UseEditorAiResult
-  readonly policy?: AiComposerPolicy
+  readonly policy?: AiSideChatPolicy
   readonly open?: boolean
   readonly onOpenChange?: (open: boolean) => void
   readonly defaultOpen?: boolean
@@ -329,12 +329,10 @@ export function AiSideChatView({
       </div>
 
       <div className="p-2">
-        <AiComposerView
+        <AiSideChatComposer
           editor={editor}
           session={chatSession}
           policy={policy}
-          showReview={false}
-          variant="side-chat"
         />
       </div>
     </>
@@ -378,7 +376,6 @@ export function AiSideChatView({
       </SheetTrigger>
 
       <SheetContent
-        showOverlay={false}
         initialFocus={false}
         className="w-full! gap-0 p-0 sm:max-w-md!"
       >
