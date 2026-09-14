@@ -21,6 +21,9 @@ out/
 # production
 build
 dist
+/apps/web/public/r/
+/.artifacts/
+/fixtures/*/pnpm-lock.yaml
 
 # turbo
 .turbo

@@ -1,0 +1,362 @@
+.emend-editor {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+  transition: box-shadow 150ms ease;
+}
+
+.emend-editor__toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in oklch, var(--background) 94%, var(--muted));
+}
+
+.emend-editor__toolbar-group,
+.emend-editor__more-content,
+.emend-editor__toolbar-section {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.emend-editor__toolbar-group,
+.emend-editor__toolbar-actions,
+.emend-editor__toolbar-section {
+  padding: 0.375rem;
+}
+
+.emend-editor__separator {
+  height: auto;
+  align-self: stretch;
+}
+
+.emend-editor__block-type {
+  width: 7.5rem;
+}
+
+.emend-editor__more {
+  display: contents;
+  padding: 0.375rem;
+}
+
+.emend-editor__more-trigger {
+  display: none;
+}
+
+.emend-editor__more-content {
+  min-width: 0;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.emend-editor__toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.emend-editor__workspace,
+.emend-editor__main,
+.emend-editor__content {
+  min-width: 0;
+  min-height: 0;
+}
+
+.emend-editor__workspace {
+  position: relative;
+  flex: 1;
+}
+
+.emend-editor__workspace[data-side-chat-open="true"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 40%);
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.emend-editor__main {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.emend-editor__main--ai {
+  padding-bottom: 3.625rem;
+}
+
+.emend-editor__side-chat {
+  min-width: 0;
+  overflow: hidden;
+  border-left: 1px solid var(--border);
+}
+
+.emend-editor__content {
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.emend-editor__ai-tools {
+  position: absolute;
+  right: 0;
+  bottom: 1rem;
+  left: 0;
+  z-index: 2;
+  width: min(100% - 2rem, 36rem);
+  margin: 0 auto;
+}
+
+.emend-editor .emend-ai-target {
+  border-radius: 0.25rem;
+  background: color-mix(in oklch, var(--primary) 14%, transparent);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.emend-editor [data-emend-preview="true"] {
+  margin-inline: 0.25rem;
+  border-radius: 0.375rem;
+  background: color-mix(in oklch, var(--chart-2) 20%, transparent);
+  opacity: 0.8;
+}
+
+.emend-editor .ProseMirror {
+  min-height: 32rem;
+  max-width: 52rem;
+  margin-inline: auto;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.25rem, 5vw, 3rem);
+  outline: none;
+  overflow-wrap: anywhere;
+}
+
+.emend-editor .ProseMirror > * + * {
+  margin-top: 0.75rem;
+}
+
+.emend-editor .ProseMirror h1 {
+  font-size: 2rem;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.emend-editor .ProseMirror h2 {
+  margin-top: 1.75rem;
+  font-size: 1.5rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.emend-editor .ProseMirror h3 {
+  margin-top: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 650;
+}
+
+.emend-editor .ProseMirror h4,
+.emend-editor .ProseMirror h5,
+.emend-editor .ProseMirror h6 {
+  margin-top: 1.25rem;
+  font-weight: 650;
+}
+
+.emend-editor .ProseMirror blockquote {
+  border-left: 3px solid var(--border);
+  padding-left: 1rem;
+  color: var(--muted-foreground);
+}
+
+.emend-editor .ProseMirror ul,
+.emend-editor .ProseMirror ol {
+  padding-left: 1.5rem;
+}
+
+.emend-editor .ProseMirror ul {
+  list-style: disc;
+}
+
+.emend-editor .ProseMirror ol {
+  list-style: decimal;
+}
+
+.emend-editor .ProseMirror li + li {
+  margin-top: 0.25rem;
+}
+
+.emend-editor .ProseMirror ul[data-type="taskList"] {
+  padding-left: 0;
+  list-style: none;
+}
+
+.emend-editor .ProseMirror ul[data-type="taskList"] > li {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.emend-editor .ProseMirror ul[data-type="taskList"] > li > div {
+  flex: 1;
+}
+
+.emend-editor .ProseMirror a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.emend-editor .ProseMirror code {
+  border-radius: 0.25rem;
+  background: var(--muted);
+  padding: 0.125rem 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.emend-editor .ProseMirror pre {
+  overflow-x: auto;
+  border-radius: calc(var(--radius) * 0.8);
+  background: var(--muted);
+  padding: 1rem;
+}
+
+.emend-editor .ProseMirror pre code {
+  padding: 0;
+}
+
+.emend-editor .ProseMirror hr {
+  margin-block: 2rem;
+  border-color: var(--border);
+}
+
+.emend-editor .ProseMirror .tableWrapper {
+  overflow-x: auto;
+}
+
+.emend-editor .ProseMirror table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.emend-editor .ProseMirror th,
+.emend-editor .ProseMirror td {
+  min-width: 7rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.emend-editor .ProseMirror th {
+  background: var(--muted);
+  font-weight: 600;
+}
+
+.emend-editor .ProseMirror p.is-editor-empty:first-child::before {
+  float: left;
+  height: 0;
+  color: var(--muted-foreground);
+  content: attr(data-placeholder);
+  pointer-events: none;
+}
+
+.emend-editor__footer {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+@media (max-width: 47.999rem) {
+  .emend-editor__toolbar {
+    flex-wrap: nowrap;
+  }
+
+  .emend-editor__toolbar > .emend-editor__separator {
+    display: none;
+  }
+
+  .emend-editor__block-type {
+    width: 2rem;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .emend-editor__block-type [data-slot="select-value"],
+  .emend-editor__block-type > svg:last-child {
+    display: none;
+  }
+
+  .emend-editor__more {
+    position: static;
+    display: block;
+  }
+
+  .emend-editor__more-trigger {
+    display: inline-flex;
+  }
+
+  .emend-editor__more-content {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0.375rem;
+    left: 0.375rem;
+    z-index: 10;
+    display: none;
+    width: auto;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--popover);
+    box-shadow: 0 0.75rem 2rem
+      color-mix(in oklch, var(--foreground) 15%, transparent);
+  }
+
+  .emend-editor__more-content[data-open="true"] {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .emend-editor__more-content > .emend-editor__separator {
+    width: 100%;
+    height: 1px;
+  }
+
+  .emend-editor__more-content .emend-editor__toolbar-group {
+    flex-wrap: wrap;
+  }
+
+  .emend-editor__more-content button {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .emend-editor__workspace[data-side-chat-open="true"] {
+    display: block;
+  }
+
+  .emend-editor__side-chat {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border-left: 0;
+  }
+}
