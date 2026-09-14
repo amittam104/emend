@@ -1,0 +1,271 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "emend",
+  "homepage": "https://emend.dev",
+  "items": [
+    {
+      "name": "ai-bubble-menu",
+      "type": "registry:block",
+      "title": "AI Bubble Menu",
+      "description": "Selection-aware AI actions for an existing Tiptap editor.",
+      "dependencies": [
+        "@emend/ai",
+        "@hugeicons/core-free-icons@4.2.3",
+        "@hugeicons/react@^1.1.9",
+        "@tiptap/extension-bold@3.30.1",
+        "@tiptap/extension-italic@3.30.1",
+        "@tiptap/extension-link@3.30.1",
+        "@tiptap/extension-text-style@3.30.1",
+        "@tiptap/extension-underline@3.30.1",
+        "@tiptap/react@3.30.1",
+        "clsx@^2.1.1",
+        "tailwind-merge@^3.6.0"
+      ],
+      "registryDependencies": ["button", "input-group", "tooltip"],
+      "files": [
+        {
+          "path": "registry/components/ai-bubble-menu/ai-bubble-menu.tsx",
+          "type": "registry:component",
+          "target": "components/emend/ai-bubble-menu/ai-bubble-menu.tsx"
+        },
+        {
+          "path": "registry/components/ai-bubble-menu/index.ts",
+          "type": "registry:component",
+          "target": "components/emend/ai-bubble-menu/index.ts"
+        },
+        {
+          "path": "registry/components/_shared/use-emend-ai-session.ts",
+          "type": "registry:hook",
+          "target": "components/emend/_shared/use-emend-ai-session.ts"
+        },
+        {
+          "path": "packages/ui/src/lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ]
+    },
+    {
+      "name": "ai-composer",
+      "type": "registry:block",
+      "title": "AI Composer",
+      "description": "Prompt and review controls for an existing Tiptap editor.",
+      "dependencies": [
+        "@emend/ai",
+        "@hugeicons/core-free-icons@4.2.3",
+        "@hugeicons/react@^1.1.9",
+        "@tiptap/react@3.30.1",
+        "clsx@^2.1.1",
+        "tailwind-merge@^3.6.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "checkbox",
+        "label",
+        "select",
+        "textarea",
+        "tooltip"
+      ],
+      "files": [
+        {
+          "path": "registry/components/ai-composer/ai-composer.tsx",
+          "type": "registry:component",
+          "target": "components/emend/ai-composer/ai-composer.tsx"
+        },
+        {
+          "path": "registry/components/ai-composer/ai-composer-review.tsx",
+          "type": "registry:component",
+          "target": "components/emend/ai-composer/ai-composer-review.tsx"
+        },
+        {
+          "path": "registry/components/ai-composer/index.tsx",
+          "type": "registry:component",
+          "target": "components/emend/ai-composer/index.tsx"
+        },
+        {
+          "path": "packages/ui/src/lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ]
+    },
+    {
+      "name": "ai-side-chat",
+      "type": "registry:block",
+      "title": "AI Side Chat",
+      "description": "Document-aware AI chat for an existing Tiptap editor.",
+      "dependencies": [
+        "@emend/ai",
+        "@hugeicons/core-free-icons@4.2.3",
+        "@hugeicons/react@^1.1.9",
+        "@tiptap/react@3.30.1",
+        "clsx@^2.1.1",
+        "tailwind-merge@^3.6.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "checkbox",
+        "label",
+        "message-scroller",
+        "sheet",
+        "textarea",
+        "tooltip",
+        "badge",
+        "select"
+      ],
+      "files": [
+        {
+          "path": "registry/components/ai-side-chat/ai-side-chat.tsx",
+          "type": "registry:component",
+          "target": "components/emend/ai-side-chat/ai-side-chat.tsx"
+        },
+        {
+          "path": "registry/components/ai-side-chat/ai-side-chat-message.tsx",
+          "type": "registry:component",
+          "target": "components/emend/ai-side-chat/ai-side-chat-message.tsx"
+        },
+        {
+          "path": "registry/components/ai-side-chat/index.ts",
+          "type": "registry:component",
+          "target": "components/emend/ai-side-chat/index.ts"
+        },
+        {
+          "path": "registry/components/ai-side-chat/ai-side-chat-composer.tsx",
+          "type": "registry:component",
+          "target": "components/emend/ai-side-chat/ai-side-chat-composer.tsx"
+        },
+        {
+          "path": "packages/ui/src/lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ]
+    },
+    {
+      "name": "emend-editor-base",
+      "type": "registry:block",
+      "title": "Emend Editor without AI",
+      "description": "A Tiptap editor with formatting and save support, without AI.",
+      "dependencies": [
+        "@hugeicons/core-free-icons@4.2.3",
+        "@hugeicons/react@^1.1.9",
+        "@tiptap/core@3.30.1",
+        "@tiptap/extension-list@3.30.1",
+        "@tiptap/extension-table@3.30.1",
+        "@tiptap/extensions@3.30.1",
+        "@tiptap/markdown@3.30.1",
+        "@tiptap/react@3.30.1",
+        "@tiptap/starter-kit@3.30.1",
+        "clsx@^2.1.1",
+        "tailwind-merge@^3.6.0"
+      ],
+      "registryDependencies": ["button", "select", "separator", "tooltip"],
+      "files": [
+        {
+          "path": "registry/blocks/emend-editor/editor-bubble-menu.tsx",
+          "type": "registry:component",
+          "target": "components/emend/emend-editor/editor-bubble-menu.tsx"
+        },
+        {
+          "path": "registry/blocks/emend-editor/editor-toolbar.tsx",
+          "type": "registry:component",
+          "target": "components/emend/emend-editor/editor-toolbar.tsx"
+        },
+        {
+          "path": "registry/blocks/emend-editor/emend-editor.css",
+          "type": "registry:file",
+          "target": "components/emend/emend-editor/emend-editor.css"
+        },
+        {
+          "path": "registry/blocks/emend-editor/extensions.ts",
+          "type": "registry:lib",
+          "target": "components/emend/emend-editor/extensions.ts"
+        },
+        {
+          "path": "registry/blocks/emend-editor/emend-editor-base.tsx",
+          "type": "registry:component",
+          "target": "components/emend/emend-editor/emend-editor-base.tsx"
+        },
+        {
+          "path": "packages/ui/src/lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ]
+    },
+    {
+      "name": "emend-editor",
+      "type": "registry:block",
+      "title": "Emend Editor with AI Bubble Menu",
+      "description": "A Tiptap editor with AI Bubble Menu. The default starter.",
+      "dependencies": ["@emend/ai"],
+      "registryDependencies": [
+        "@emend/emend-editor-base",
+        "@emend/ai-bubble-menu"
+      ],
+      "files": [
+        {
+          "path": "registry/blocks/emend-editor/emend-editor.tsx",
+          "type": "registry:component",
+          "target": "components/emend/emend-editor/emend-editor.tsx"
+        },
+        {
+          "path": "registry/blocks/emend-editor/index.ts",
+          "type": "registry:component",
+          "target": "components/emend/emend-editor/index.ts"
+        }
+      ]
+    },
+    {
+      "name": "emend-editor-side-chat",
+      "type": "registry:block",
+      "title": "Emend Editor with AI Side Chat",
+      "description": "A Tiptap editor with AI Side Chat.",
+      "dependencies": ["@emend/ai"],
+      "registryDependencies": [
+        "@emend/emend-editor-base",
+        "@emend/ai-side-chat"
+      ],
+      "files": [
+        {
+          "path": "registry/blocks/emend-editor/emend-editor-side-chat.tsx",
+          "type": "registry:component",
+          "target": "components/emend/emend-editor/emend-editor-side-chat.tsx"
+        }
+      ]
+    },
+    {
+      "name": "emend-editor-composer",
+      "type": "registry:block",
+      "title": "Emend Editor with AI Composer",
+      "description": "A Tiptap editor with AI Composer.",
+      "dependencies": ["@emend/ai"],
+      "registryDependencies": [
+        "@emend/emend-editor-base",
+        "@emend/ai-composer"
+      ],
+      "files": [
+        {
+          "path": "registry/blocks/emend-editor/emend-editor-composer.tsx",
+          "type": "registry:component",
+          "target": "components/emend/emend-editor/emend-editor-composer.tsx"
+        }
+      ]
+    },
+    {
+      "name": "recipe-vercel-ai-gateway",
+      "type": "registry:item",
+      "title": "Vercel AI Gateway Route",
+      "description": "An Emend AI route backed by Vercel AI Gateway.",
+      "dependencies": ["@emend/ai", "ai@^7.0.97"],
+      "files": [
+        {
+          "path": "registry/recipes/vercel-ai-gateway/route.ts",
+          "type": "registry:page",
+          "target": "app/api/editor-ai/route.ts"
+        }
+      ]
+    }
+  ]
+}

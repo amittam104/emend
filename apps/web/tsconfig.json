@@ -3,6 +3,9 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"],
+      "@/components/emend/*": ["../../registry/components/*"],
+      "@/components/ui/*": ["../../packages/ui/src/components/*"],
+      "@/lib/utils": ["../../packages/ui/src/lib/utils.ts"],
       "@workspace/ui/*": ["../../packages/ui/src/*"]
     },
     "plugins": [
