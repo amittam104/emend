@@ -1,0 +1,44 @@
+---
+title: Installation
+description: Learn what Emend installs, what it copies into your app, and what is available before the preview release.
+---
+
+Emend uses two pieces together: the Shadcn registry copies the UI source into
+your project, while `@emend/ai` supplies the shared editor protocol, Tiptap
+extension, controller, and transports.
+
+<Callout type="warn" title="Public installation is not available yet">
+  `@emend/ai` remains unpublished until the preview release. The commands on
+  this site must not be presented as a working public npm installation before
+  that release.
+</Callout>
+
+## Prerequisites
+
+- Next.js App Router and React
+- Tiptap packages aligned to `3.30.1`
+- Shadcn and Tailwind CSS 4
+- A server route for production AI requests
+
+## Registry setup
+
+The public registry is designed to use the `@emend` namespace in your
+`components.json` file:
+
+```json title="components.json"
+{
+  "registries": {
+    "@emend": "https://emend.dev/r/{name}.json"
+  }
+}
+```
+
+Once the preview package is published, Shadcn will resolve the selected Emend
+item, copy its source into your project, and install its declared dependencies.
+You will be able to inspect and adapt that copied UI like the rest of your
+Shadcn components.
+
+## Choose your path
+
+Continue to [Getting Started](/docs/getting-started) to add Emend to an existing
+Tiptap editor or begin with a complete editor starter.
