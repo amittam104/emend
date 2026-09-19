@@ -1,0 +1,41 @@
+---
+title: Introduction
+description: Build transparent AI editing into a Tiptap editor without giving up control of the document or UI.
+---
+
+Emend is a set of AI editing components and editor starters for Tiptap. It gives
+readers a clear review step before an AI-generated change becomes part of their
+document.
+
+<Callout type="warn" title="Pre-release documentation">
+  Emend is still being prepared for its first public preview. The registry is in
+  place, but `@emend/ai` is not published to npm yet.
+</Callout>
+
+## What Emend gives you
+
+- **Three AI surfaces:** a selection-aware Bubble Menu, a Composer for focused
+  prompts, and a document-aware Side Chat.
+- **Reviewable edits:** Ask requests return answers, while Edit requests create
+  proposals that stay separate until the user accepts them.
+- **Two ways to start:** add one surface to an editor you already own, or copy a
+  complete editor starter into your app.
+
+## What stays yours
+
+The editor, copied component source, server route, provider credentials,
+authentication, persistence, and deployment remain inside your application.
+Emend does not replace your product's permissions, content model, or backend.
+
+<Cards>
+  <Card
+    title="Install Emend"
+    description="Understand the package and registry boundary before adding a component."
+    href="/docs/installation"
+  />
+  <Card
+    title="Choose a starting point"
+    description="Follow the path for an existing Tiptap editor or a complete starter."
+    href="/docs/getting-started"
+  />
+</Cards>

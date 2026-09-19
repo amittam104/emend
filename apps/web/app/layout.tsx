@@ -1,18 +1,30 @@
+import type { Metadata } from "next"
 import { Geist, Geist_Mono, Manrope } from "next/font/google"
+import { RootProvider } from "fumadocs-ui/provider/next"
 
-import "@workspace/ui/globals.css"
 import { TooltipProvider } from "@workspace/ui/components/tooltip"
-import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@workspace/ui/lib/utils";
+import { cn } from "@workspace/ui/lib/utils"
 
-const manropeHeading = Manrope({subsets:['latin'],variable:'--font-heading'});
+import "./globals.css"
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'})
+const manropeHeading = Manrope({
+  subsets: ["latin"],
+  variable: "--font-heading",
+})
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 })
+
+export const metadata: Metadata = {
+  title: {
+    default: "Emend",
+    template: "%s | Emend",
+  },
+  description: "AI editing components and editor starters for Tiptap.",
+}
 
 export default function RootLayout({
   children,
@@ -23,12 +35,17 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", geist.variable, manropeHeading.variable)}
+      className={cn(
+        "font-sans antialiased",
+        fontMono.variable,
+        geist.variable,
+        manropeHeading.variable
+      )}
     >
-      <body>
-        <ThemeProvider>
+      <body className="flex min-h-screen flex-col">
+        <RootProvider>
           <TooltipProvider>{children}</TooltipProvider>
-        </ThemeProvider>
+        </RootProvider>
       </body>
     </html>
   )

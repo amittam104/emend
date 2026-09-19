@@ -1,0 +1,23 @@
+---
+title: Existing Tiptap Editor
+description: Keep your current editor and add one Emend AI surface around the same Editor instance.
+---
+
+Choose this path when your application already creates and owns a Tiptap
+`Editor`.
+
+<Callout type="warn" title="Preview package required">
+  The public command will be enabled after `@emend/ai` is published. Until then,
+  this flow is verified only by the repository's packed-package fixture.
+</Callout>
+
+## The integration shape
+
+1. Add `EmendAi` to the extensions of your existing editor.
+2. Create one transport for your AI route or deterministic mock.
+3. Pass the same `Editor` and AI session to the copied Emend surface.
+4. Keep proposed edits in review until the user accepts or rejects them.
+
+The detailed install command and minimal component code will be added here with
+the preview release. For now, continue to the [Editor Starter](/docs/emend-editor-starter)
+if you want Emend to create the editor as well.

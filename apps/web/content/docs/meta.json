@@ -1,0 +1,12 @@
+{
+  "title": "Emend",
+  "pages": [
+    "---Start---",
+    "index",
+    "installation",
+    "getting-started",
+    "---Build---",
+    "existing-tiptap-editor",
+    "emend-editor-starter"
+  ]
+}
