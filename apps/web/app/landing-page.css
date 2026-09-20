@@ -41,6 +41,26 @@
   margin-top: 3rem;
 }
 
+/* Mention nodes created from the @ suggestion list. */
+.landing-page .emend-editor .ProseMirror .emend-mention {
+  border-radius: 0.25rem;
+  background: color-mix(in oklch, var(--primary) 12%, transparent);
+  padding: 0.1rem 0.3rem;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+/* Find and replace highlights. The extension's own stylesheet is light-mode
+   only, so the landing page ships its own. */
+.landing-page .emend-editor .ProseMirror .find-and-replace-result {
+  border-radius: 0.15rem;
+  background: color-mix(in oklch, var(--chart-1) 45%, transparent);
+}
+
+.landing-page .emend-editor .ProseMirror .find-and-replace-result-current {
+  background: color-mix(in oklch, var(--chart-2) 75%, transparent);
+}
+
 /* The hero call to action renders inside the editable surface, so the
    document link and code styling has to give way to the button styling. */
 .landing-page [data-node-view-wrapper] a[data-slot="button"] {
