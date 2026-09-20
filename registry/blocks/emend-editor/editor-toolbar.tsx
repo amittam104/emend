@@ -32,7 +32,7 @@ import {
   UndoIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -59,6 +59,7 @@ export function EditorToolbar({
   saveDisabled,
   saveStatus,
   sideChatOpen,
+  toolbarActions,
 }: {
   readonly editor: Editor
   readonly onSave?: () => Promise<void>
@@ -66,6 +67,7 @@ export function EditorToolbar({
   readonly saveDisabled: boolean
   readonly saveStatus: "idle" | "saving" | "success" | "error"
   readonly sideChatOpen?: boolean
+  readonly toolbarActions?: ReactNode
 }) {
   const [moreOpen, setMoreOpen] = useState(false)
   const state = useEditorState({
@@ -288,7 +290,6 @@ export function EditorToolbar({
       aria-label="Editor formatting"
     >
       <ControlGroup label="History" controls={historyControls} />
-
       <Separator orientation="vertical" className="emend-editor__separator" />
 
       <div className="emend-editor__toolbar-section">
@@ -382,8 +383,9 @@ export function EditorToolbar({
         </div>
       </div>
 
-      {(onSideChatToggle || onSave) && (
+      {(toolbarActions || onSideChatToggle || onSave) && (
         <div className="emend-editor__toolbar-actions">
+          {toolbarActions}
           {onSideChatToggle && (
             <Tooltip>
               <TooltipTrigger
