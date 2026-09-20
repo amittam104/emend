@@ -24,7 +24,7 @@ import { cn } from "@workspace/ui/lib/utils"
 import { LandingEditor } from "./landing-editor"
 
 const transport = createMockTransport({ delayMs: 12 })
-const installCommand = "npm install emend"
+const installCommand = "pnpm install emend"
 
 const initialContent: JSONContent = {
   type: "doc",
@@ -228,10 +228,7 @@ function listItem(label: string, detail: string): JSONContent {
   }
 }
 
-/**
- * Landing-only node so the hero call to action stays inside the editable
- * document without adding a registry block for it.
- */
+
 const HeroCta = Node.create({
   name: "heroCta",
   group: "block",
