@@ -2,17 +2,22 @@
 
 import type { ComponentProps, ReactNode } from "react"
 import { Fragment, useMemo } from "react"
-import { Cancel01Icon, SidebarLeft01Icon } from "@hugeicons/core-free-icons"
+import {
+  Cancel01Icon,
+  SidebarLeftIcon,
+  SidebarRightIcon,
+} from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
+  SidebarContent,
   SidebarDrawerContent,
   SidebarDrawerOverlay,
+  SidebarTrigger as BaseSidebarTrigger,
   useSidebar as useBaseSidebar,
 } from "fumadocs-ui/components/sidebar/base"
-import type { SidebarPageTreeComponents } from "fumadocs-ui/components/sidebar/page-tree"
 import { useTreeContext } from "fumadocs-ui/contexts/tree"
-import { useGlassLayout } from "fumadocs-ui/layouts/glass"
-import { useSidebar } from "fumadocs-ui/layouts/glass/slots/sidebar"
+import { useDocsLayout } from "fumadocs-ui/layouts/docs"
+import type { SidebarProps } from "fumadocs-ui/layouts/docs/slots/sidebar"
 import type { LinkItemType } from "fumadocs-ui/layouts/shared"
 import Link from "fumadocs-core/link"
 import { usePathname } from "fumadocs-core/framework"
@@ -25,6 +30,7 @@ import {
   type BranchedMenuLink,
   type BranchedMenuSection,
 } from "./branched-menu"
+import { Button } from "@/components/ui/button"
 
 function pageLinks(nodes: PageTree.Node[]): BranchedMenuLink[] {
   return nodes.flatMap((node) => {
@@ -146,29 +152,6 @@ function DocsNavigation() {
   )
 }
 
-function HiddenItem() {
-  return null
-}
-
-function HiddenFolder() {
-  return null
-}
-
-function DocsTreeSeparator({ item }: { item: PageTree.Separator }) {
-  const { root } = useTreeContext()
-  const firstSeparator = root.children.find(
-    (node): node is PageTree.Separator => node.type === "separator"
-  )
-
-  return item === firstSeparator ? <DocsNavigation /> : null
-}
-
-export const docsSidebarComponents: Partial<SidebarPageTreeComponents> = {
-  Folder: HiddenFolder,
-  Item: HiddenItem,
-  Separator: DocsTreeSeparator,
-}
-
 function SidebarHeader({
   action,
   className,
@@ -176,7 +159,7 @@ function SidebarHeader({
   action: ReactNode
   className?: string
 }) {
-  const { slots } = useGlassLayout()
+  const { slots } = useDocsLayout()
 
   return (
     <div className={cn("flex items-center gap-2", className)}>
@@ -187,7 +170,7 @@ function SidebarHeader({
 }
 
 function SidebarSearch({ className }: { className?: string }) {
-  const { slots } = useGlassLayout()
+  const { slots } = useDocsLayout()
 
   if (!slots.searchTrigger) return null
 
@@ -198,55 +181,113 @@ function SidebarSearch({ className }: { className?: string }) {
   )
 }
 
-export function DocsSidebar({ className, ...props }: ComponentProps<"aside">) {
-  const { menuItems } = useGlassLayout()
-  const { collapsible, collapsed, setCollapsed } = useSidebar()
+export function DocsSidebar({
+  banner,
+  className,
+  collapsible = true,
+  footer,
+  ...props
+}: SidebarProps) {
+  const { menuItems } = useDocsLayout()
+  const { setCollapsed } = useBaseSidebar()
 
   return (
-    <aside
-      id="nd-sidebar"
-      className={cn(
-        "bg-fd-popover/80 text-fd-popover-foreground shadow-docs-sidebar md:layout:[--fd-left-width:280px] sticky top-2 z-30 my-2 ms-2 flex h-[calc(100dvh-1rem)] flex-col rounded-2xl border backdrop-blur-sm transition-transform [grid-area:left] max-md:hidden",
-        collapsed &&
-          "md:layout:[--fd-left-width:0px] w-[272px] -translate-x-[280px]",
-        className
-      )}
-      {...props}
-    >
-      <SidebarHeader
-        className="px-4 pt-4 pb-3"
-        action={
-          <div className="flex items-center gap-0.5">
-            <IconLinks items={menuItems} />
-            {collapsible ? (
-              <button
-                type="button"
-                aria-label="Hide sidebar"
-                onClick={() => setCollapsed(true)}
-                className="text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-accent-foreground focus-visible:outline-fd-ring inline-flex size-8 items-center justify-center rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+    <Fragment>
+      <SidebarContent>
+        {({ collapsed, hovered, ref, ...hoverProps }) => (
+          <Fragment>
+            <div
+              data-sidebar-placeholder=""
+              className="md:layout:[--fd-sidebar-width:280px] pointer-events-none sticky top-(--fd-docs-row-1) z-20 h-[calc(var(--fd-docs-height)-var(--fd-docs-row-1))] [grid-area:sidebar] *:pointer-events-auto max-md:hidden"
+            >
+              {collapsed ? (
+                <div
+                  className="inset-s-0 absolute inset-y-0 w-4"
+                  {...hoverProps}
+                />
+              ) : null}
+
+              <aside
+                {...props}
+                id="nd-sidebar"
+                ref={ref}
+                data-collapsed={collapsed}
+                data-hovered={collapsed && hovered}
+                className={cn(
+                  "bg-fd-popover/80 text-fd-popover-foreground shadow-docs-sidebar flex h-full w-[272px] flex-col border-r backdrop-blur-sm transition-transform duration-250",
+                  collapsed &&
+                    !hovered &&
+                    "-translate-x-[280px] rtl:translate-x-[280px]",
+                  className
+                )}
+                {...hoverProps}
               >
-                <HugeiconsIcon icon={SidebarLeft01Icon} size={17} />
-              </button>
+                <SidebarHeader
+                  className="px-4 pt-4 pb-3"
+                  action={
+                    <div className="flex items-center gap-0.5">
+                      {collapsible ? (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Hide sidebar"
+                          onClick={() => setCollapsed(true)}
+                        >
+                          <HugeiconsIcon icon={SidebarLeftIcon} size={16} />
+                        </Button>
+                      ) : null}
+                    </div>
+                  }
+                />
+
+                <SidebarSearch className="px-3 pb-3" />
+                {banner}
+
+                <div className="fd-scroll-container min-h-0 flex-1 overflow-y-auto px-3 pb-3">
+                  <DocsNavigation />
+                </div>
+
+                <div className="mx-3 flex flex-col border-t py-3 empty:hidden">
+                  <ResourceLinks items={menuItems} />
+                  {footer}
+                </div>
+              </aside>
+            </div>
+
+            {collapsible ? (
+              <div
+                data-sidebar-panel=""
+                className={cn(
+                  "bg-fd-muted text-fd-muted-foreground inset-s-4 fixed top-[calc(var(--fd-docs-row-1)+1rem)] z-20 flex rounded-xl border p-0.5 shadow-lg transition-opacity",
+                  (!collapsed || hovered) && "pointer-events-none opacity-0"
+                )}
+              >
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Show sidebar"
+                  onClick={() => setCollapsed(false)}
+                >
+                  <HugeiconsIcon icon={SidebarRightIcon} size={16} />
+                </Button>
+              </div>
             ) : null}
-          </div>
-        }
-      />
+          </Fragment>
+        )}
+      </SidebarContent>
 
-      <SidebarSearch className="px-3 pb-3" />
-
-      <div className="fd-scroll-container min-h-0 flex-1 overflow-y-auto px-3 pb-3">
-        <DocsNavigation />
-      </div>
-
-      <div className="mx-3 flex flex-col border-t py-3 empty:hidden">
-        <ResourceLinks items={menuItems} />
-      </div>
-    </aside>
+      <DocsSidebarDrawer banner={banner} footer={footer} />
+    </Fragment>
   )
 }
 
-export function DocsSidebarDrawer() {
-  const { menuItems, slots } = useGlassLayout()
+export function DocsSidebarDrawer({
+  banner,
+  footer,
+}: Pick<SidebarProps, "banner" | "footer"> = {}) {
+  const { menuItems, slots } = useDocsLayout()
   const { setOpen } = useBaseSidebar()
 
   return (
@@ -268,6 +309,7 @@ export function DocsSidebarDrawer() {
         />
 
         <SidebarSearch className="px-4 pb-4" />
+        {banner}
 
         <div className="fd-scroll-container min-h-0 flex-1 overflow-y-auto px-4 pb-4">
           <DocsNavigation />
@@ -283,7 +325,16 @@ export function DocsSidebarDrawer() {
           <IconLinks items={menuItems} />
           {slots.themeSwitch ? <slots.themeSwitch className="p-0" /> : null}
         </div>
+        {footer}
       </SidebarDrawerContent>
     </Fragment>
+  )
+}
+
+export function DocsSidebarTrigger({ ...props }: ComponentProps<"button">) {
+  return (
+    <BaseSidebarTrigger {...props}>
+      <HugeiconsIcon icon={SidebarLeftIcon} size={18} />
+    </BaseSidebarTrigger>
   )
 }

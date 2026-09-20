@@ -5,7 +5,7 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
-} from "fumadocs-ui/layouts/notebook/page"
+} from "fumadocs-ui/layouts/docs/page"
 
 import { SiteFooter } from "@/components/docs/site-footer"
 import { getMDXComponents } from "@/components/mdx"
