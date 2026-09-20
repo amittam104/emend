@@ -1,0 +1,55 @@
+@source "../components/landing-page.tsx";
+
+.landing-page .emend-editor__footer {
+  display: none;
+}
+
+/* The editor block ships its document rhythm in an unlayered stylesheet, which
+   outranks Tailwind utilities. The landing page keeps its roomier rhythm here
+   so the vertical spacing has one source of truth. */
+.landing-page .emend-editor .ProseMirror > * + * {
+  margin-top: 1.25rem;
+}
+
+.landing-page .emend-editor .ProseMirror ul,
+.landing-page .emend-editor .ProseMirror ol {
+  margin-top: 1.25rem;
+}
+
+.landing-page .emend-editor .ProseMirror li + li {
+  margin-top: 0.25rem;
+}
+
+.landing-page .emend-editor .ProseMirror h2 {
+  margin-top: 4.5rem;
+}
+
+.landing-page .emend-editor .ProseMirror hr {
+  margin-block: 4.5rem;
+}
+
+.landing-page .emend-editor .ProseMirror pre {
+  margin-top: 2rem;
+}
+
+.landing-page .emend-editor .ProseMirror blockquote {
+  margin-top: 3rem;
+}
+
+/* The hero call to action node view. */
+.landing-page .emend-editor .ProseMirror > .react-renderer {
+  margin-top: 3rem;
+}
+
+/* The hero call to action renders inside the editable surface, so the
+   document link and code styling has to give way to the button styling. */
+.landing-page [data-node-view-wrapper] a[data-slot="button"] {
+  color: var(--primary-foreground);
+  text-decoration: none;
+}
+
+.landing-page [data-node-view-wrapper] [data-slot="button"] code {
+  background: transparent;
+  padding: 0;
+  font-size: 0.8125rem;
+}
