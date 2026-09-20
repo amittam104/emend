@@ -26,6 +26,7 @@ export interface EmendEditorBaseProps {
   readonly editable?: boolean
   readonly extensions?: Extensions
   readonly editorProps?: EditorOptions["editorProps"]
+  readonly toolbarActions?: ReactNode
   readonly onChange?: (content: {
     readonly json: JSONContent
     readonly html: string
@@ -43,6 +44,7 @@ export function EmendEditorBase({
   editable = true,
   extensions,
   editorProps,
+  toolbarActions,
   onChange,
   onEditorReady,
   onSave,
@@ -126,6 +128,7 @@ export function EmendEditorBase({
           saveDisabled={saveStatus === "saving"}
           saveStatus={saveStatus}
           sideChatOpen={sideChatOpen}
+          toolbarActions={toolbarActions}
         />
       )}
       {editor && editable && renderWorkspace ? (
