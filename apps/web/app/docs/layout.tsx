@@ -1,30 +1,36 @@
 import type { ReactNode } from "react"
-import AiChat02Icon from "@hugeicons/core-free-icons/AiChat02Icon"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { MessageCircleIcon } from "lucide-react"
+import { buttonVariants } from "fumadocs-ui/components/ui/button"
+import { DocsLayout } from "fumadocs-ui/layouts/docs"
 
 import {
   AISearch,
   AISearchPanel,
   AISearchTrigger,
 } from "@/components/ai/search"
-import { DocsLayoutShell } from "@/components/docs/docs-layout-shell"
 import { baseOptions } from "@/lib/layout.shared"
 import { source } from "@/lib/source"
+import { cn } from "@workspace/ui/lib/utils"
 
-export default function DocsLayout({ children }: { children: ReactNode }) {
+export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <AISearch>
-      <DocsLayoutShell {...baseOptions()} tree={source.getPageTree()}>
-        {children}
-      </DocsLayoutShell>
-      <AISearchPanel />
-      <AISearchTrigger
-        position="float"
-        aria-label="Ask AI"
-        className="bg-fd-primary text-fd-primary-foreground inline-flex w-auto items-center justify-center gap-2 rounded-full px-3 py-3 text-base font-medium"
-      >
-        <HugeiconsIcon icon={AiChat02Icon} size={16} />
-      </AISearchTrigger>
-    </AISearch>
+    <DocsLayout {...baseOptions()} tree={source.getPageTree()}>
+      <AISearch>
+        <AISearchPanel />
+        <AISearchTrigger
+          position="float"
+          className={cn(
+            buttonVariants({
+              variant: "secondary",
+              className: "text-fd-muted-foreground rounded-2xl",
+            })
+          )}
+        >
+          <MessageCircleIcon className="size-4.5" />
+          Ask AI
+        </AISearchTrigger>
+      </AISearch>
+      {children}
+    </DocsLayout>
   )
 }

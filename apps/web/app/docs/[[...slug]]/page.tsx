@@ -7,7 +7,6 @@ import {
   DocsTitle,
 } from "fumadocs-ui/layouts/docs/page"
 
-import { SiteFooter } from "@/components/docs/site-footer"
 import { getMDXComponents } from "@/components/mdx"
 import { source } from "@/lib/source"
 
@@ -22,23 +21,12 @@ export default async function Page({ params }: PageProps) {
   const MDX = page.data.body
 
   return (
-    <DocsPage
-      toc={page.data.toc}
-      full={page.data.full}
-      tabIndex={-1}
-      tableOfContent={{
-        container: {
-          className:
-            "top-(--fd-header-height) h-[calc(var(--fd-docs-height)-var(--fd-header-height))]",
-        },
-      }}
-    >
+    <DocsPage toc={page.data.toc} full={page.data.full}>
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
         <MDX components={getMDXComponents()} />
       </DocsBody>
-      <SiteFooter />
     </DocsPage>
   )
 }
