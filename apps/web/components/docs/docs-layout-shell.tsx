@@ -62,7 +62,6 @@ export function DocsLayoutShell({
       <DocsLayout
         {...props}
         sidebar={sidebar}
-        tabMode=""
         slots={{
           ...slots,
           container: slots?.container ?? DocsContainer,
