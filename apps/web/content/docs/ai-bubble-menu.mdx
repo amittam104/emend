@@ -1,0 +1,86 @@
+---
+title: AI Bubble Menu
+description: Add selection-aware Ask and Edit actions beside the text a person is already working on.
+---
+
+The AI Bubble Menu is the smallest Emend surface. It appears for a non-empty
+text selection and keeps the prompt, preview, and review decision close to that
+selection.
+
+## Live mock demo
+
+Select the sentence in the editor. Use a quick Edit action, or open **AI** and
+enter a custom instruction for Ask or Edit.
+
+<EditorDemo variant="bubble" />
+
+## Install
+
+```bash
+pnpm dlx shadcn@latest add @emend/ai-bubble-menu
+```
+
+<Callout type="warn" title="Preview package required">
+  This command depends on the unpublished `@emend/ai` package. It documents the
+  verified consumer flow but will not complete from the public npm registry
+  until the preview release.
+</Callout>
+
+<Callout type="info" title="Set up the server route">
+  This component needs an Emend-compatible server route for real AI responses.
+  Follow the [Vercel AI Gateway recipe](/docs/vercel-ai-gateway) to install and
+  connect one.
+</Callout>
+
+## Minimal usage
+
+Add `EmendAi` to the same Tiptap editor and pass that editor to the copied
+component.
+
+```tsx
+import { EmendAi } from "@emend/ai/tiptap"
+import { createFetchTransport } from "@emend/ai/transport"
+import { Markdown } from "@tiptap/markdown"
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import { AiBubbleMenu } from "@/components/emend/ai-bubble-menu"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" })
+
+const editor = useEditor({
+  immediatelyRender: false,
+  extensions: [StarterKit, Markdown, EmendAi],
+})
+
+return editor ? (
+  <>
+    <EditorContent editor={editor} />
+    <AiBubbleMenu editor={editor} transport={transport} />
+  </>
+) : null
+```
+
+## Important options
+
+| Prop         | Default  | Purpose                                                  |
+| ------------ | -------- | -------------------------------------------------------- |
+| `editor`     | Required | The existing Tiptap `Editor` instance.                   |
+| `transport`  | Required | Sends typed Emend requests to your mock or server route. |
+| `showReview` | `true`   | Keeps proposal review controls inside the Bubble Menu.   |
+| `className`  | —        | Extends the copied component's outer surface.            |
+
+## Behavior notes
+
+- Quick actions such as Improve, Shorten, Expand, and Fix grammar create Edit
+  proposals for the current selection.
+- A custom instruction can Ask without changing content or Edit the selection.
+- The optional document-context control expands what the model may read; it
+  does not expand the change target.
+- A content-changing transaction makes an open proposal stale. The stale
+  proposal cannot be accepted.
+
+## Next step
+
+Compare the persistent prompt area in [AI Composer](/docs/ai-composer), or read
+[Content and Proposals](/docs/content-and-proposals) to understand the review
+model.

@@ -1,23 +1,81 @@
 ---
 title: Existing Tiptap Editor
-description: Keep your current editor and add one Emend AI surface around the same Editor instance.
+description: Add one Emend AI surface to an Editor instance your application already owns.
 ---
 
 Choose this path when your application already creates and owns a Tiptap
 `Editor`.
 
 <Callout type="warn" title="Preview package required">
-  The public command will be enabled after `@emend/ai` is published. Until then,
-  this flow is verified only by the repository's packed-package fixture.
+  This registry command depends on the unpublished `@emend/ai` package. It is
+  verified with a packed package in the consumer fixture, but it will not
+  complete from the public npm registry yet.
 </Callout>
 
-## The integration shape
+## Prerequisites
 
-1. Add `EmendAi` to the extensions of your existing editor.
-2. Create one transport for your AI route or deterministic mock.
-3. Pass the same `Editor` and AI session to the copied Emend surface.
-4. Keep proposed edits in review until the user accepts or rejects them.
+- A client component that creates a Tiptap editor
+- Tiptap `3.30.1` packages, including `@tiptap/markdown`
+- Shadcn initialized and the `@emend` registry configured
+- An Emend-compatible route such as `/api/editor-ai`
 
-The detailed install command and minimal component code will be added here with
-the preview release. For now, continue to the [Editor Starter](/docs/emend-editor-starter)
-if you want Emend to create the editor as well.
+## Install the Bubble Menu
+
+```bash
+pnpm dlx shadcn@latest add @emend/ai-bubble-menu
+```
+
+## Add Emend to the editor
+
+Install `EmendAi` beside the extensions your editor already uses. Then pass the
+same `Editor` and one transport to the copied surface.
+
+```tsx title="components/document-editor.tsx"
+"use client"
+
+import { EmendAi } from "@emend/ai/tiptap"
+import { createFetchTransport } from "@emend/ai/transport"
+import { Markdown } from "@tiptap/markdown"
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import { AiBubbleMenu } from "@/components/emend/ai-bubble-menu"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" })
+
+export function DocumentEditor() {
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [StarterKit, Markdown, EmendAi],
+    content: "<p>Select this sentence and ask Emend to improve it.</p>",
+  })
+
+  if (!editor) return null
+
+  return (
+    <div className="relative">
+      <EditorContent editor={editor} />
+      <AiBubbleMenu editor={editor} transport={transport} />
+    </div>
+  )
+}
+```
+
+Do not create a second editor for the AI surface. Capture, previews, stale
+checks, and Accept all depend on the same live `Editor` instance.
+
+## Try one Ask and Edit flow
+
+1. Select text in the editor.
+2. Open **AI**, enter an instruction, and choose **Ask** to get an answer without
+   changing the document.
+3. Run an Edit action such as **Improve**.
+4. Review the preview, then Accept or Reject it.
+
+## Expected result
+
+Ask leaves the document untouched. Edit keeps the proposed Markdown separate
+until Accept applies one undoable transaction.
+
+Next, read [AI Bubble Menu](/docs/ai-bubble-menu) for its options, or use the
+[Editor Starter](/docs/emend-editor-starter) if you want Emend to create the
+complete editor surface.

@@ -1,0 +1,88 @@
+---
+title: Vercel AI Gateway
+description: Install the consumer-owned server recipe and connect an Emend transport to it.
+---
+
+The Vercel AI Gateway recipe installs a Next.js App Router handler at
+`app/api/editor-ai/route.ts`. It validates Emend requests, streams provider text
+as typed server-sent events, and keeps the provider key on the server.
+
+<Callout type="info" title="Public demos stay deterministic">
+  Demos in these docs use Emend's local mock transport. They never call the
+  Gateway and never consume a provider key.
+</Callout>
+
+## Prerequisites
+
+- One AI-enabled Emend surface
+- A Next.js App Router application
+- Vercel AI Gateway credentials or Vercel OIDC
+- Authentication and rate-limit rules for your own product
+
+## Install the route
+
+```bash
+pnpm dlx shadcn@latest add @emend/recipe-vercel-ai-gateway
+```
+
+<Callout type="warn" title="Preview package required">
+  The recipe depends on the unpublished `@emend/ai` package. Its copied route
+  and production build are verified in consumer fixtures, but the public
+  registry command will not complete until the package is released.
+</Callout>
+
+The recipe copies one editable file to `app/api/editor-ai/route.ts`. It defaults
+to the `openai/gpt-5.6-luna` Gateway model and separates Ask instructions from
+Edit instructions.
+
+## Configure the server key
+
+```bash title=".env.local"
+AI_GATEWAY_API_KEY=your_server_side_key
+```
+
+Do not prefix this variable with `NEXT_PUBLIC_` and do not pass it to a client
+component. When deployed on Vercel, you can use the platform's OIDC path instead
+of a long-lived local key.
+
+## Connect the client
+
+```tsx
+import { createFetchTransport } from "@emend/ai/transport"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" })
+
+<EmendEditor transport={transport} />
+```
+
+## Add your authorization boundary
+
+The installed recipe does not know your users or permissions. Add the handler's
+`authorize` option using your existing server-side session logic:
+
+```ts
+export const POST = createEmendAiHandler({
+  authorize: async (request) => {
+    return userCanEdit(await getCurrentUser(request))
+  },
+  async *generate(request, signal) {
+    // Keep the installed Gateway generator here.
+  },
+})
+```
+
+Replace `getCurrentUser` and `userCanEdit` with the server-side authorization
+helpers your application already uses.
+
+Apply rate limits before generation starts, using the user or workspace identity
+your application trusts. The recipe intentionally does not invent an identity,
+quota, billing rule, or persistence model for you.
+
+## Expected result
+
+A `POST` to `/api/editor-ai` accepts a valid Emend request and returns an SSE
+stream. Invalid input returns a typed error, oversized context returns `413`,
+and unauthorized requests should return `401` after you add `authorize`.
+
+Next, review [Production Considerations](/docs/production-considerations) before
+deploying the route.

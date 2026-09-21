@@ -1,0 +1,62 @@
+---
+title: Production Considerations
+description: Keep credentials, permissions, persistence, accessibility, and deployment inside your application's trust boundary.
+---
+
+Emend provides editing primitives, not a hosted security or persistence layer.
+Before deployment, connect each boundary to the systems your application
+already trusts.
+
+## Keep secrets on the server
+
+Provider keys belong in server-only environment variables or platform identity.
+Never expose a key through `NEXT_PUBLIC_*`, component props, browser storage, or
+the copied registry source.
+
+## Authenticate and authorize every request
+
+The Gateway recipe cannot infer who may read or edit a document. Use the
+handler's `authorize` option to validate the current user and document access
+before generation starts. Return no document context to a provider when that
+check fails.
+
+## Apply rate limits before generation
+
+Rate-limit by a trusted user, workspace, or service identity. Include a clear
+retry policy and log enough request metadata to investigate abuse without
+logging full documents by default.
+
+## Own persistence deliberately
+
+Emend does not persist documents, proposals, or chat history. Store canonical
+Tiptap JSON in your normal application database. If you choose to keep drafts
+or conversations in `localStorage`, treat that as unencrypted browser storage:
+scripts running on the same origin can read it, and it is not a safe place for
+secrets or sensitive documents.
+
+## Keep the review boundary visible
+
+Do not automatically accept Edit proposals. Preserve a clear target, preview,
+Accept, Reject, stale state, and Undo path so model output never appears to be a
+silent document mutation.
+
+## Preserve accessibility when adapting copied UI
+
+Keep native buttons and links, accessible names on icon controls, visible focus
+indicators, keyboard access to every action, and announced error or loading
+states. Check the final integrated surface at 320 px width and 200% zoom; the
+copied source cannot account for every surrounding application layout.
+
+## Deployment checklist
+
+- Use an HTTPS origin and a server-only provider credential.
+- Add authentication, document authorization, and rate limits.
+- Set request and provider-output limits appropriate for your plan.
+- Store Tiptap JSON and any history under your own retention rules.
+- Exercise Ask, Edit, Accept, Reject, stale handling, and Undo with production
+  schema extensions.
+- Verify keyboard navigation, mobile reflow, light and dark themes, and error
+  recovery.
+
+See [Troubleshooting and Limitations](/docs/troubleshooting-and-limitations) for
+common integration failures.

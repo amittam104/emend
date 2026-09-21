@@ -1,6 +1,6 @@
 ---
 title: Emend Editor Starter
-description: Start with a complete Tiptap editor and choose the AI surface that fits your product.
+description: Copy a complete Tiptap editor with no AI or one of three reviewable AI surfaces.
 ---
 
 Choose this path when you want a complete editor copied into your application.
@@ -15,11 +15,74 @@ through `onEditorReady`.
 - **AI Side Chat:** document-aware conversation beside the editor.
 
 <Callout type="warn" title="Preview package required">
-  The public registry command will be enabled after `@emend/ai` is published.
-  Current verification uses the repository's packed-package fixture and the
-  deterministic mock transport.
+  The three AI starters depend on the unpublished `@emend/ai` package. Their
+  registry flow is verified with a packed package, but public installation will
+  not complete until that package is released. The no-AI starter has no
+  `@emend/ai` dependency.
 </Callout>
 
-The complete installation command and minimal render example will be added with
-the preview release. Return to [Getting Started](/docs/getting-started) to try
-the default Bubble Menu starter now.
+## Install one starter
+
+| Choice                   | Registry item                   | Export                |
+| ------------------------ | ------------------------------- | --------------------- |
+| AI Bubble Menu (default) | `@emend/emend-editor`           | `EmendEditor`         |
+| No AI                    | `@emend/emend-editor-base`      | `EmendEditorBase`     |
+| AI Composer              | `@emend/emend-editor-composer`  | `EmendEditorComposer` |
+| AI Side Chat             | `@emend/emend-editor-side-chat` | `EmendEditorSideChat` |
+
+Install only the choice you plan to ship. The default is:
+
+```bash
+pnpm dlx shadcn@latest add @emend/emend-editor
+```
+
+The other choices use these exact commands:
+
+- No AI: `pnpm dlx shadcn@latest add @emend/emend-editor-base`
+- AI Composer: `pnpm dlx shadcn@latest add @emend/emend-editor-composer`
+- AI Side Chat: `pnpm dlx shadcn@latest add @emend/emend-editor-side-chat`
+
+## Render the default starter
+
+```tsx title="app/editor/page.tsx"
+"use client"
+
+import { createFetchTransport } from "@emend/ai/transport"
+import { EmendEditor } from "@/components/emend/emend-editor"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" })
+
+export default function EditorPage() {
+  return <EmendEditor transport={transport} />
+}
+```
+
+Omit `transport` only for `EmendEditorBase`. AI-enabled starters need a
+transport before they render their AI surface.
+
+## Compare the four choices
+
+Switch previews without leaving this page. Every AI preview uses an isolated,
+deterministic mock transport.
+
+<EditorDemo variantPicker />
+
+## Keep access to Tiptap
+
+Use `onEditorReady` when your application needs the underlying editor for save,
+collaboration, analytics, or other extensions.
+
+```tsx
+<EmendEditor
+  transport={transport}
+  onEditorReady={(editor) => {
+    editor.commands.focus()
+  }}
+/>
+```
+
+## Expected result
+
+The selected registry item copies one editor foundation and only its chosen AI
+surface. Continue to [Vercel AI Gateway](/docs/vercel-ai-gateway) to connect a
+production route, or read the page for your chosen component.

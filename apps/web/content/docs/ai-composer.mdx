@@ -1,0 +1,90 @@
+---
+title: AI Composer
+description: Add a persistent prompt and review surface with explicit read context and change scopes.
+---
+
+AI Composer sits below the document. It supports quick writing actions, free
+questions, custom edits, and explicit controls for what the model may read and
+what an Edit may replace.
+
+## Live mock demo
+
+Type a question for Ask. Select text and choose a slash or plus-menu action for
+Edit, then review the proposal before accepting it.
+
+<EditorDemo variant="composer" />
+
+## Install
+
+```bash
+pnpm dlx shadcn@latest add @emend/ai-composer
+```
+
+<Callout type="warn" title="Preview package required">
+  This command depends on the unpublished `@emend/ai` package. It documents the
+  verified consumer flow but will not complete from the public npm registry
+  until the preview release.
+</Callout>
+
+<Callout type="info" title="Set up the server route">
+  This component needs an Emend-compatible server route for real AI responses.
+  Follow the [Vercel AI Gateway recipe](/docs/vercel-ai-gateway) to install and
+  connect one.
+</Callout>
+
+## Minimal usage
+
+```tsx
+import { EmendAi } from "@emend/ai/tiptap"
+import { createFetchTransport } from "@emend/ai/transport"
+import { Markdown } from "@tiptap/markdown"
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import { AiComposer } from "@/components/emend/ai-composer"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" })
+
+const editor = useEditor({
+  immediatelyRender: false,
+  extensions: [StarterKit, Markdown, EmendAi],
+})
+
+return editor ? (
+  <>
+    <EditorContent editor={editor} />
+    <AiComposer editor={editor} transport={transport} />
+  </>
+) : null
+```
+
+## Ask, Edit, and scopes
+
+- Plain prompt text is an **Ask** request. It reads the selected context or the
+  document and returns an answer without a mutation operation.
+- A built-in writing action is an **Edit** request with a predefined target and
+  mutation operation.
+- A custom Edit can replace the selection, current block, or document, or insert
+  at the cursor when the configured policy permits it.
+- **Context** is read-only input. **Change** is the exact target an accepted
+  proposal may replace.
+
+## Important options
+
+| Prop         | Default         | Purpose                                                    |
+| ------------ | --------------- | ---------------------------------------------------------- |
+| `editor`     | Required        | The Tiptap editor that owns selection and document state.  |
+| `transport`  | Required        | Connects the composer to an Emend-compatible route.        |
+| `policy`     | Adaptive scopes | Restricts allowed contexts, mutations, and user overrides. |
+| `showReview` | `true`          | Renders Ask results and Edit review beneath the composer.  |
+| `className`  | —               | Extends the copied component's outer surface.              |
+
+## Expected result
+
+Ask produces informational Markdown. Edit produces a proposal, preview, and
+Accept or Reject controls. Accept stays unavailable when the proposal is stale,
+blocked by the schema, or still streaming.
+
+## Next step
+
+Read [Content and Proposals](/docs/content-and-proposals) for the safety model,
+or use [AI Side Chat](/docs/ai-side-chat) when a task needs follow-up turns.
