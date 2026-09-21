@@ -15,16 +15,14 @@ import { cn } from "@workspace/ui/lib/utils"
 import { DocsHeader, DocsThemeSwitch } from "./docs-header"
 import { DocsSidebar, DocsSidebarTrigger } from "./docs-sidebar"
 
-function DocsContainer({ style, ...props }: ComponentProps<"div">) {
+function DocsContainer({ className, ...props }: ComponentProps<"div">) {
   return (
     <Container
       {...props}
-      style={{
-        ...style,
-        gridTemplateAreas: `"sidebar sidebar header header header"
-"sidebar sidebar toc-popover toc-popover toc-popover"
-"sidebar sidebar main toc toc"`,
-      }}
+      className={cn(
+        "md:[grid-template-areas:'sidebar_sidebar_header_header_header'_'sidebar_sidebar_toc-popover_toc-popover_toc-popover'_'sidebar_sidebar_main_toc_toc']!",
+        className
+      )}
     />
   )
 }
@@ -54,22 +52,31 @@ export function DocsLayoutShell({
   ...props
 }: ComponentProps<typeof DocsLayout>) {
   return (
-    <DocsLayout
-      {...props}
-      sidebar={sidebar}
-      slots={{
-        ...slots,
-        container: slots?.container ?? DocsContainer,
-        header: DocsHeader,
-        navTitle: DocsNavTitle,
-        themeSwitch: DocsThemeSwitch,
-        sidebar: slots?.sidebar ?? {
-          provider: SidebarProvider,
-          root: DocsSidebar,
-          trigger: DocsSidebarTrigger,
-          useSidebar,
-        },
-      }}
-    />
+    <>
+      <a
+        href="#nd-page"
+        className="bg-fd-background text-fd-foreground focus-visible:outline-fd-ring sr-only fixed start-4 top-4 z-50 rounded-lg px-3 py-2 text-sm font-medium focus:not-sr-only focus-visible:outline-2 focus-visible:outline-offset-2"
+      >
+        Skip to content
+      </a>
+      <DocsLayout
+        {...props}
+        sidebar={sidebar}
+        tabMode=""
+        slots={{
+          ...slots,
+          container: slots?.container ?? DocsContainer,
+          header: DocsHeader,
+          navTitle: DocsNavTitle,
+          themeSwitch: DocsThemeSwitch,
+          sidebar: slots?.sidebar ?? {
+            provider: SidebarProvider,
+            root: DocsSidebar,
+            trigger: DocsSidebarTrigger,
+            useSidebar,
+          },
+        }}
+      />
+    </>
   )
 }
