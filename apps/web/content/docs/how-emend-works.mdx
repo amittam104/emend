@@ -1,0 +1,63 @@
+---
+title: How Emend Works
+description: Understand the runtime, copied UI, transport, server route, and review boundary behind every Emend surface.
+---
+
+Emend separates document ownership, AI communication, and interface source so
+each part stays replaceable.
+
+## The four layers
+
+1. **Your Tiptap editor** owns the canonical JSON document, schema, selection,
+   undo history, and persistence.
+2. **`@emend/ai`** captures safe Markdown, tracks source revisions, validates
+   streamed events, prepares proposals, and applies accepted changes.
+3. **Copied UI** from the `@emend` Shadcn registry presents Bubble Menu,
+   Composer, Side Chat, and editor-starter controls inside your application.
+4. **Your server route** authorizes the request, applies rate limits, calls a
+   provider, and streams the answer through the Emend protocol.
+
+The registry does not copy protocol logic into every component, and the runtime
+does not own your React interface or provider credentials.
+
+## Ask and Edit are different requests
+
+| Mode | Result                 | Document effect                                          |
+| ---- | ---------------------- | -------------------------------------------------------- |
+| Ask  | Informational Markdown | Never creates a mutation target or changes the document. |
+| Edit | An immutable proposal  | Changes the document only after Accept succeeds.         |
+
+The distinction is part of the request protocol, not a label inferred from the
+provider's response.
+
+## Read context and change target
+
+Every request keeps these boundaries separate:
+
+- **Read context** is Markdown the model may use to answer well. It can be the
+  selection, current block, or document.
+- **Change target** is the exact Tiptap range an Edit proposal may replace.
+
+Giving the model document context does not give it permission to replace the
+document. The selected mutation operation still controls the target.
+
+## Proposal lifecycle
+
+1. Capture the target, context, schema capabilities, and source revision.
+2. Stream Markdown from the transport into an Ask result or Edit proposal.
+3. Prepare the completed proposal against the current editor schema.
+4. Show temporary target and preview decorations.
+5. Accept one exact-range replacement, or Reject and clear the preview.
+
+Any content-changing editor transaction after capture makes the proposal stale.
+Selection and cursor movement alone do not retarget it.
+
+## Why the server is consumer-owned
+
+Authentication, authorization, provider choice, rate limits, logging, and spend
+belong to the application that knows the user and document. Emend provides a
+Web Platform handler and one Vercel AI Gateway recipe; it does not host an open
+paid endpoint.
+
+Continue to [Content and Proposals](/docs/content-and-proposals) for the
+Markdown and Accept guarantees.

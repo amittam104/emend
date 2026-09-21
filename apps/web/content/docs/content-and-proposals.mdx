@@ -1,0 +1,57 @@
+---
+title: Content and Proposals
+description: Learn how Tiptap JSON, Markdown, previews, stale checks, and Accept work together.
+---
+
+Tiptap JSON is the canonical document. Markdown is the AI boundary: it is small,
+readable, and provider-neutral, but it is never a replacement for your editor's
+schema or stored JSON.
+
+## Capture
+
+For each request, Emend captures:
+
+- the exact target and read-context ranges;
+- source Markdown for each boundary;
+- the source revision and local source slice;
+- the schema capabilities needed to prepare a safe result.
+
+Unsupported target content blocks the request. Unsupported context is also
+blocked unless the caller supplies a clearly labelled plain-text projection.
+
+## Prepare
+
+Completed Edit Markdown has one of three outcomes:
+
+| Outcome               | Meaning                                                                                |
+| --------------------- | -------------------------------------------------------------------------------------- |
+| `supported-markdown`  | The Markdown normalizes and parses into schema-valid Tiptap JSON.                      |
+| `plain-text-fallback` | A caller-confirmed text-safe target can display and apply an explicit text projection. |
+| `blocked`             | The result cannot be represented safely by the configured schema.                      |
+
+Raw proposal Markdown remains visible and copyable even when automatic apply is
+blocked.
+
+## Preview is temporary
+
+Target highlighting and inline preview are ProseMirror decorations. They are
+not stored in the document and disappear after Accept, Reject, or cleanup. A
+preview never becomes canonical content by itself.
+
+## Stale proposals cannot be accepted
+
+An Edit proposal is tied to the source revision captured for that request. If
+the document changes before Accept, Emend marks the proposal stale and refuses
+to prepare or apply it again. Start a new request against the current content
+instead of forcing the old range into a changed document.
+
+## Accept is one undoable change
+
+Accept rechecks the revision, target, and prepared content, then dispatches one
+exact-range Tiptap transaction. That creates one normal undo event. A non-empty
+whole-document replacement also requires explicit confirmation.
+
+Reject clears the proposal and decorations without mutating document content.
+
+See [Supported Markdown and Compatibility](/docs/supported-markdown-and-compatibility)
+for the V0 content profile.

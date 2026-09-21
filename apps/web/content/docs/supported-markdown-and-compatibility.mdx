@@ -1,0 +1,59 @@
+---
+title: Supported Markdown and Compatibility
+description: Check the V0 Markdown profile, table boundaries, and officially supported application stack.
+---
+
+Emend uses the Tiptap Markdown extension for the model-facing projection. The
+extensions in your editor determine what can round-trip safely.
+
+## Supported Markdown profile
+
+| Content                                                       | V0 support                      |
+| ------------------------------------------------------------- | ------------------------------- |
+| Paragraphs and headings                                       | Supported                       |
+| Bold, italic, combined emphasis, strikethrough, and underline | Supported                       |
+| Inline code and fenced code blocks                            | Supported                       |
+| Validated links, including links inside tables                | Supported                       |
+| Nested bullet and ordered lists                               | Supported                       |
+| Nested task lists                                             | Supported                       |
+| Blockquotes                                                   | Supported                       |
+| Hard breaks and horizontal rules                              | Supported                       |
+| Basic GFM tables                                              | Supported with the limits below |
+| Arbitrary raw HTML                                            | Not supported                   |
+| Generated images                                              | Not supported                   |
+
+Link destinations are protocol-validated. `javascript:`, `data:`, and
+`vbscript:` URLs are blocked.
+
+## GFM table limits
+
+A supported table has a complete header row, equal column counts, and one
+paragraph per cell. Alignment, escaped pipes, and a hard break inside a cell
+are supported.
+
+Merged cells, row or column spans, column widths, mixed or missing headers, and
+multiple block children inside a cell are outside the automatic V0 guarantee.
+
+## Custom content
+
+A custom node or mark is not supported only because its name resembles a
+built-in type. If its target cannot be represented by the configured Markdown
+and editor schema, Emend blocks automatic apply rather than dropping content.
+
+## Official V0 compatibility
+
+| Layer            | Supported baseline                                                                          |
+| ---------------- | ------------------------------------------------------------------------------------------- |
+| Framework        | Next.js App Router                                                                          |
+| React            | `^19.0.0`                                                                                   |
+| Tiptap           | Exact aligned `3.30.1` packages for core, Markdown, ProseMirror, React, and used extensions |
+| Component system | Shadcn registry with editable copied source                                                 |
+| Styling          | Tailwind CSS 4 and semantic Shadcn tokens                                                   |
+| Runtime          | Node.js `24.19.0` or later                                                                  |
+
+Other React frameworks may be adaptable because the core handler uses Web
+Platform requests and responses, but they are not part of the verified V0
+consumer path.
+
+Continue to [Troubleshooting and Limitations](/docs/troubleshooting-and-limitations)
+when a schema or version mismatch blocks a request.

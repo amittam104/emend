@@ -19,6 +19,10 @@ starting point.
   />
 </Cards>
 
+Choose the existing-editor path when your app already owns its Tiptap schema,
+extensions, toolbar, and persistence. Choose the starter when you want a
+complete editor surface that you can copy and adapt.
+
 ## Preview the default editor
 
 Select text in the editor to open the Bubble Menu. Its AI responses come from
@@ -26,3 +30,8 @@ Emend's deterministic mock transport, so this documentation never needs a
 provider key.
 
 <EditorDemo />
+
+## Expected result
+
+An Edit action shows a proposal before it changes the document. Accept applies
+the proposal as one undoable change; Reject keeps the original content.

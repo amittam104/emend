@@ -1,0 +1,88 @@
+---
+title: Troubleshooting and Limitations
+description: Diagnose common installation, editor, transport, proposal, and schema failures, and understand the V0 boundary.
+---
+
+Start with the error shown by the Emend surface. Typed runtime errors describe
+the boundary that rejected the request or proposal.
+
+## The registry command cannot install `@emend/ai`
+
+**Cause:** the runtime package is not published to npm yet.
+
+**Fix:** wait for the preview release for a public install. Repository
+contributors should use the packed-package consumer fixtures; do not replace
+the dependency with a private workspace alias in a consumer app.
+
+## The Bubble Menu does not appear
+
+**Check:**
+
+1. The editor has a non-empty text selection and still has focus.
+2. The same editor includes `EmendAi` and is passed to `AiBubbleMenu`.
+3. A pending review is not already holding the surface open in another state.
+4. The editor is editable and has not been destroyed.
+
+## `editor_not_configured`
+
+**Cause:** the AI session does not have a live Tiptap editor with the Emend
+extension.
+
+**Fix:** add `EmendAi` to that editor's extensions, wait until `useEditor`
+returns an instance, and pass that same instance to the AI component.
+
+## `context_too_large` or HTTP `413`
+
+**Cause:** the instruction, target, context, or conversation exceeds the
+runtime request limits.
+
+**Fix:** reduce the read context, start a new Side Chat conversation, or choose
+a smaller target. Do not silently truncate the change target.
+
+## `stale_revision`
+
+**Cause:** document content changed after the Edit request captured its source.
+
+**Fix:** reject or dismiss the stale proposal, select the current content, and
+run the request again. A stale proposal cannot be forced through Accept.
+
+## `schema_unsupported` or a blocked proposal
+
+**Cause:** the target or generated Markdown cannot round-trip through the
+configured Tiptap schema.
+
+**Fix:** align the editor's Tiptap packages to `3.30.1`, include the Markdown
+handlers for the content you support, or revise the proposal to use the
+[supported profile](/docs/supported-markdown-and-compatibility). Raw Markdown
+remains available to copy when automatic apply is blocked.
+
+## Accept is unavailable
+
+Accept remains unavailable while a response is streaming, when a proposal is
+stale or blocked, or when a whole-document replacement still needs explicit
+confirmation. Resolve the status shown in review rather than bypassing it.
+
+## The route returns no stream
+
+Check that the client URL matches the installed route, the request is a `POST`
+with JSON content, the server credential exists, and your authorization layer
+allows the request. The Emend handler returns SSE with
+`text/event-stream; charset=utf-8`.
+
+## V0 limitations
+
+- `@emend/ai` is not publicly published yet.
+- The verified consumer stack is Next.js App Router, React 19, Tailwind CSS 4,
+  Shadcn, and aligned Tiptap `3.30.1` packages.
+- Automatic apply is limited to the documented Markdown profile and compatible
+  editor schemas. Arbitrary raw HTML and generated images are disabled.
+- Authentication, authorization, rate limiting, persistence, provider billing,
+  and deployment remain consumer-owned.
+- V0 includes one production server recipe: Vercel AI Gateway.
+- **AI Composer** is the current prompt-and-review surface. **Agent Composer**
+  and an **Agentic Editor** are future concepts, not alternate names for the
+  component shipped today.
+
+If the issue is specific to one surface, return to [AI Bubble Menu](/docs/ai-bubble-menu),
+[AI Composer](/docs/ai-composer), or [AI Side Chat](/docs/ai-side-chat) and
+compare the minimal usage first.

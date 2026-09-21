@@ -1,25 +1,34 @@
 ---
 title: Introduction
-description: Build transparent AI editing into a Tiptap editor without giving up control of the document or UI.
+description: Add reviewable AI writing tools to Tiptap without giving up control of the editor, document, or server.
 ---
 
-Emend is a set of AI editing components and editor starters for Tiptap. It gives
-readers a clear review step before an AI-generated change becomes part of their
-document.
+Emend is a set of AI writing components and complete editor starters for
+Tiptap. It keeps generated edits separate from the live document until the
+person writing accepts them.
 
 <Callout type="warn" title="Pre-release documentation">
-  Emend is still being prepared for its first public preview. The registry is in
-  place, but `@emend/ai` is not published to npm yet.
+  The registry is ready, but `@emend/ai` is not published to npm yet. Commands
+  in these docs describe the verified preview flow and will work publicly after
+  the package is released.
 </Callout>
 
 ## What Emend gives you
 
 - **Three AI surfaces:** a selection-aware Bubble Menu, a Composer for focused
   prompts, and a document-aware Side Chat.
-- **Reviewable edits:** Ask requests return answers, while Edit requests create
-  proposals that stay separate until the user accepts them.
+- **Reviewable changes:** Ask returns an answer. Edit creates a proposal that
+  can be accepted, rejected, or left untouched.
 - **Two ways to start:** add one surface to an editor you already own, or copy a
   complete editor starter into your app.
+
+### The editing flow
+
+1. Your Tiptap editor captures a target and any read-only context.
+2. Emend sends Markdown through a transport to your server route.
+3. Ask displays an answer; Edit prepares a proposal and temporary preview.
+4. Accept applies one undoable Tiptap change. Reject leaves the document as it
+   was.
 
 ## What stays yours
 
@@ -30,7 +39,7 @@ Emend does not replace your product's permissions, content model, or backend.
 <Cards>
   <Card
     title="Install Emend"
-    description="Understand the package and registry boundary before adding a component."
+    description="Check the prerequisites and understand what the registry copies."
     href="/docs/installation"
   />
   <Card

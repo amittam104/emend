@@ -1,29 +1,30 @@
 ---
 title: Installation
-description: Learn what Emend installs, what it copies into your app, and what is available before the preview release.
+description: Prepare a Next.js and Tiptap app for the Emend registry and runtime package.
 ---
 
 Emend uses two pieces together: the Shadcn registry copies the UI source into
-your project, while `@emend/ai` supplies the shared editor protocol, Tiptap
-extension, controller, and transports.
+your project, while `@emend/ai` supplies the protocol, controller, Tiptap
+integration, and transports shared by every AI surface.
 
 <Callout type="warn" title="Public installation is not available yet">
-  `@emend/ai` remains unpublished until the preview release. The commands on
-  this site must not be presented as a working public npm installation before
-  that release.
+  `@emend/ai` remains unpublished. Registry commands that include AI will not
+  complete from the public npm registry until the preview package is released.
+  The same flow is verified today with a packed package in clean consumer
+  fixtures.
 </Callout>
 
 ## Prerequisites
 
-- Next.js App Router and React
+- Next.js App Router and React 19
 - Tiptap packages aligned to `3.30.1`
-- Shadcn and Tailwind CSS 4
-- A server route for production AI requests
+- Shadcn initialized with Tailwind CSS 4
+- Node.js `24.19.0` or later
+- A server route for any AI-enabled surface
 
 ## Registry setup
 
-The public registry is designed to use the `@emend` namespace in your
-`components.json` file:
+Add the `@emend` namespace to `components.json`:
 
 ```json title="components.json"
 {
@@ -33,10 +34,27 @@ The public registry is designed to use the `@emend` namespace in your
 }
 ```
 
-Once the preview package is published, Shadcn will resolve the selected Emend
-item, copy its source into your project, and install its declared dependencies.
-You will be able to inspect and adapt that copied UI like the rest of your
-Shadcn components.
+Use `http://127.0.0.1:3000/r/{name}.json` instead when working against a local
+checkout of this repository.
+
+## Add one registry item
+
+The Bubble Menu is the smallest AI-enabled starting point:
+
+```bash
+pnpm dlx shadcn@latest add @emend/ai-bubble-menu
+```
+
+Shadcn reads the generated registry item, installs only its declared
+dependencies, and copies the component into
+`components/emend/ai-bubble-menu`. The copied UI belongs to your application;
+shared editing behavior continues to come from `@emend/ai`.
+
+## Expected result
+
+You should have editable component source under `components/emend`, normal
+Shadcn primitives under `components/ui`, and no dependency on Emend's private
+monorepo packages.
 
 ## Choose your path
 

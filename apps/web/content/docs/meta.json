@@ -5,8 +5,17 @@
     "index",
     "installation",
     "getting-started",
-    "---Build---",
+    "---Editor---",
     "existing-tiptap-editor",
-    "emend-editor-starter"
+    "emend-editor-starter",
+    "---Components---",
+    "ai-bubble-menu",
+    "ai-composer",
+    "ai-side-chat",
+    "---Recipes---",
+    "vercel-ai-gateway",
+    "---More---",
+    "troubleshooting-and-limitations",
+    "production-considerations"
   ]
 }
