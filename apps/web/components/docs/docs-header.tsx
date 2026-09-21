@@ -22,10 +22,15 @@ export function DocsThemeSwitch() {
       type="button"
       variant="secondary"
       size="icon"
-      aria-label="Toggle Theme"
+      aria-label="Toggle theme"
       onClick={() => setTheme(isDark ? "light" : "dark")}
     >
-      <HugeiconsIcon icon={isDark ? Moon02Icon : Sun01Icon} size={18} />
+      <HugeiconsIcon icon={Sun01Icon} size={18} className="dark:hidden" />
+      <HugeiconsIcon
+        icon={Moon02Icon}
+        size={18}
+        className="hidden dark:block"
+      />
     </Button>
   )
 }

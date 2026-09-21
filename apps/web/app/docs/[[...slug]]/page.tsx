@@ -22,7 +22,17 @@ export default async function Page({ params }: PageProps) {
   const MDX = page.data.body
 
   return (
-    <DocsPage toc={page.data.toc} full={page.data.full}>
+    <DocsPage
+      toc={page.data.toc}
+      full={page.data.full}
+      tabIndex={-1}
+      tableOfContent={{
+        container: {
+          className:
+            "top-(--fd-header-height) h-[calc(var(--fd-docs-height)-var(--fd-header-height))]",
+        },
+      }}
+    >
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>

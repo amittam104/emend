@@ -20,10 +20,10 @@ export default function DocsLayout({ children }: { children: ReactNode }) {
       <AISearchPanel />
       <AISearchTrigger
         position="float"
+        aria-label="Ask AI"
         className="bg-fd-primary text-fd-primary-foreground inline-flex w-auto items-center justify-center gap-2 rounded-full px-3 py-3 text-base font-medium"
       >
         <HugeiconsIcon icon={AiChat02Icon} size={16} />
-
       </AISearchTrigger>
     </AISearch>
   )
