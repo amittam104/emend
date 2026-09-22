@@ -38,12 +38,21 @@ Add the `@emend` namespace to `components.json`:
 Use `http://127.0.0.1:3000/r/{name}.json` instead when working against a local
 checkout of this repository.
 
+## Install the runtime
+
+Install the `@emend/ai` runtime with the package manager you use in your
+project.
+
+```npm
+npm install @emend/ai
+```
+
 ## Add one registry item
 
 The Bubble Menu is the smallest AI-enabled starting point:
 
-```bash
-pnpm dlx shadcn@latest add @emend/ai-bubble-menu
+```npm
+npx shadcn@latest add @emend/ai-bubble-menu
 ```
 
 Shadcn reads the generated registry item, installs only its declared
