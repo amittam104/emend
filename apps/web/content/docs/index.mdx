@@ -1,11 +1,13 @@
 ---
 title: Introduction
 description: Add reviewable AI writing tools to Tiptap without giving up control of the editor, document, or server.
+icon: BookOpen02Icon
 ---
 
-Emend is a set of AI writing components and complete editor starters for
-Tiptap. It keeps generated edits separate from the live document until the
-person writing accepts them.
+Emend is an open-source, MIT-licensed AI editing layer for Tiptap and
+ProseMirror. It combines a provider-neutral runtime with editable Shadcn
+registry components, while keeping generated edits separate from the live
+document until the person writing accepts them.
 
 <Callout type="warn" title="Pre-release documentation">
   The registry is ready, but `@emend/ai` is not published to npm yet. Commands
@@ -19,8 +21,25 @@ person writing accepts them.
   prompts, and a document-aware Side Chat.
 - **Reviewable changes:** Ask returns an answer. Edit creates a proposal that
   can be accepted, rejected, or left untouched.
+- **Provider-neutral infrastructure:** your server route chooses the model,
+  provider, authentication, rate limits, and logging.
 - **Two ways to start:** add one surface to an editor you already own, or copy a
   complete editor starter into your app.
+
+## Choose an integration path
+
+| Starting point         | What you keep                                     | What Emend adds                                     |
+| ---------------------- | ------------------------------------------------- | --------------------------------------------------- |
+| Existing Tiptap editor | Your schema, extensions, toolbar, and persistence | One or more AI surfaces and the review runtime      |
+| Emend editor starter   | Full ownership of the copied component source     | A complete editor with your choice of AI experience |
+
+## How Emend is distributed
+
+| Part          | Distribution        | Purpose                                                          |
+| ------------- | ------------------- | ---------------------------------------------------------------- |
+| `@emend/ai`   | npm package preview | Protocol, controller, transports, React, Tiptap, and server APIs |
+| UI components | Shadcn registry     | Bubble Menu, Composer, Side Chat, and editor starters            |
+| Server recipe | Shadcn registry     | Consumer-owned Vercel AI Gateway route                           |
 
 ### The editing flow
 
@@ -35,6 +54,21 @@ person writing accepts them.
 The editor, copied component source, server route, provider credentials,
 authentication, persistence, and deployment remain inside your application.
 Emend does not replace your product's permissions, content model, or backend.
+
+## Explore the system
+
+<Cards>
+  <Card
+    title="How Emend works"
+    description="Understand the runtime, copied UI, transport, server route, and review boundary."
+    href="/docs/how-emend-works"
+  />
+  <Card
+    title="API reference"
+    description="Use the React hook, Tiptap extension, transports, handler, actions, and typed errors."
+    href="/docs/api-reference"
+  />
+</Cards>
 
 <Cards>
   <Card

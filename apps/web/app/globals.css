@@ -1,3 +1,47 @@
 @import "@workspace/ui/globals.css";
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
+
+.emend-docs-sidebar
+  [data-radix-scroll-area-viewport]
+  > div
+  > div[data-state]
+  > button {
+  font-weight: 600;
+}
+
+.emend-docs-sidebar
+  [data-radix-scroll-area-viewport]
+  > div
+  > div[data-state]
+  > button:not(:hover) {
+  color: color-mix(in oklab, var(--color-fd-foreground) 80%, transparent);
+}
+
+.emend-docs-sidebar
+  [data-radix-scroll-area-viewport]
+  > div
+  > a[data-active="false"]:is(
+    [href="/docs"],
+    [href="/docs/installation"],
+    [href="/docs/getting-started"]
+  ):not(:hover) {
+  color: color-mix(in oklab, var(--color-fd-foreground) 80%, transparent);
+}
+
+.emend-docs-sidebar
+  [data-radix-scroll-area-viewport]
+  > div
+  > a[href="/docs/getting-started"]
+  + div[data-state] {
+  margin-block-start: 0.5rem;
+}
+
+.emend-docs-sidebar
+  [data-radix-scroll-area-viewport]
+  > div
+  > div[data-state]
+  + div[data-state]
+  > button {
+  margin-block-start: 0.5rem;
+}

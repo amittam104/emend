@@ -1,0 +1,84 @@
+---
+title: Error Codes
+description: Handle stable Emend error codes, user-facing messages, and retry behavior.
+icon: Bug01Icon
+---
+
+Emend represents public failures with a serializable `EmendAiError`.
+
+```ts
+interface EmendAiError {
+  readonly code: EmendErrorCode
+  readonly message: string
+  readonly retryable: boolean
+}
+```
+
+Use `code` for application logic and `message` for the default user-facing
+explanation. The `retryable` value describes whether repeating the same kind of
+request may succeed; it does not replace a product-specific recovery decision.
+
+## Reference
+
+| Code                    | Retryable | Default message                                                         |
+| ----------------------- | --------- | ----------------------------------------------------------------------- |
+| `invalid_protocol`      | No        | This request uses an unsupported Emend protocol version.                |
+| `invalid_request`       | No        | The AI request is invalid.                                              |
+| `invalid_action`        | No        | That AI action is not available.                                        |
+| `invalid_instruction`   | No        | Add a valid instruction and try again.                                  |
+| `context_too_large`     | No        | The selected context is too large for this request.                     |
+| `selection_required`    | No        | Select some text before using this action.                              |
+| `pending_review`        | No        | Review or reject the pending document change first.                     |
+| `request_in_progress`   | No        | Another AI request is already in progress.                              |
+| `stale_revision`        | No        | The document changed while this request was open. Run the action again. |
+| `aborted`               | Yes       | The AI request was cancelled.                                           |
+| `transport_error`       | Yes       | The AI service could not be reached.                                    |
+| `provider_error`        | Yes       | The configured AI provider returned an error.                           |
+| `unauthorized`          | No        | This request is not authorized.                                         |
+| `rate_limited`          | Yes       | Too many requests. Try again shortly.                                   |
+| `markdown_unavailable`  | No        | This editor needs compatible Tiptap Markdown support.                   |
+| `schema_unsupported`    | No        | The editor cannot safely accept this generated content.                 |
+| `editor_not_configured` | No        | This editor does not have Emend AI configured.                          |
+| `confirmation_required` | No        | Confirm the document replacement before applying this proposal.         |
+| `apply_failed`          | No        | The proposal could not be applied safely.                               |
+| `internal_error`        | Yes       | The request failed unexpectedly.                                        |
+
+## Where errors appear
+
+- `useEditorAi().error` contains request, stream, and transport failures.
+- `useEditorAi().reviewError` contains preparation, preview, Accept, or Reject
+  failures.
+- `createFetchTransport` preserves a valid serialized Emend error returned by
+  the server and maps common HTTP statuses when one is not present.
+- `createEmendAiHandler` exposes public error objects without leaking thrown
+  provider or authorization details.
+
+## Create and inspect errors
+
+```ts
+import { createEmendError, isEmendErrorCode } from "@emend/ai"
+
+const error = createEmendError("rate_limited")
+
+if (isEmendErrorCode(error.code) && error.retryable) {
+  // Offer a deliberate retry path.
+}
+```
+
+`createEmendError(code, message?)` accepts a custom message but always derives
+`retryable` from the code. `publicError(error, fallbackCode?)` removes unknown
+details from a thrown value and returns a safe public error.
+
+## Recovery guidance
+
+| Error family                                 | Recommended response                                       |
+| -------------------------------------------- | ---------------------------------------------------------- |
+| Invalid input or configuration               | Correct the editor, action, instruction, or package setup. |
+| `context_too_large`                          | Reduce the read context or target and run again.           |
+| `pending_review` or `request_in_progress`    | Finish, reject, or stop the active work first.             |
+| `stale_revision`                             | Dismiss the old proposal and capture current content.      |
+| Transport, provider, rate limit, or internal | Preserve the draft and offer retry when appropriate.       |
+| Unauthorized                                 | Restore the session or request access; do not auto-retry.  |
+
+See [Troubleshooting and Limitations](/docs/troubleshooting-and-limitations)
+for integration-level causes and fixes.

@@ -1,7 +1,6 @@
 {
   "title": "Emend",
   "pages": [
-    "---Start---",
     "index",
     "installation",
     "getting-started",
@@ -12,10 +11,16 @@
     "ai-bubble-menu",
     "ai-composer",
     "ai-side-chat",
+    "---Concepts---",
+    "how-emend-works",
+    "content-and-proposals",
+    "transports",
+    "supported-markdown-and-compatibility",
     "---Recipes---",
     "vercel-ai-gateway",
     "---More---",
     "troubleshooting-and-limitations",
-    "production-considerations"
+    "production-considerations",
+    "api-reference"
   ]
 }

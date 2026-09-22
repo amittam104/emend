@@ -5,7 +5,7 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
-} from "fumadocs-ui/layouts/docs/page"
+} from "fumadocs-ui/layouts/notebook/page"
 
 import { getMDXComponents } from "@/components/mdx"
 import { source } from "@/lib/source"

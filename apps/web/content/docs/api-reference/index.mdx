@@ -1,0 +1,55 @@
+---
+title: API Reference
+description: Use the public React, Tiptap, transport, server, action, and error APIs in the Emend runtime.
+icon: ApiIcon
+---
+
+The Emend runtime is split into focused entry points so client components,
+Tiptap integrations, and server routes import only the layer they use.
+
+<Callout type="warn" title="Preview API">
+  `@emend/ai` is not published to npm yet. This reference describes the API in
+  the current repository and the packed package verified in consumer fixtures.
+</Callout>
+
+## Entry points
+
+| Entry point           | Primary use                                              |
+| --------------------- | -------------------------------------------------------- |
+| `@emend/ai/react`     | React session lifecycle with `useEditorAi`               |
+| `@emend/ai/tiptap`    | Tiptap extension, adapter, capture, preview, and apply   |
+| `@emend/ai/transport` | Fetch/SSE and deterministic mock transports              |
+| `@emend/ai/server`    | Web Platform handler, SSE helpers, and mock generation   |
+| `@emend/ai/protocol`  | Requests, stream events, actions, controller, and errors |
+| `@emend/ai`           | Common exports from the public runtime                   |
+
+## Start with the integration APIs
+
+<Cards>
+  <Card
+    title="useEditorAi"
+    description="Run requests and manage streaming, proposal review, stale state, and errors in React."
+    href="/docs/api-reference/use-editor-ai"
+  />
+  <Card
+    title="EmendAi extension"
+    description="Install revision tracking and proposal decorations in a Tiptap editor."
+    href="/docs/api-reference/emend-ai-extension"
+  />
+  <Card
+    title="createFetchTransport"
+    description="Connect the browser to an Emend-compatible JSON and SSE route."
+    href="/docs/api-reference/create-fetch-transport"
+  />
+  <Card
+    title="createEmendAiHandler"
+    description="Validate, authorize, generate, and stream from a Web Platform route."
+    href="/docs/api-reference/create-emend-ai-handler"
+  />
+</Cards>
+
+## Protocol references
+
+Use the [action manifest](/docs/api-reference/action-manifest) to understand
+built-in action constraints and [error codes](/docs/api-reference/error-codes)
+to build recovery UI around stable typed failures.
