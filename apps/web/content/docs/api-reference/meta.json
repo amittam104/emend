@@ -1,0 +1,16 @@
+{
+  "title": "API Reference",
+  "description": "Reference for the public Emend runtime entry points.",
+  "icon": "ApiIcon",
+  "root": true,
+  "pagesIndex": "index",
+  "pages": [
+    "index",
+    "use-editor-ai",
+    "emend-ai-extension",
+    "create-fetch-transport",
+    "create-emend-ai-handler",
+    "action-manifest",
+    "error-codes"
+  ]
+}

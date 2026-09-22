@@ -1,0 +1,95 @@
+---
+title: EmendAi Extension
+description: Add revision tracking, selection highlights, and proposal decorations to a Tiptap editor.
+icon: BracesIcon
+---
+
+`EmendAi` is a Tiptap extension backed by one ProseMirror plugin. It tracks
+document revisions and owns the temporary decorations used during capture and
+proposal review.
+
+```ts
+import { EmendAi } from "@emend/ai/tiptap"
+```
+
+## Setup
+
+```ts
+import { EmendAi } from "@emend/ai/tiptap"
+import { Markdown } from "@tiptap/markdown"
+import StarterKit from "@tiptap/starter-kit"
+
+const extensions = [StarterKit, Markdown, EmendAi]
+```
+
+The extension has no configuration options. Add it to the same editor passed
+to `useEditorAi` or an Emend registry component.
+
+## Editor commands
+
+### `showEmendProposal(options)`
+
+Shows proposal decorations for a captured range and revision. It returns
+`false` when the plugin is unavailable, the range is invalid, another proposal
+is active, or the source revision is no longer current.
+
+`useEditorAi` calls this command through the Tiptap adapter. Most applications
+do not need to call it directly.
+
+### `clearEmendProposal(options?)`
+
+Clears the active proposal decorations. Pass `{ proposalId }` to avoid clearing
+a different proposal, or omit the argument to clear whichever proposal is
+active.
+
+```ts
+editor.commands.clearEmendProposal({ proposalId })
+```
+
+## State helpers
+
+### `getEmendAiEditorState(editor)`
+
+Returns `null` when the editor is unavailable, destroyed, or missing the
+extension. Otherwise it returns:
+
+| Field              | Meaning                                                 |
+| ------------------ | ------------------------------------------------------- |
+| `revisionCounter`  | Increments after every document-changing transaction.   |
+| `activeProposalId` | Proposal currently represented by decorations.          |
+| `targetRange`      | ProseMirror range captured for the active proposal.     |
+| `sourceRevision`   | Counter and fingerprint captured with the request.      |
+| `stale`            | The document changed while that proposal was open.      |
+| `previewKind`      | `supported-markdown`, `plain-text-fallback`, or `null`. |
+
+### `setEmendSelectionDecoration(editor, range)`
+
+Shows a temporary selection highlight while an action is being prepared. Pass
+`null` to clear it. The helper returns `false` for invalid ranges, missing
+editors, or when proposal review already owns the decoration layer.
+
+## Revision behavior
+
+Any transaction with `docChanged` increments the revision counter. If a
+proposal is active, Emend clears its decorations and marks it stale. Cursor and
+selection movement alone do not make a proposal stale.
+
+## Low-level adapter
+
+`createEmendTiptapAdapter(editor, options?)` exposes the capture, preparation,
+show, hide, Accept, Reject, state, and cleanup operations orchestrated by
+`useEditorAi`. Use it only when integrating outside React or implementing a
+custom session lifecycle.
+
+```ts
+import { createEmendTiptapAdapter } from "@emend/ai/tiptap"
+
+const adapter = createEmendTiptapAdapter(editor, {
+  limits: { maxTargetMarkdownLength: 4_000 },
+  linkProtocols: ["notion"],
+  contextProjection: "workspace-editor",
+})
+```
+
+Continue to [`useEditorAi`](/docs/api-reference/use-editor-ai) for the standard
+React integration.

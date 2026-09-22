@@ -1,0 +1,116 @@
+---
+title: createEmendAiHandler
+description: Validate, authorize, generate, and stream Emend requests from a Web Platform route.
+icon: FileCodeIcon
+---
+
+`createEmendAiHandler` returns a standard
+`(request: Request) => Promise<Response>` handler. It is provider-neutral and
+works anywhere a framework exposes Web Platform requests and responses.
+
+```ts
+import { createEmendAiHandler } from "@emend/ai/server"
+```
+
+## Options
+
+```ts
+interface EmendAiHandlerOptions {
+  readonly generate: (
+    request: EmendAiRequest,
+    signal: AbortSignal
+  ) => AsyncIterable<string>
+  readonly authorize?: (
+    request: Request,
+    payload: EmendAiRequest
+  ) => Promise<boolean> | boolean
+  readonly manifest?: readonly EmendActionManifestEntry[]
+  readonly limits?: Partial<EmendRequestLimits>
+}
+```
+
+| Option      | Required | Purpose                                                  |
+| ----------- | -------- | -------------------------------------------------------- |
+| `generate`  | Yes      | Yields provider text chunks for a validated request.     |
+| `authorize` | No       | Allows or rejects a validated request before generation. |
+| `manifest`  | No       | Replaces the server's default action constraints.        |
+| `limits`    | No       | Overrides protocol and content-size limits.              |
+
+## Start with the mock generator
+
+```ts title="app/api/editor-ai/route.ts"
+import { createEmendAiHandler, mockGenerate } from "@emend/ai/server"
+
+export const POST = createEmendAiHandler({
+  generate: mockGenerate,
+})
+```
+
+`mockGenerate` exercises request validation and the complete HTTP/SSE boundary
+without calling an AI provider.
+
+## Connect a provider
+
+The generator receives only a validated Emend request. Yield plain Markdown
+chunks as the provider streams them.
+
+```ts title="app/api/editor-ai/route.ts"
+import { createEmendAiHandler } from "@emend/ai/server"
+
+export const POST = createEmendAiHandler({
+  async *generate(request, signal) {
+    const stream = createProviderStream({
+      action: request.actionId,
+      instruction: request.instruction,
+      target: request.targetMarkdown,
+      context: request.contextMarkdown,
+      messages: request.messages,
+      signal,
+    })
+
+    for await (const chunk of stream) yield chunk
+  },
+})
+```
+
+The `AbortSignal` combines the incoming request lifecycle with server cleanup.
+Pass it to the provider so closing the browser request stops generation.
+
+## Authorize before generation
+
+```ts
+export const POST = createEmendAiHandler({
+  authorize: async (request, payload) => {
+    const user = await getCurrentUser(request)
+    return Boolean(user && (await userCanEdit(user, payload)))
+  },
+  generate,
+})
+```
+
+Return `false` for an intentional rejection. A thrown authorization error is
+converted to `internal_error`, so it does not expose server details.
+
+## Request pipeline
+
+1. Require `POST` and an `application/json` content type.
+2. Parse JSON and validate the protocol, action manifest, and request limits.
+3. Run `authorize`, when supplied.
+4. Convert yielded Markdown chunks to typed `text-delta` events.
+5. Finish with `done`, or emit a public error event when generation fails.
+
+## HTTP responses
+
+| Status | Trigger                                          |
+| ------ | ------------------------------------------------ |
+| `400`  | Invalid JSON or protocol request.                |
+| `401`  | `authorize` returned `false`.                    |
+| `405`  | Request method was not `POST`.                   |
+| `413`  | The validated content exceeds configured limits. |
+| `415`  | Content type is not `application/json`.          |
+| `500`  | `authorize` threw unexpectedly.                  |
+
+Successful responses use `text/event-stream; charset=utf-8` and disable
+transforming caches. Review the [action manifest](/docs/api-reference/action-manifest)
+and [production considerations](/docs/production-considerations) before
+exposing the route.

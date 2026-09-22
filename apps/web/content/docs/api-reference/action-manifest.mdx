@@ -1,0 +1,100 @@
+---
+title: Action Manifest
+description: Understand the built-in action constraints and server-side manifest helpers.
+icon: BracesIcon
+---
+
+The action manifest is the policy table used to validate an Emend request. It
+defines which interaction modes, scopes, mutations, selections, and
+instructions are valid for each action ID.
+
+```ts
+import { DEFAULT_ACTION_MANIFEST, getAction, validateAction } from "@emend/ai"
+```
+
+## Built-in actions
+
+| Action ID     | Mode        | Target requirement     | Mutation                 |
+| ------------- | ----------- | ---------------------- | ------------------------ |
+| `improve`     | Edit        | Non-empty selection    | Replace selection        |
+| `shorten`     | Edit        | Non-empty selection    | Replace selection        |
+| `expand`      | Edit        | Non-empty selection    | Replace selection        |
+| `fix-grammar` | Edit        | Non-empty selection    | Replace selection        |
+| `continue`    | Edit        | Collapsed selection    | Insert at cursor         |
+| `summarize`   | Ask         | Any supported scope    | None                     |
+| `custom`      | Ask or Edit | Depends on run options | Any compatible operation |
+
+All built-in actions may read selection, current-block, or document context.
+`custom` requires a non-empty instruction. When using `custom` in Edit mode,
+the client must explicitly supply its target scope and mutation operation.
+
+## Manifest entry
+
+```ts
+interface EmendActionManifestEntry {
+  readonly actionId: EmendActionId
+  readonly label: string
+  readonly description: string
+  readonly allowedInteractionModes: readonly EmendInteractionMode[]
+  readonly allowedTargetScopes: readonly EmendTargetScope[]
+  readonly allowedContextScopes: readonly EmendContextScope[]
+  readonly allowedMutationOperations: readonly EmendMutationOperation[]
+  readonly selectionRequirement: "any" | "non-empty" | "collapsed"
+  readonly instructionRequirement: "optional" | "required"
+  readonly informational: boolean
+}
+```
+
+## Restrict the server manifest
+
+Pass a manifest to `createEmendAiHandler` to restrict the actions accepted by
+that route.
+
+```ts
+import { DEFAULT_ACTION_MANIFEST } from "@emend/ai"
+import { createEmendAiHandler } from "@emend/ai/server"
+
+const allowed = new Set(["improve", "fix-grammar", "summarize"])
+const manifest = DEFAULT_ACTION_MANIFEST.filter((action) =>
+  allowed.has(action.actionId)
+)
+
+export const POST = createEmendAiHandler({
+  manifest,
+  generate,
+})
+```
+
+<Callout type="warn" title="Custom action IDs are not a useEditorAi API yet">
+  The V0 React controller resolves the built-in IDs plus `custom` before it
+  sends a request. A server manifest can validate additional IDs, but
+  `useEditorAi` cannot initiate those IDs in the current source. Use the
+  `custom` action with an instruction until client-side custom manifests are
+  supported.
+</Callout>
+
+## `getAction(actionId, manifest?)`
+
+Returns the matching manifest entry or `undefined`. When `manifest` is omitted,
+it searches `DEFAULT_ACTION_MANIFEST`.
+
+```ts
+const action = getAction("improve")
+```
+
+## `validateAction(input, manifest?)`
+
+Checks an action ID, interaction mode, scopes, mutation, range, and instruction.
+The result is either `{ ok: true, action }` or `{ ok: false, reason }`.
+
+Failure reasons are stable string values:
+
+- `unknown-action`
+- `interaction-mode-not-allowed`
+- `target-scope-not-allowed`
+- `context-scope-not-allowed`
+- `mutation-operation-not-allowed`
+- `selection-requirement-not-met`
+- `instruction-required`
+
+The server handler runs this validation as part of parsing every request.

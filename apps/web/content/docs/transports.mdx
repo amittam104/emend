@@ -1,0 +1,76 @@
+---
+title: Transports
+description: Choose the network boundary that carries typed Emend requests and streamed events.
+---
+
+A transport connects the Emend controller in the browser to a generator. It
+accepts a validated request and an `AbortSignal`, then yields typed stream
+events without knowing which AI provider produced the text.
+
+## Choose a transport
+
+| Option                                  | Use it for                                        | Network |
+| --------------------------------------- | ------------------------------------------------- | ------- |
+| `createFetchTransport`                  | Production routes that return an SSE stream       | Yes     |
+| `createMockTransport`                   | Deterministic demos and local component work      | No      |
+| `mockGenerate` + `createFetchTransport` | Exercising the real HTTP and SSE boundary locally | Yes     |
+| Custom `EmendTransport`                 | WebSockets, workers, queues, or another channel   | Varies  |
+
+## Fetch transport
+
+```ts
+import { createFetchTransport } from "@emend/ai/transport"
+
+const transport = createFetchTransport({
+  url: "/api/editor-ai",
+})
+```
+
+The fetch transport sends a JSON `POST`, requests `text/event-stream`, validates
+every event against the active request, and maps standard HTTP failures to
+typed Emend errors.
+
+See [`createFetchTransport`](/docs/api-reference/create-fetch-transport) for
+headers, custom fetch implementations, and error mapping.
+
+## Mock transport
+
+```ts
+import { createMockTransport } from "@emend/ai/transport"
+
+const transport = createMockTransport({
+  delayMs: 30,
+})
+```
+
+The mock transport produces action-aware Markdown without a server or provider
+credential. Use `failAfterDeltas` to exercise provider-error recovery.
+
+<Callout type="info" title="The docs demos are deterministic">
+  The interactive examples on this site use the mock transport. They do not call
+  a model or consume a provider key.
+</Callout>
+
+## Custom transport contract
+
+```ts
+import type { EmendTransport } from "@emend/ai"
+
+const transport: EmendTransport = {
+  async *run(request, signal) {
+    signal.throwIfAborted()
+
+    for await (const event of readEvents(request, signal)) {
+      yield event
+    }
+  },
+}
+```
+
+A custom transport must stop work when the signal aborts and yield events with
+the active protocol version and request ID. The controller ignores mismatched
+events, but the transport should not continue spending resources on stale work.
+
+Continue to [Vercel AI Gateway](/docs/vercel-ai-gateway) for the supplied
+production route or [`createEmendAiHandler`](/docs/api-reference/create-emend-ai-handler)
+for the framework-neutral server API.

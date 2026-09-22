@@ -1,0 +1,102 @@
+---
+title: createFetchTransport
+description: Send Emend requests to an HTTP route and consume its validated SSE stream.
+icon: ApiIcon
+---
+
+`createFetchTransport` connects an Emend controller in the browser to a route
+that accepts JSON and returns Server-Sent Events.
+
+```ts
+import { createFetchTransport } from "@emend/ai/transport"
+
+const transport = createFetchTransport({
+  url: "/api/editor-ai",
+})
+```
+
+## Options
+
+```ts
+interface FetchTransportOptions {
+  readonly url: string
+  readonly headers?: HeadersInit
+  readonly fetch?: typeof fetch
+}
+```
+
+| Option    | Required | Purpose                                                       |
+| --------- | -------- | ------------------------------------------------------------- |
+| `url`     | Yes      | Route that accepts one Emend request per `POST`.              |
+| `headers` | No       | Extra headers merged with the required request headers.       |
+| `fetch`   | No       | Custom fetch implementation for credentials or observability. |
+
+The transport always sets `Accept: text/event-stream` and
+`Content-Type: application/json`. Those required values override duplicates in
+`headers`.
+
+## Add authorization
+
+```ts
+const transport = createFetchTransport({
+  url: "/api/editor-ai",
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+})
+```
+
+Use a custom fetch implementation when credentials must be resolved for every
+request or when the route lives on another origin.
+
+```ts
+const fetchWithCredentials: typeof fetch = (input, init) =>
+  fetch(input, { ...init, credentials: "include" })
+
+const transport = createFetchTransport({
+  url: "https://api.example.com/editor-ai",
+  fetch: fetchWithCredentials,
+})
+```
+
+The server must still return the appropriate CORS headers for a cross-origin
+request.
+
+## Stream contract
+
+The response body is decoded as SSE. Each event must contain JSON matching one
+of the Emend stream event types:
+
+```ts
+type EmendStreamEvent =
+  | { protocolVersion: 1; type: "text-delta"; requestId: string; delta: string }
+  | { protocolVersion: 1; type: "done"; requestId: string }
+  | {
+      protocolVersion: 1
+      type: "error"
+      requestId: string
+      error: EmendAiError
+    }
+```
+
+The parser validates the event sequence and request ID. A missing body,
+malformed JSON, invalid event, or stream that closes without `done` becomes a
+`transport_error`.
+
+## HTTP error mapping
+
+If the response contains a valid serialized `EmendAiError`, the transport uses
+it. Otherwise it maps status codes as follows:
+
+| Status                    | Error code          |
+| ------------------------- | ------------------- |
+| `401` or `403`            | `unauthorized`      |
+| `413`                     | `context_too_large` |
+| `429`                     | `rate_limited`      |
+| `400`, `415`, or `422`    | `invalid_request`   |
+| Any other failed response | `transport_error`   |
+
+Create the transport once so `useEditorAi` does not rebuild its session on
+every render. Pair it with
+[`createEmendAiHandler`](/docs/api-reference/create-emend-ai-handler) for the
+supplied server contract.
