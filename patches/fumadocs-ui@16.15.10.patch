@@ -1,0 +1,66 @@
+diff --git a/dist/layouts/notebook/slots/header.js b/dist/layouts/notebook/slots/header.js
+index c4c67e34a408103799f49f88696db10f603f47cc..6328d185bddf87767b2407212e77704d9c449b5c 100644
+--- a/dist/layouts/notebook/slots/header.js
++++ b/dist/layouts/notebook/slots/header.js
+@@ -10,7 +10,9 @@ import { useNotebookLayout } from "../client.js";
+ import Link from "fumadocs-core/link";
+ import { usePathname } from "fumadocs-core/framework";
+ import { jsx, jsxs } from "react/jsx-runtime";
+-import { ChevronDown, Languages, Sidebar } from "lucide-react";
++import { ChevronDown, Languages } from "lucide-react";
++import { HugeiconsIcon } from "@hugeicons/react";
++import SidebarLeftIcon from "@hugeicons/core-free-icons/SidebarLeftIcon";
+ import { Fragment as Fragment$1, useMemo, useRef, useState } from "react";
+ //#region src/layouts/notebook/slots/header.tsx
+ function Header(props) {
+@@ -38,7 +40,7 @@ function Header(props) {
+ 								color: "ghost",
+ 								size: "icon-sm"
+ 							}), "-ms-1.5 text-fd-muted-foreground data-[collapsed=false]:hidden max-md:hidden"),
+-							children: /* @__PURE__ */ jsx(Sidebar, {})
++							children: /* @__PURE__ */ jsx(HugeiconsIcon, { icon: SidebarLeftIcon, strokeWidth: 1.8 })
+ 						}),
+ 						slots.navTitle && /* @__PURE__ */ jsx(slots.navTitle, { className: cn("inline-flex items-center gap-2.5 font-semibold", navMode === "auto" && "md:hidden") }),
+ 						nav?.children
+@@ -75,7 +77,7 @@ function Header(props) {
+ 									size: "icon-sm",
+ 									className: "p-2 -me-1.5"
+ 								})),
+-								children: /* @__PURE__ */ jsx(Sidebar, {})
++								children: /* @__PURE__ */ jsx(HugeiconsIcon, { icon: SidebarLeftIcon, strokeWidth: 1.8 })
+ 							})]
+ 						}),
+ 						/* @__PURE__ */ jsxs("div", {
+@@ -88,7 +90,7 @@ function Header(props) {
+ 										color: "secondary",
+ 										size: "icon-sm"
+ 									}), "text-fd-muted-foreground rounded-full -me-1.5"),
+-									children: /* @__PURE__ */ jsx(Sidebar, {})
++									children: /* @__PURE__ */ jsx(HugeiconsIcon, { icon: SidebarLeftIcon, strokeWidth: 1.8 })
+ 								})
+ 							]
+ 						})
+diff --git a/dist/layouts/notebook/slots/sidebar.js b/dist/layouts/notebook/slots/sidebar.js
+index 5a40db2c50a7701d9895855b13f3fd2a3ccc680f..3c5d5ffeb46b46f742ad8cf85f2ac53894c037b4 100644
+--- a/dist/layouts/notebook/slots/sidebar.js
++++ b/dist/layouts/notebook/slots/sidebar.js
+@@ -10,7 +10,9 @@ import { createLinkItemRenderer } from "../../../components/sidebar/link-item.js
+ import { SidebarTabsDropdown } from "../../../components/sidebar/tabs/dropdown.js";
+ import { useNotebookLayout } from "../client.js";
+ import { Fragment, jsx, jsxs } from "react/jsx-runtime";
+-import { Languages, SidebarIcon, X } from "lucide-react";
++import { Languages, X } from "lucide-react";
++import { HugeiconsIcon } from "@hugeicons/react";
++import SidebarLeftIcon from "@hugeicons/core-free-icons/SidebarLeftIcon";
+ import { cva } from "class-variance-authority";
+ import { createElement, useRef } from "react";
+ //#region src/layouts/notebook/slots/sidebar.tsx
+@@ -183,7 +185,7 @@ function Sidebar({ banner, footer, components, collapsible = true, ...rest }) {
+ 							size: "icon-sm",
+ 							className: "mt-px mb-auto text-fd-muted-foreground"
+ 						})),
+-						children: /* @__PURE__ */ jsx(SidebarIcon, {})
++						children: /* @__PURE__ */ jsx(HugeiconsIcon, { icon: SidebarLeftIcon, strokeWidth: 1.8 })
+ 					})
+ 				]
+ 			}), tabs.length > 0 && /* @__PURE__ */ jsx(SidebarTabsDropdown, {

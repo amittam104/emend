@@ -12,14 +12,13 @@ import {
   useState,
 } from "react"
 import { flushSync } from "react-dom"
-import {
-  Loader2,
-  MessageCircleIcon,
-  RefreshCw,
-  SearchIcon,
-  Send,
-  X,
-} from "lucide-react"
+import AiChat02Icon from "@hugeicons/core-free-icons/AiChat02Icon"
+import Cancel01Icon from "@hugeicons/core-free-icons/Cancel01Icon"
+import Loading02Icon from "@hugeicons/core-free-icons/Loading02Icon"
+import Refresh01Icon from "@hugeicons/core-free-icons/Refresh01Icon"
+import Search01Icon from "@hugeicons/core-free-icons/Search01Icon"
+import Sent02Icon from "@hugeicons/core-free-icons/Sent02Icon"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { cn } from "@workspace/ui/lib/utils"
 import { buttonVariants } from "../../ui/components/button"
 import { useChat, type UseChatHelpers } from "@ai-sdk/react"
@@ -65,7 +64,7 @@ export function AISearchPanelHeader({
       <div className="flex-1 px-3 py-2">
         <p className="mb-2 text-sm font-medium">AI Chat</p>
         <p className="text-fd-muted-foreground text-xs">
-          AI can be inaccurate, please verify the answers.
+          AI can be inaccurate. Verify important answers.
         </p>
       </div>
 
@@ -81,7 +80,7 @@ export function AISearchPanelHeader({
         )}
         onClick={() => setOpen(false)}
       >
-        <X />
+        <HugeiconsIcon icon={Cancel01Icon} aria-hidden="true" />
       </button>
     </div>
   )
@@ -107,7 +106,11 @@ export function AISearchInputActions() {
           )}
           onClick={() => regenerate()}
         >
-          <RefreshCw className="size-4" />
+          <HugeiconsIcon
+            icon={Refresh01Icon}
+            aria-hidden="true"
+            className="size-4"
+          />
           Retry
         </button>
       )}
@@ -171,6 +174,7 @@ export function AISearchInput(props: ComponentProps<"form">) {
     >
       <Input
         value={input}
+        aria-label="Ask a question"
         placeholder={isLoading ? "AI is answering..." : "Ask a question"}
         autoFocus
         className="p-3"
@@ -199,13 +203,18 @@ export function AISearchInput(props: ComponentProps<"form">) {
           )}
           onClick={stop}
         >
-          <Loader2 className="text-fd-muted-foreground size-4 animate-spin" />
+          <HugeiconsIcon
+            icon={Loading02Icon}
+            aria-hidden="true"
+            className="text-fd-muted-foreground size-4 animate-spin"
+          />
           Abort Answer
         </button>
       ) : (
         <button
           key="bn"
           type="submit"
+          aria-label="Send message"
           className={cn(
             buttonVariants({
               variant: "default",
@@ -214,7 +223,11 @@ export function AISearchInput(props: ComponentProps<"form">) {
           )}
           disabled={input.length === 0}
         >
-          <Send className="size-4" />
+          <HugeiconsIcon
+            icon={Sent02Icon}
+            aria-hidden="true"
+            className="size-4"
+          />
         </button>
       )}
     </form>
@@ -332,7 +345,11 @@ function Message({
             key={call.toolCallId}
             className="bg-fd-secondary text-fd-muted-foreground mt-3 flex flex-row items-center gap-2 rounded-lg border p-2 text-xs"
           >
-            <SearchIcon className="size-4" />
+            <HugeiconsIcon
+              icon={Search01Icon}
+              aria-hidden="true"
+              className="size-4"
+            />
             {call.state === "output-error" || call.state === "output-denied" ? (
               <p className="text-fd-error">
                 {call.errorText ?? "Failed to search"}
@@ -482,7 +499,11 @@ export function AISearchPanelList({
     >
       {messages.length === 0 ? (
         <div className="text-fd-muted-foreground/80 flex size-full flex-col items-center justify-center gap-2 text-center text-sm">
-          <MessageCircleIcon fill="currentColor" stroke="none" />
+          <HugeiconsIcon
+            icon={AiChat02Icon}
+            aria-hidden="true"
+            className="size-5"
+          />
           <p onClick={(e) => e.stopPropagation()}>Start a new chat below.</p>
         </div>
       ) : (

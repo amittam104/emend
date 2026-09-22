@@ -44,3 +44,6 @@ allowBuilds:
   unrs-resolver: true
   msw: false
   esbuild: true
+
+patchedDependencies:
+  fumadocs-ui@16.15.10: patches/fumadocs-ui@16.15.10.patch
