@@ -1,16 +1,16 @@
 ---
 title: AI Bubble Menu
-description: Add selection-aware Ask and Edit actions beside the text a person is already working on.
+description: Add selection-aware AI edits beside the text a person is already working on.
 ---
 
-The AI Bubble Menu is the smallest Emend surface. It appears for a non-empty
-text selection and keeps the prompt, preview, and review decision close to that
-selection.
+The AI Bubble Menu appears for a non-empty text selection. It offers AI edits
+in a compact bar, shows the proposal inline in the editor, and keeps Keep and
+Discard beside the selection.
 
 ## Live mock demo
 
-Select the sentence in the editor. Use a quick Edit action, or open **AI** and
-enter a custom instruction for Ask or Edit.
+Select the sentence in the editor. Choose a quick edit or describe your own
+edit in the bar. Expand the arrow to see more actions.
 
 <EditorDemo variant="bubble" />
 
@@ -66,16 +66,16 @@ return editor ? (
 | ------------ | -------- | -------------------------------------------------------- |
 | `editor`     | Required | The existing Tiptap `Editor` instance.                   |
 | `transport`  | Required | Sends typed Emend requests to your mock or server route. |
-| `showReview` | `true`   | Keeps proposal review controls inside the Bubble Menu.   |
+| `showReview` | `true`   | Shows inline proposal decisions in the Bubble Menu.      |
 | `className`  | —        | Extends the copied component's outer surface.            |
 
 ## Behavior notes
 
-- Quick actions such as Improve, Shorten, Expand, and Fix grammar create Edit
-  proposals for the current selection.
-- A custom instruction can Ask without changing content or Edit the selection.
-- The optional document-context control expands what the model may read; it
-  does not expand the change target.
+- Quick actions include Improve, Shorten, Expand, Tone, and Grammar. The compact
+  bar moves extra actions behind the arrow on narrow screens. Every action
+  targets only the selected text.
+- A custom instruction also edits only the selection.
+- A completed proposal appears inline. Keep applies it; Discard removes it.
 - A content-changing transaction makes an open proposal stale. The stale
   proposal cannot be accepted.
 

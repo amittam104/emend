@@ -53,6 +53,8 @@ const editorContentClasses = [
   "[&_.ProseMirror_h5]:mt-8 [&_.ProseMirror_h5]:text-base [&_.ProseMirror_h5]:font-semibold",
   "[&_.ProseMirror_h6]:mt-8 [&_.ProseMirror_h6]:text-sm [&_.ProseMirror_h6]:font-semibold",
   "[&_.ProseMirror_p]:text-pretty",
+  "[&_.ProseMirror_.emend-ai-target]:box-decoration-clone [&_.ProseMirror_.emend-ai-target]:rounded-sm [&_.ProseMirror_.emend-ai-target]:bg-primary/15",
+  "[&_.ProseMirror_[data-emend-preview=true]]:mx-1 [&_.ProseMirror_[data-emend-preview=true]]:rounded-sm [&_.ProseMirror_[data-emend-preview=true]]:bg-chart-2/20",
   "[&_.ProseMirror_ul]:mt-4 [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-[1.4rem]",
   "[&_.ProseMirror_ol]:mt-4 [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ol]:pl-[1.4rem] [&_.ProseMirror_li+li]:mt-1",
   "[&_.ProseMirror_ul[data-type=taskList]]:mt-4 [&_.ProseMirror_ul[data-type=taskList]]:flex [&_.ProseMirror_ul[data-type=taskList]]:list-none [&_.ProseMirror_ul[data-type=taskList]]:flex-col [&_.ProseMirror_ul[data-type=taskList]]:gap-1.5 [&_.ProseMirror_ul[data-type=taskList]]:pl-0",
