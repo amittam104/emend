@@ -111,7 +111,7 @@ export function LandingEditor({
   })
 
   return (
-    <section className="emend-editor flex h-full w-full min-w-0 flex-col overflow-hidden bg-background text-foreground">
+    <section className="emend-landing-editor flex h-full w-full min-w-0 flex-col overflow-hidden bg-background text-foreground">
       {editor && (
         <LandingEditorToolbar
           editor={editor}
