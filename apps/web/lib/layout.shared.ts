@@ -7,14 +7,21 @@ export function baseOptions(): BaseLayoutProps {
     nav: {
       title: createElement(
         "span",
-        { className: "inline-flex items-center gap-2" },
+        {
+          className:
+            "inline-flex items-center gap-1.5 whitespace-nowrap font-sans",
+        },
         createElement(Image, {
           src: "/emend-logo.svg",
           alt: "",
           width: 20,
           height: 20,
         }),
-        createElement("span", null, "emend")
+        createElement(
+          "span",
+          { className: "font-medium tracking-[-0.01em]" },
+          "emend"
+        )
       ),
       url: "/",
     },

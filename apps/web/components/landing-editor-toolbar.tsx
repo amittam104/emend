@@ -346,7 +346,7 @@ export function LandingEditorToolbar({
     >
       <Link
         href="/"
-        className="mx-2 flex shrink-0 items-center gap-1.5 rounded-md pr-1.5 text-sm font-bold tracking-tight text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="mx-2 flex shrink-0 items-center gap-1.5 rounded-md pr-1.5 text-sm font-medium tracking-[-0.01em] whitespace-nowrap text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
         aria-label="Emend home"
       >
         <Image src="/emend-logo.svg" alt="" width={18} height={18} priority />
