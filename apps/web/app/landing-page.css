@@ -1,48 +1,48 @@
 @source "../components/landing-page.tsx";
 
-.landing-page .emend-editor__footer {
+.landing-page .emend-landing-editor__footer {
   display: none;
 }
 
 /* The editor block ships its document rhythm in an unlayered stylesheet, which
    outranks Tailwind utilities. The landing page keeps its roomier rhythm here
    so the vertical spacing has one source of truth. */
-.landing-page .emend-editor .ProseMirror > * + * {
+.landing-page .emend-landing-editor .ProseMirror > * + * {
   margin-top: 1.25rem;
 }
 
-.landing-page .emend-editor .ProseMirror ul,
-.landing-page .emend-editor .ProseMirror ol {
+.landing-page .emend-landing-editor .ProseMirror ul,
+.landing-page .emend-landing-editor .ProseMirror ol {
   margin-top: 1.25rem;
 }
 
-.landing-page .emend-editor .ProseMirror li + li {
+.landing-page .emend-landing-editor .ProseMirror li + li {
   margin-top: 0.25rem;
 }
 
-.landing-page .emend-editor .ProseMirror h2 {
+.landing-page .emend-landing-editor .ProseMirror h2 {
   margin-top: 4.5rem;
 }
 
-.landing-page .emend-editor .ProseMirror hr {
+.landing-page .emend-landing-editor .ProseMirror hr {
   margin-block: 4.5rem;
 }
 
-.landing-page .emend-editor .ProseMirror pre {
+.landing-page .emend-landing-editor .ProseMirror pre {
   margin-top: 2rem;
 }
 
-.landing-page .emend-editor .ProseMirror blockquote {
+.landing-page .emend-landing-editor .ProseMirror blockquote {
   margin-top: 3rem;
 }
 
 /* The hero call to action node view. */
-.landing-page .emend-editor .ProseMirror > .react-renderer {
+.landing-page .emend-landing-editor .ProseMirror > .react-renderer {
   margin-top: 3rem;
 }
 
 /* Mention nodes created from the @ suggestion list. */
-.landing-page .emend-editor .ProseMirror .emend-mention {
+.landing-page .emend-landing-editor .ProseMirror .emend-mention {
   border-radius: 0.25rem;
   background: color-mix(in oklch, var(--primary) 12%, transparent);
   padding: 0.1rem 0.3rem;
@@ -52,12 +52,15 @@
 
 /* Find and replace highlights. The extension's own stylesheet is light-mode
    only, so the landing page ships its own. */
-.landing-page .emend-editor .ProseMirror .find-and-replace-result {
+.landing-page .emend-landing-editor .ProseMirror .find-and-replace-result {
   border-radius: 0.15rem;
   background: color-mix(in oklch, var(--chart-1) 45%, transparent);
 }
 
-.landing-page .emend-editor .ProseMirror .find-and-replace-result-current {
+.landing-page
+  .emend-landing-editor
+  .ProseMirror
+  .find-and-replace-result-current {
   background: color-mix(in oklch, var(--chart-2) 75%, transparent);
 }
 
