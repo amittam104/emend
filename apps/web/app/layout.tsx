@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono, Manrope } from "next/font/google"
+import { Instrument_Sans } from "next/font/google"
 import { RootProvider } from "fumadocs-ui/provider/next"
 
 import { TooltipProvider } from "@workspace/ui/components/tooltip"
@@ -7,15 +7,13 @@ import { cn } from "@workspace/ui/lib/utils"
 
 import "./globals.css"
 
-const manropeHeading = Manrope({
+const instrumentSans = Instrument_Sans({
+  weight: "variable",
+  style: ["normal", "italic"],
   subsets: ["latin"],
-  variable: "--font-heading",
-})
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
-
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
+  display: "swap",
+  fallback: ["system-ui", "sans-serif"],
+  variable: "--font-sans",
 })
 
 export const metadata: Metadata = {
@@ -35,12 +33,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn(
-        "font-sans antialiased",
-        fontMono.variable,
-        geist.variable,
-        manropeHeading.variable
-      )}
+      className={cn("font-sans antialiased", instrumentSans.variable)}
     >
       <body className="flex min-h-screen flex-col">
         <RootProvider>
