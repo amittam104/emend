@@ -23,7 +23,7 @@ import type {
   EmendTiptapEditorState,
   EmendTiptapPreparation,
 } from "../tiptap/types.js"
-import type { EmendProposal } from "../proposal/index.js"
+import { createProposal, type EmendProposal } from "../proposal/index.js"
 
 export interface UseEditorAiOptions {
   readonly editor: Editor | null
@@ -35,6 +35,7 @@ export interface UseEditorAiOptions {
 }
 
 export interface UseEditorAiResult {
+  readonly previewMode: "inline" | "card"
   readonly state: EmendAiState
   readonly activeRequest: EmendAiRequest | null
   readonly streamedMarkdown: string
@@ -92,6 +93,8 @@ interface Session {
   preparation: EmendTiptapPreparation | null
   reviewError: EmendAiError | null
   editorState: EmendTiptapEditorState | null
+  draftProposalId: string | null
+  draftMarkdown: string | null
   disposed: boolean
 }
 
@@ -156,6 +159,8 @@ export function useEditorAi(options: UseEditorAiOptions): UseEditorAiResult {
       preparation: null,
       reviewError: null,
       editorState: adapter.getEditorState(),
+      draftProposalId: null,
+      draftMarkdown: null,
       disposed: false,
     }
     store.setSession(session)
@@ -301,6 +306,7 @@ export function useEditorAi(options: UseEditorAiOptions): UseEditorAiResult {
   }, [store])
 
   return {
+    previewMode,
     state: current.controller.state,
     activeRequest: current.controller.activeRequest,
     streamedMarkdown: current.controller.streamedMarkdown,
@@ -337,7 +343,9 @@ function handleControllerSnapshot(
 
   if (!proposal) {
     if (previousProposalId !== null) clearReview(session)
+    syncStreamingPreview(session, snapshot)
   } else if (proposal.id !== previousProposalId) {
+    clearDraft(session)
     session.proposalId = proposal.id
     session.proposalMarkdown = proposal.content.value
     session.preparation = null
@@ -378,6 +386,58 @@ function prepareAndShow(
   }
   session.editorState = session.adapter.getEditorState()
   publish(session)
+}
+
+// Streams edit output into the inline preview before the proposal completes.
+function syncStreamingPreview(
+  session: Session,
+  snapshot: EmendAiControllerSnapshot
+): void {
+  const request = snapshot.activeRequest
+  const markdown = snapshot.streamedMarkdown
+  const streaming =
+    session.previewMode === "inline" &&
+    snapshot.state === "streaming" &&
+    request !== null &&
+    request.interactionMode === "edit" &&
+    request.mutationOperation !== null &&
+    markdown.trim().length > 0
+
+  if (!streaming) {
+    if (session.draftProposalId !== null) {
+      session.adapter.hide(session.draftProposalId)
+      clearDraft(session)
+    }
+    return
+  }
+  if (
+    session.draftProposalId === request.requestId &&
+    session.draftMarkdown === markdown
+  ) {
+    return
+  }
+
+  const draft = createProposal({
+    id: request.requestId,
+    actionId: request.actionId,
+    request,
+    content: { format: "markdown", value: markdown },
+  })
+  const preparation = session.adapter.prepare(draft)
+  // Partial Markdown can be temporarily unsupported; keep the last good draft.
+  if (preparation.kind === "blocked") return
+
+  const shown = session.adapter.show(draft, preparation, {
+    inlinePreview: true,
+  })
+  if (!shown.ok) return
+  session.draftProposalId = request.requestId
+  session.draftMarkdown = markdown
+}
+
+function clearDraft(session: Session): void {
+  session.draftProposalId = null
+  session.draftMarkdown = null
 }
 
 function showCurrentPresentation(session: Session): void {
