@@ -4,88 +4,28 @@ import { createMockTransport } from "@emend/ai/transport"
 import { EmendEditorBase } from "@emend/registry-components/blocks/emend-editor-base"
 import { EmendEditorComposer } from "@emend/registry-components/blocks/emend-editor-composer"
 import { EmendEditorAssistant } from "@emend/registry-components/blocks/emend-editor-assistant"
-import type { JSONContent } from "@tiptap/core"
 import { EmendEditor } from "@emend/registry-components/blocks/emend-editor"
+import { RefreshIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+import type { JSONContent } from "@tiptap/core"
 import { useState } from "react"
 
 import { DocsDemo } from "./docs-demo"
+import {
+  assistantContent,
+  baseContent,
+  bubbleContent,
+  composerContent,
+} from "./editor-demo-content"
 import { Button } from "@/components/ui/button"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
 const transport = createMockTransport({ delayMs: 12 })
-const initialContent: JSONContent = {
-  type: "doc",
-  content: [
-    {
-      type: "heading",
-      attrs: { level: 1 },
-      content: [{ type: "text", text: "Write with a visible review step" }],
-    },
-    {
-      type: "paragraph",
-      content: [
-        {
-          type: "text",
-          text: "Select this sentence to ask a question or propose a clearer edit.",
-        },
-      ],
-    },
-  ],
-}
-
-const paragraph = (text: string): JSONContent => ({
-  type: "paragraph",
-  content: [{ type: "text", text }],
-})
-
-const assistantContent: JSONContent = {
-  type: "doc",
-  content: [
-    {
-      type: "heading",
-      attrs: { level: 1 },
-      content: [{ type: "text", text: "A clearer way to write together" }],
-    },
-    paragraph(
-      "Good writing starts with a useful draft, not a perfect one. Put the idea on the page, then decide what your reader needs to understand, feel, or do next. The AI Assistant can help you explore that question while the document stays in view."
-    ),
-    paragraph(
-      "Select a sentence to try Improve, Shorten, Longer, Fix grammar, or Tone. Each Edit action proposes a change for review. You can accept it, reject it, or keep writing before making a decision."
-    ),
-    {
-      type: "heading",
-      attrs: { level: 2 },
-      content: [{ type: "text", text: "Make the next pass count" }],
-    },
-    paragraph(
-      "Imagine you are preparing a short note for a project team. The first paragraph explains the goal, but the middle buries the decision under background detail. Ask the assistant what feels unclear. Then select the sentence that carries the decision and ask for a more direct version."
-    ),
-    {
-      type: "bulletList",
-      content: [
-        {
-          type: "listItem",
-          content: [paragraph("Lead with the decision readers need to make.")],
-        },
-        {
-          type: "listItem",
-          content: [
-            paragraph(
-              "Keep the supporting detail close to the claim it supports."
-            ),
-          ],
-        },
-        {
-          type: "listItem",
-          content: [paragraph("Use a tone that fits the people reading it.")],
-        },
-      ],
-    },
-    paragraph(
-      "Try a follow-up in the same chat: ask for an example, challenge an assumption, or request a shorter explanation. The conversation keeps its context, while every proposed document edit still waits for your approval."
-    ),
-  ],
-}
 
 const variants = {
   bubble: "AI Bubble Menu",
@@ -95,6 +35,13 @@ const variants = {
 } as const
 
 type DemoVariant = keyof typeof variants
+
+const demoContent: Record<DemoVariant, JSONContent> = {
+  bubble: bubbleContent,
+  none: baseContent,
+  composer: composerContent,
+  chat: assistantContent,
+}
 
 interface EditorDemoProps {
   readonly variant?: DemoVariant
@@ -115,20 +62,27 @@ export function EditorDemo({
       title={
         variantPicker ? "Editor starter previews" : `${variants[variant]} demo`
       }
-      description="This is the shipped Emend UI using a deterministic local transport. No provider key is used."
       action={
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setRevision((value) => value + 1)}
-        >
-          Reset demo
-        </Button>
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                type="button"
+                variant="outline"
+                size="icon-sm"
+                aria-label="Reset demo"
+                onClick={() => setRevision((value) => value + 1)}
+              >
+                <HugeiconsIcon icon={RefreshIcon} />
+              </Button>
+            }
+          />
+          <TooltipContent>Reset demo</TooltipContent>
+        </Tooltip>
       }
     >
       {variantPicker ? (
-        <fieldset className="mb-3 flex flex-wrap gap-2">
+        <fieldset className="flex flex-wrap gap-2 border-b px-4 py-3 sm:px-5">
           <legend className="sr-only">Editor starter preview</legend>
           {(Object.entries(variants) as [DemoVariant, string][]).map(
             ([value, label]) => (
@@ -148,12 +102,12 @@ export function EditorDemo({
       ) : null}
       <div
         className={cn(
-          "min-h-[24rem] overflow-hidden rounded-xl",
+          "min-h-[48rem] overflow-hidden",
           activeVariant === "chat"
             ? showToolbarAssistantToggle
-              ? "h-[30rem]"
-              : "h-[42rem]"
-            : "h-[32rem] max-h-[70vh]"
+              ? "h-[60rem]"
+              : "h-[84rem]"
+            : "h-[64rem]"
         )}
       >
         <DemoEditor
@@ -173,9 +127,7 @@ function DemoEditor({
   readonly variant: DemoVariant
   readonly showToolbarAssistantToggle: boolean
 }) {
-  const props = {
-    initialContent: variant === "chat" ? assistantContent : initialContent,
-  }
+  const props = { initialContent: demoContent[variant] }
 
   if (variant === "none") return <EmendEditorBase {...props} />
   if (variant === "composer")
