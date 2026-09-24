@@ -1,4 +1,5 @@
 .emend-editor {
+  container: emend-editor / inline-size;
   display: flex;
   width: 100%;
   height: 100%;
@@ -82,12 +83,6 @@
   flex: 1;
 }
 
-.emend-editor__workspace[data-side-chat-open="true"] {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(20rem, 40%);
-  grid-template-rows: minmax(0, 1fr);
-}
-
 .emend-editor__main {
   position: relative;
   display: flex;
@@ -97,12 +92,6 @@
 
 .emend-editor__main--ai {
   padding-bottom: 3.625rem;
-}
-
-.emend-editor__side-chat {
-  min-width: 0;
-  overflow: hidden;
-  border-left: 1px solid var(--border);
 }
 
 .emend-editor__content {
@@ -283,7 +272,7 @@
   font-size: 0.75rem;
 }
 
-@media (max-width: 47.999rem) {
+@container emend-editor (max-width: 47.999rem) {
   .emend-editor__toolbar {
     flex-wrap: nowrap;
   }
@@ -345,16 +334,5 @@
   .emend-editor__more-content button {
     width: 2.5rem;
     height: 2.5rem;
-  }
-
-  .emend-editor__workspace[data-side-chat-open="true"] {
-    display: block;
-  }
-
-  .emend-editor__side-chat {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    border-left: 0;
   }
 }

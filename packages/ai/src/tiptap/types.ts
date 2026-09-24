@@ -6,7 +6,10 @@ import type {
   ResolvedPos,
   Slice,
 } from "@tiptap/pm/model"
-import type { EmendMarkdownWarning } from "../content/types.js"
+import type {
+  EmendMarkdownWarning,
+  SerializeSourceMarkdownOptions,
+} from "../content/types.js"
 import type { EmendProposal } from "../proposal/index.js"
 import type { EmendAiError } from "../protocol/errors.js"
 import type {
@@ -65,7 +68,7 @@ export interface EmendTiptapCaptureOptions extends EmendCaptureOptions {
     >
   >
   readonly linkProtocols?: readonly string[]
-  readonly contextProjection?: string
+  readonly contextProjection?: SerializeSourceMarkdownOptions["contextProjection"]
 }
 
 export interface EmendTiptapPrepareOptions {

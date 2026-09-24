@@ -31,7 +31,7 @@ export interface UseEditorAiOptions {
   readonly previewMode: "inline" | "card"
   readonly limits?: Partial<EmendRequestLimits>
   readonly linkProtocols?: readonly string[]
-  readonly contextProjection?: string
+  readonly contextProjection?: EmendTiptapAdapterOptions["contextProjection"]
 }
 
 export interface UseEditorAiResult {

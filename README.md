@@ -32,7 +32,7 @@ release.
 | Artifact       | Distribution       | Responsibility                                                                    |
 | -------------- | ------------------ | --------------------------------------------------------------------------------- |
 | @emend/ai      | npm package        | Shared protocol, proposal, transport, content, Tiptap, React, and server behavior |
-| Components     | shadcn registry    | Bubble Menu, AI Composer, AI Side Chat, and Editor Starter                        |
+| Components     | shadcn registry    | Bubble Menu, AI Composer, AI Assistant, and Editor Starter                        |
 | Server recipes | shadcn registry    | Integrator-owned provider wiring and credentials                                  |
 | apps/web       | Hosted Next.js app | Documentation, demos, and registry JSON                                           |
 

@@ -55,7 +55,7 @@ const initialContent: JSONContent = {
       content: [
         listItem("Composer", "a simple, agent-style writing experience"),
         listItem("Bubble menu", "rewrite selected text in place"),
-        listItem("Side chat", "work with your document in an AI chat sidebar"),
+        listItem("AI Assistant", "a floating assistant for your document"),
         listItem("Editor starter", "a complete editor with the AI Bubble Menu"),
       ],
     },
@@ -81,7 +81,7 @@ const initialContent: JSONContent = {
       content: [
         listItem(
           "I already use Tiptap",
-          "add the AI Bubble Menu, Composer, or Side Chat without replacing your editor"
+          "add the AI Bubble Menu, Composer, or AI Assistant without replacing your editor"
         ),
         listItem(
           "I need an editor",
@@ -112,7 +112,7 @@ const initialContent: JSONContent = {
         ),
         listItem(
           "AI components",
-          "a Composer, selection Bubble Menu, and document-aware Side Chat"
+          "a Composer, selection Bubble Menu, and document-aware AI Assistant"
         ),
         listItem(
           "Editor starters",
@@ -227,7 +227,6 @@ function listItem(label: string, detail: string): JSONContent {
     ],
   }
 }
-
 
 const HeroCta = Node.create({
   name: "heroCta",

@@ -87,9 +87,15 @@ import { createEmendTiptapAdapter } from "@emend/ai/tiptap"
 const adapter = createEmendTiptapAdapter(editor, {
   limits: { maxTargetMarkdownLength: 4_000 },
   linkProtocols: ["notion"],
-  contextProjection: "workspace-editor",
+  contextProjection: (context) =>
+    editor.schema.nodeFromJSON(context).textContent,
 })
 ```
+
+`contextProjection` accepts a plain-text string or a callback that receives the
+captured context. Use the callback when the projection must reflect the
+document at request time, such as an editor with nodes that have no Markdown
+serialization.
 
 Continue to [`useEditorAi`](/docs/api-reference/use-editor-ai) for the standard
 React integration.

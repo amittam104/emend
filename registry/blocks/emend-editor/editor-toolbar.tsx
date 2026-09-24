@@ -394,7 +394,7 @@ export function EditorToolbar({
                     type="button"
                     variant="outline"
                     size="icon"
-                    aria-label="AI Chat"
+                    aria-label="AI Assistant"
                     aria-expanded={sideChatOpen}
                     onClick={onSideChatToggle}
                   />
@@ -402,7 +402,7 @@ export function EditorToolbar({
               >
                 <HugeiconsIcon icon={AiChat02Icon} />
               </TooltipTrigger>
-              <TooltipContent>AI Chat</TooltipContent>
+              <TooltipContent>AI Assistant</TooltipContent>
             </Tooltip>
           )}
           {onSave && (

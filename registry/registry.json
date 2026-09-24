@@ -86,10 +86,10 @@
       ]
     },
     {
-      "name": "ai-side-chat",
+      "name": "ai-assistant",
       "type": "registry:block",
-      "title": "AI Side Chat",
-      "description": "Document-aware AI chat for an existing Tiptap editor.",
+      "title": "AI Assistant",
+      "description": "Floating AI assistant with document-aware writing actions and local chat history.",
       "dependencies": [
         "@emend/ai",
         "@hugeicons/core-free-icons@4.2.3",
@@ -103,12 +103,59 @@
         "checkbox",
         "label",
         "message-scroller",
-        "sheet",
+        "popover",
         "textarea",
         "tooltip",
         "badge",
         "select"
       ],
+      "files": [
+        {
+          "path": "registry/components/ai-assistant/ai-assistant.tsx",
+          "type": "registry:component",
+          "target": "components/emend/ai-assistant/ai-assistant.tsx"
+        },
+        {
+          "path": "registry/components/ai-assistant/ai-assistant-message.tsx",
+          "type": "registry:component",
+          "target": "components/emend/ai-assistant/ai-assistant-message.tsx"
+        },
+        {
+          "path": "registry/components/ai-assistant/index.ts",
+          "type": "registry:component",
+          "target": "components/emend/ai-assistant/index.ts"
+        },
+        {
+          "path": "registry/components/ai-assistant/ai-assistant-composer.tsx",
+          "type": "registry:component",
+          "target": "components/emend/ai-assistant/ai-assistant-composer.tsx"
+        },
+        {
+          "path": "registry/components/ai-assistant/use-assistant-history.ts",
+          "type": "registry:component",
+          "target": "components/emend/ai-assistant/use-assistant-history.ts"
+        },
+        {
+          "path": "packages/ui/src/lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ]
+    },
+    {
+      "name": "ai-side-chat",
+      "type": "registry:block",
+      "title": "AI Assistant (legacy alias)",
+      "description": "Compatibility entry point. Use @emend/ai-assistant for new installations.",
+      "dependencies": [
+        "@emend/ai",
+        "@hugeicons/core-free-icons@4.2.3",
+        "@hugeicons/react@^1.1.9",
+        "@tiptap/react@3.30.1",
+        "clsx@^2.1.1",
+        "tailwind-merge@^3.6.0"
+      ],
+      "registryDependencies": ["@emend/ai-assistant"],
       "files": [
         {
           "path": "registry/components/ai-side-chat/ai-side-chat.tsx",
@@ -129,11 +176,6 @@
           "path": "registry/components/ai-side-chat/ai-side-chat-composer.tsx",
           "type": "registry:component",
           "target": "components/emend/ai-side-chat/ai-side-chat-composer.tsx"
-        },
-        {
-          "path": "packages/ui/src/lib/utils.ts",
-          "type": "registry:lib",
-          "target": "lib/utils.ts"
         }
       ]
     },
@@ -213,15 +255,30 @@
       ]
     },
     {
-      "name": "emend-editor-side-chat",
+      "name": "emend-editor-assistant",
       "type": "registry:block",
-      "title": "Emend Editor with AI Side Chat",
-      "description": "A Tiptap editor with AI Side Chat.",
+      "title": "Emend Editor with AI Assistant",
+      "description": "A Tiptap editor with AI Assistant.",
       "dependencies": ["@emend/ai"],
       "registryDependencies": [
         "@emend/emend-editor-base",
-        "@emend/ai-side-chat"
+        "@emend/ai-assistant"
       ],
+      "files": [
+        {
+          "path": "registry/blocks/emend-editor/emend-editor-assistant.tsx",
+          "type": "registry:component",
+          "target": "components/emend/emend-editor/emend-editor-assistant.tsx"
+        }
+      ]
+    },
+    {
+      "name": "emend-editor-side-chat",
+      "type": "registry:block",
+      "title": "Emend Editor with AI Assistant (legacy alias)",
+      "description": "Compatibility entry point. Use @emend/emend-editor-assistant for new installations.",
+      "dependencies": ["@emend/ai"],
+      "registryDependencies": ["@emend/emend-editor-assistant"],
       "files": [
         {
           "path": "registry/blocks/emend-editor/emend-editor-side-chat.tsx",

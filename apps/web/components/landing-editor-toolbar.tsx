@@ -444,7 +444,7 @@ export function LandingEditorToolbar({
           aria-label="AI surfaces"
         >
           <ToolbarToggle
-            label="AI Side Chat"
+            label="AI Assistant"
             icon={AiChat02Icon}
             pressed={sideChatOpen}
             onClick={onToggleSideChat}

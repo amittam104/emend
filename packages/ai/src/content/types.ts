@@ -29,7 +29,7 @@ export interface SerializeSourceMarkdownOptions {
   readonly editor: Editor
   readonly target: JSONContent | null
   readonly context: JSONContent
-  readonly contextProjection?: string
+  readonly contextProjection?: string | ((context: JSONContent) => string)
   readonly limits?: Partial<
     Pick<
       EmendRequestLimits,
