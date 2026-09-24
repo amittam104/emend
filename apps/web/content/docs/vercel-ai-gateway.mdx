@@ -7,9 +7,10 @@ The Vercel AI Gateway recipe installs a Next.js App Router handler at
 `app/api/editor-ai/route.ts`. It validates Emend requests, streams provider text
 as typed server-sent events, and keeps the provider key on the server.
 
-<Callout type="info" title="Public demos stay deterministic">
-  Demos in these docs use Emend's local mock transport. They never call the
-  Gateway and never consume a provider key.
+<Callout type="info" title="The docs demos run this recipe">
+  Demos in these docs call this recipe unchanged, with the same handler and
+  system prompt. The model resolves through OpenRouter's free models router
+  (`openrouter/free`) instead of the Gateway.
 </Callout>
 
 ## Prerequisites

@@ -46,9 +46,10 @@ const transport = createMockTransport({
 The mock transport produces action-aware Markdown without a server or provider
 credential. Use `failAfterDeltas` to exercise provider-error recovery.
 
-<Callout type="info" title="The docs demos are deterministic">
-  The interactive examples on this site use the mock transport. They do not call
-  a model or consume a provider key.
+<Callout type="info" title="The docs demos call a real model">
+  The interactive examples on this site use `createFetchTransport` against
+  `/api/editor-ai`, which runs the Vercel AI Gateway recipe on OpenRouter's free
+  models router.
 </Callout>
 
 ## Custom transport contract
