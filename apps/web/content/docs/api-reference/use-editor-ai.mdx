@@ -20,18 +20,18 @@ interface UseEditorAiOptions {
   readonly previewMode: "inline" | "card"
   readonly limits?: Partial<EmendRequestLimits>
   readonly linkProtocols?: readonly string[]
-  readonly contextProjection?: string
+  readonly contextProjection?: string | ((context: JSONContent) => string)
 }
 ```
 
-| Option              | Required | Purpose                                                           |
-| ------------------- | -------- | ----------------------------------------------------------------- |
-| `editor`            | Yes      | The live Tiptap editor, or `null` while it initializes.           |
-| `transport`         | Yes      | Sends requests and yields validated stream events.                |
-| `previewMode`       | Yes      | Shows proposal decorations inline or prepares them for a card.    |
-| `limits`            | No       | Overrides client request limits before a request is sent.         |
-| `linkProtocols`     | No       | Adds trusted URL protocols to proposal preparation.               |
-| `contextProjection` | No       | Labels an explicit plain-text projection for unsupported context. |
+| Option              | Required | Purpose                                                                                                                                              |
+| ------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `editor`            | Yes      | The live Tiptap editor, or `null` while it initializes.                                                                                              |
+| `transport`         | Yes      | Sends requests and yields validated stream events.                                                                                                   |
+| `previewMode`       | Yes      | Shows proposal decorations inline or prepares them for a card.                                                                                       |
+| `limits`            | No       | Overrides client request limits before a request is sent.                                                                                            |
+| `linkProtocols`     | No       | Adds trusted URL protocols to proposal preparation.                                                                                                  |
+| `contextProjection` | No       | Plain-text context used when the document cannot be serialized as Markdown. A callback receives the captured context and runs when a request starts. |
 
 <Callout type="info" title="Keep the transport stable">
   Create the transport outside the component or memoize it. A new transport

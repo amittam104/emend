@@ -12,7 +12,7 @@ through `onEditorReady`.
 - **AI Bubble Menu:** the default and smallest AI-first starting point.
 - **No AI:** the editor, toolbar, formatting, and save boundary only.
 - **AI Composer:** prompt and review controls below the document.
-- **AI Side Chat:** document-aware conversation beside the editor.
+- **AI Assistant:** a floating, document-aware chat over the editor.
 
 <Callout type="warn" title="Preview package required">
   The three AI starters depend on the unpublished `@emend/ai` package. Their
@@ -23,12 +23,12 @@ through `onEditorReady`.
 
 ## Install one starter
 
-| Choice                   | Registry item                   | Export                |
-| ------------------------ | ------------------------------- | --------------------- |
-| AI Bubble Menu (default) | `@emend/emend-editor`           | `EmendEditor`         |
-| No AI                    | `@emend/emend-editor-base`      | `EmendEditorBase`     |
-| AI Composer              | `@emend/emend-editor-composer`  | `EmendEditorComposer` |
-| AI Side Chat             | `@emend/emend-editor-side-chat` | `EmendEditorSideChat` |
+| Choice                   | Registry item                   | Export                 |
+| ------------------------ | ------------------------------- | ---------------------- |
+| AI Bubble Menu (default) | `@emend/emend-editor`           | `EmendEditor`          |
+| No AI                    | `@emend/emend-editor-base`      | `EmendEditorBase`      |
+| AI Composer              | `@emend/emend-editor-composer`  | `EmendEditorComposer`  |
+| AI Assistant             | `@emend/emend-editor-assistant` | `EmendEditorAssistant` |
 
 Install only the choice you plan to ship. The default is:
 
@@ -50,10 +50,10 @@ npx shadcn@latest add @emend/emend-editor-base
 npx shadcn@latest add @emend/emend-editor-composer
 ```
 
-### AI Side Chat
+### AI Assistant
 
 ```npm
-npx shadcn@latest add @emend/emend-editor-side-chat
+npx shadcn@latest add @emend/emend-editor-assistant
 ```
 
 ## Render the default starter

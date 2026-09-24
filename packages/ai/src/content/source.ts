@@ -50,7 +50,11 @@ export function serializeSourceMarkdown(
   if (context) {
     contextMarkdown = context.markdown
   } else {
-    const projection = options.contextProjection?.replace(/\r\n?/g, "\n")
+    const projected =
+      typeof options.contextProjection === "function"
+        ? options.contextProjection(options.context)
+        : options.contextProjection
+    const projection = projected?.replace(/\r\n?/g, "\n")
     if (
       typeof projection !== "string" ||
       hasDisallowedControlCharacters(projection)

@@ -27,7 +27,7 @@ import type { EmendTiptapApplyResult } from "./types.js"
 export interface EmendTiptapAdapterOptions {
   readonly limits?: EmendTiptapCaptureOptions["limits"]
   readonly linkProtocols?: readonly string[]
-  readonly contextProjection?: string
+  readonly contextProjection?: EmendTiptapCaptureOptions["contextProjection"]
 }
 
 export interface EmendTiptapAdapter {

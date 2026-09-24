@@ -12,14 +12,14 @@ import { TextStyleKit } from "@tiptap/extension-text-style"
 import { Markdown } from "@tiptap/markdown"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import { useMemo, useState, type ReactNode } from "react"
+import { useCallback, useMemo, useState, type ReactNode } from "react"
 
 import { AiBubbleMenuView } from "@/components/emend/ai-bubble-menu"
 import {
   AiComposerView,
   type AiComposerPolicy,
 } from "@/components/emend/ai-composer"
-import { AiSideChatView } from "@/components/emend/ai-side-chat"
+import { AiAssistantView } from "@/components/emend/ai-assistant"
 
 import { LandingEditorToolbar } from "./landing-editor-toolbar"
 import { landingMention } from "./landing-mention"
@@ -130,7 +130,7 @@ export function LandingEditor({
           transport={transport}
           composerOpen={composerOpen}
           sideChatOpen={sideChatOpen}
-          onCloseSideChat={() => setSideChatOpen(false)}
+          onOpenChange={setSideChatOpen}
         />
       )}
     </section>
@@ -142,15 +142,27 @@ function LandingAiWorkspace({
   transport,
   composerOpen,
   sideChatOpen,
-  onCloseSideChat,
+  onOpenChange,
 }: {
   readonly editor: Editor
   readonly transport: EmendTransport
   readonly composerOpen: boolean
   readonly sideChatOpen: boolean
-  readonly onCloseSideChat: () => void
+  readonly onOpenChange: (open: boolean) => void
 }) {
-  const session = useEditorAi({ editor, transport, previewMode: "inline" })
+  const contextProjection = useCallback(
+    (context: JSONContent) => {
+      const document = editor.schema.nodeFromJSON(context)
+      return document.textBetween(0, document.content.size, "\n\n")
+    },
+    [editor]
+  )
+  const session = useEditorAi({
+    editor,
+    transport,
+    previewMode: "inline",
+    contextProjection,
+  })
 
   return (
     <div className="relative flex min-h-0 min-w-0 flex-1">
@@ -173,18 +185,14 @@ function LandingAiWorkspace({
           showReview={!composerOpen && !sideChatOpen}
         />
       </div>
-      {sideChatOpen && (
-        <AiSideChatView
-          editor={editor}
-          session={session}
-          inline
-          open
-          onOpenChange={(open) => {
-            if (!open) onCloseSideChat()
-          }}
-          panelClassName="w-[min(24rem,42vw)] shrink-0 border-l border-border pt-10 max-md:absolute max-md:inset-0 max-md:z-30 max-md:w-full max-md:border-l-0"
-        />
-      )}
+      <AiAssistantView
+        editor={editor}
+        session={session}
+        open={sideChatOpen}
+        onOpenChange={onOpenChange}
+        storageKey="emend:landing-assistant:v1"
+        className="bottom-14"
+      />
     </div>
   )
 }

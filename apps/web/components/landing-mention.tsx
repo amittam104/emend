@@ -27,7 +27,7 @@ interface MentionListRef {
 const mentionItems: readonly MentionItem[] = [
   { id: "bubble-menu", label: "AI Bubble Menu" },
   { id: "composer", label: "AI Composer" },
-  { id: "side-chat", label: "AI Side Chat" },
+  { id: "side-chat", label: "AI Assistant" },
   { id: "editor", label: "Emend Editor" },
 ]
 
