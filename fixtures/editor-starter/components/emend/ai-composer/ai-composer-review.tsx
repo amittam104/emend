@@ -49,6 +49,10 @@ export function AiComposerReview({
     !isAsk &&
     pendingProposal !== null &&
     pendingProposal.request.interactionMode === "edit"
+  const isInlineEditRun =
+    isRunning &&
+    session.previewMode === "inline" &&
+    session.activeRequest?.interactionMode === "edit"
   const isStale = session.stale
   const isBlocked = isEditReview && preparation?.kind === "blocked"
   const isPlainTextFallback =
@@ -101,7 +105,7 @@ export function AiComposerReview({
   return (
     <section
       className={
-        proposalRenderedInline
+        proposalRenderedInline || isInlineEditRun
           ? "max-w-lg space-y-2 rounded-3xl border border-border/60 bg-card p-1.5 text-card-foreground shadow-md"
           : "max-w-lg space-y-2 rounded-2xl border border-border bg-card p-3 shadow-sm"
       }
@@ -121,7 +125,24 @@ export function AiComposerReview({
         </p>
       )}
 
-      {isRunning && (
+      {isInlineEditRun && (
+        <div className="flex items-center justify-between gap-3 pl-2.5">
+          <span className="text-[12.5px] text-muted-foreground">
+            {session.state === "streaming"
+              ? "Writing in the document…"
+              : "Generating…"}
+          </span>
+          <ReviewAction
+            label="Stop"
+            icon={StopIcon}
+            variant="outline"
+            size="icon-sm"
+            onClick={session.stop}
+          />
+        </div>
+      )}
+
+      {isRunning && !isInlineEditRun && (
         <pre className="max-h-72 overflow-auto rounded-xl border border-border bg-muted/30 p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap">
           {session.streamedMarkdown || "Generating proposal…"}
         </pre>
@@ -205,7 +226,7 @@ export function AiComposerReview({
         </div>
       )}
 
-      {isRunning && (
+      {isRunning && !isInlineEditRun && (
         <div className="flex justify-end">
           <ReviewAction
             label="Stop"
@@ -324,6 +345,7 @@ function ReviewAction({
             variant={variant}
             size={size}
             type="button"
+            className="rounded-full"
             aria-label={label}
             disabled={disabled}
             onClick={onClick}
@@ -358,7 +380,7 @@ function WarningButton({
             size="icon-xs"
             type="button"
             className={cn(
-              "text-amber-700 hover:bg-amber-500/10 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-400",
+              "rounded-full text-amber-700 hover:bg-amber-500/10 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-400",
               className
             )}
             aria-label="View proposal warnings"
