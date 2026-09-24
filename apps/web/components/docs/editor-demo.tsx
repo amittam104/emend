@@ -1,6 +1,6 @@
 "use client"
 
-import { createMockTransport } from "@emend/ai/transport"
+import { createFetchTransport } from "@emend/ai/transport"
 import { EmendEditorBase } from "@emend/registry-components/blocks/emend-editor-base"
 import { EmendEditorComposer } from "@emend/registry-components/blocks/emend-editor-composer"
 import { EmendEditorAssistant } from "@emend/registry-components/blocks/emend-editor-assistant"
@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
-const transport = createMockTransport({ delayMs: 12 })
+const transport = createFetchTransport({ url: "/api/editor-ai" })
 
 const variants = {
   bubble: "AI Bubble Menu",

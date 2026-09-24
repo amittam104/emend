@@ -76,8 +76,9 @@ transport before they render their AI surface.
 
 ## Compare the four choices
 
-Switch previews without leaving this page. Every AI preview uses an isolated,
-deterministic mock transport.
+Switch previews without leaving this page. Every AI preview calls this site's
+`/api/editor-ai` route, running the Vercel AI Gateway recipe on OpenRouter's
+free models.
 
 <EditorDemo variantPicker />
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { createMockTransport } from "@emend/ai/transport"
+import { createFetchTransport } from "@emend/ai/transport"
 import {
   BookOpen02Icon,
   Copy01Icon,
@@ -23,7 +23,7 @@ import { cn } from "@workspace/ui/lib/utils"
 
 import { LandingEditor } from "./landing-editor"
 
-const transport = createMockTransport({ delayMs: 12 })
+const transport = createFetchTransport({ url: "/api/editor-ai" })
 const installCommand = "pnpm install emend"
 
 const initialContent: JSONContent = {
@@ -192,7 +192,7 @@ const initialContent: JSONContent = {
       content: [
         {
           type: "text",
-          text: "Emend is in active development. The public package is not available yet, so this demo uses a deterministic local AI transport.",
+          text: "Emend is in active development. The public package is not available yet, so this demo calls our own Emend route backed by OpenRouter's free models.",
         },
       ],
     },
