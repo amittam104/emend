@@ -14,7 +14,9 @@ export function normalizeCompleteMarkdown(
   const withoutBom = markdown.startsWith("\uFEFF")
     ? markdown.slice(1)
     : markdown
-  const normalized = trimOuterBlankLines(withoutBom.replace(/\r\n?/g, "\n"))
+  const normalized = unwrapJsonString(
+    trimOuterBlankLines(withoutBom.replace(/\r\n?/g, "\n"))
+  )
 
   if (hasDisallowedControlCharacters(normalized)) {
     return {
@@ -39,6 +41,18 @@ export function hasDisallowedControlCharacters(value: string): boolean {
       codePoint === 0xfeff
     )
   })
+}
+
+// Some models echo the answer as a JSON string: one quoted line holding
+// escaped line breaks. Prose never has that shape, so unwrap it.
+function unwrapJsonString(markdown: string): string {
+  if (!/^"[^\n]*\\n[^\n]*"$/.test(markdown)) return markdown
+  try {
+    const value: unknown = JSON.parse(markdown)
+    return typeof value === "string" ? trimOuterBlankLines(value) : markdown
+  } catch {
+    return markdown
+  }
 }
 
 function trimOuterBlankLines(markdown: string): string {

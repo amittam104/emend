@@ -33,7 +33,7 @@ const initialContent: JSONContent = {
       type: "heading",
       attrs: { level: 1 },
       content: [
-        { type: "text", text: "Open Source, AI Powered \n" },
+        { type: "text", text: "Open Source, AI Powered " },
         {
           type: "text",
           marks: [{ type: "bold" }],
