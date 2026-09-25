@@ -109,11 +109,15 @@ export function Markdown({ text }: { text: string }) {
   )
 }
 
+// Streaming renders every partial answer, so keep only the most recent entries.
+const cacheLimit = 100
 const cache = new Map<string, Promise<ReactNode>>()
 
 function Renderer({ text }: { text: string }) {
   const result = cache.get(text) ?? processor.process(text)
+  cache.delete(text)
   cache.set(text, result)
+  if (cache.size > cacheLimit) cache.delete(cache.keys().next().value!)
 
   return use(result)
 }
