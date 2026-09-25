@@ -1,3 +1,4 @@
+@import "lenis/dist/lenis.css";
 @source "../components/landing-page.tsx";
 
 .landing-page .emend-landing-editor__footer {
