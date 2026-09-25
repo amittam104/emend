@@ -2,6 +2,35 @@
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 
+/* Soft elevation shadows. A real shadow fades out gradually, so each level
+   stacks several faint layers of growing blur instead of one dark one. The
+   layers can also be combined directly, for example
+   shadow-[var(--shadow-layer-1),var(--shadow-layer-3)]. */
+:root {
+  --shadow-color: oklch(0.21 0.006 285.885);
+  --shadow-layer-1: 0 1px 1px
+    color-mix(in oklch, var(--shadow-color) 3%, transparent);
+  --shadow-layer-2: 0 2px 4px -1px
+    color-mix(in oklch, var(--shadow-color) 4%, transparent);
+  --shadow-layer-3: 0 6px 12px -3px
+    color-mix(in oklch, var(--shadow-color) 5%, transparent);
+  --shadow-layer-4: 0 16px 32px -8px
+    color-mix(in oklch, var(--shadow-color) 7%, transparent);
+}
+
+.dark {
+  --shadow-color: oklch(0 0 0);
+}
+
+@theme inline {
+  --shadow-elevation-1: var(--shadow-layer-1), var(--shadow-layer-2);
+  --shadow-elevation-2:
+    var(--shadow-layer-1), var(--shadow-layer-2), var(--shadow-layer-3);
+  --shadow-elevation-3:
+    var(--shadow-layer-1), var(--shadow-layer-2), var(--shadow-layer-3),
+    var(--shadow-layer-4);
+}
+
 .emend-docs-sidebar
   [data-radix-scroll-area-viewport]
   > div
