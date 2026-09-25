@@ -62,6 +62,7 @@ export interface AiAssistantProps {
   readonly onOpenChange?: (open: boolean) => void
   readonly defaultOpen?: boolean
   readonly storageKey?: string
+  readonly inline?: boolean
   readonly className?: string
   readonly panelClassName?: string
 }
@@ -74,6 +75,7 @@ export interface AiAssistantViewProps {
   readonly onOpenChange?: (open: boolean) => void
   readonly defaultOpen?: boolean
   readonly storageKey?: string
+  readonly inline?: boolean
   readonly className?: string
   readonly panelClassName?: string
 }
@@ -86,6 +88,7 @@ export function AiAssistant({
   onOpenChange,
   defaultOpen,
   storageKey,
+  inline,
   className,
   panelClassName,
 }: AiAssistantProps) {
@@ -100,6 +103,7 @@ export function AiAssistant({
       onOpenChange={onOpenChange}
       defaultOpen={defaultOpen}
       storageKey={storageKey}
+      inline={inline}
       className={className}
       panelClassName={panelClassName}
     />
@@ -118,6 +122,7 @@ function AiAssistantPanel({
   onOpenChange,
   defaultOpen = false,
   storageKey = "emend:ai-assistant:v1",
+  inline = false,
   className,
   panelClassName,
 }: AiAssistantViewProps) {
@@ -255,16 +260,22 @@ function AiAssistantPanel({
     deleteThread(thread.id)
   }
 
+  const title = historyOpen
+    ? "Chat history"
+    : visibleMessages.length
+      ? "AI Assistant"
+      : "New chat"
+
   const content = (
     <>
       <div className="flex h-12 shrink-0 items-center justify-between border-b px-4">
-        <PopoverTitle className="truncate text-sm font-medium">
-          {historyOpen
-            ? "Chat history"
-            : visibleMessages.length
-              ? "AI Assistant"
-              : "New chat"}
-        </PopoverTitle>
+        {inline ? (
+          <h2 className="truncate text-sm font-medium">{title}</h2>
+        ) : (
+          <PopoverTitle className="truncate text-sm font-medium">
+            {title}
+          </PopoverTitle>
+        )}
         <div className="flex items-center gap-1">
           <Tooltip>
             <TooltipTrigger
@@ -484,6 +495,22 @@ function AiAssistantPanel({
       )}
     </>
   )
+
+  if (inline) {
+    if (!isOpen) return null
+
+    return (
+      <aside
+        aria-label="AI Assistant"
+        className={cn(
+          "flex h-full min-h-0 min-w-0 flex-col overflow-hidden bg-popover text-sm [overflow-wrap:anywhere] text-popover-foreground",
+          panelClassName
+        )}
+      >
+        {content}
+      </aside>
+    )
+  }
 
   return (
     <Popover
