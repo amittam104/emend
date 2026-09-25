@@ -14,6 +14,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Node, type Editor, type JSONContent } from "@tiptap/core"
 import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react"
+import Lenis from "lenis"
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { useCallback, useEffect, useState } from "react"
@@ -281,7 +282,7 @@ function HeroCtaView() {
             variant: "default",
             size: "lg",
             className:
-              "!text-primary-foreground !no-underline transition-[background-color,color,scale] duration-100 active:translate-y-0 motion-safe:active:scale-96",
+              "!text-primary-foreground !no-underline transition-[background-color,color,scale] duration-200 ease-out active:translate-y-0 active:duration-100 motion-safe:active:scale-96",
           })
         )}
       >
@@ -292,6 +293,7 @@ function HeroCtaView() {
         type="button"
         variant="secondary"
         size="lg"
+        className="transition-[background-color,color,scale] duration-200 ease-out active:translate-y-0 active:duration-100 motion-safe:active:scale-96"
         onClick={copyInstall}
         aria-label={`Copy install command: ${installCommand}`}
         title={`Copy ${installCommand}`}
@@ -344,6 +346,25 @@ export function LandingPage() {
   const onEditorReady = useCallback((nextEditor: Editor) => {
     setEditor(nextEditor)
   }, [])
+
+  // The editor, not the window, is the page's scroll container. Lenis eases
+  // wheel input on it for a slower, weighted scroll; touch stays native, and
+  // it steps aside when the visitor prefers reduced motion.
+  useEffect(() => {
+    const content = editor?.view.dom
+    const wrapper = content?.parentElement
+    if (!content || !wrapper) return
+
+    const lenis = new Lenis({
+      wrapper,
+      content,
+      lerp: 0.08,
+      wheelMultiplier: 0.9,
+      allowNestedScroll: true,
+      autoRaf: true,
+    })
+    return () => lenis.destroy()
+  }, [editor])
 
   useEffect(() => {
     if (!editor) return
