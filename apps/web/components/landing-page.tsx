@@ -22,6 +22,7 @@ import { Button, buttonVariants } from "@workspace/ui/components/button"
 import { cn } from "@workspace/ui/lib/utils"
 
 import { LandingEditor } from "./landing-editor"
+import { ComponentShowcase } from "./landing-showcase"
 
 const transport = createFetchTransport({ url: "/api/editor-ai" })
 const installCommand = "pnpm install emend"
@@ -61,6 +62,23 @@ const initialContent: JSONContent = {
     },
     {
       type: "heroCta",
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "See the components." }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "Each one runs on the same AI editing runtime, and you can try all of them on this page.",
+        },
+      ],
+    },
+    {
+      type: "componentShowcase",
     },
     {
       type: "heading",
@@ -237,7 +255,7 @@ const HeroCta = Node.create({
   addNodeView: () => ReactNodeViewRenderer(HeroCtaView),
 })
 
-const landingExtensions = [HeroCta]
+const landingExtensions = [HeroCta, ComponentShowcase]
 
 function HeroCtaView() {
   const [copied, setCopied] = useState(false)

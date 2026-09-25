@@ -20,8 +20,21 @@
   margin-top: 0.25rem;
 }
 
+/* The hero's feature list sits a little further from the intro paragraph so
+   the two read as separate beats. */
+.landing-page .emend-landing-editor .ProseMirror > h1 + p + ul {
+  margin-top: 2rem;
+}
+
+/* Each section opens with an h2, so this is the gap between sections. */
 .landing-page .emend-landing-editor .ProseMirror h2 {
-  margin-top: 4.5rem;
+  margin-top: 7rem;
+}
+
+@media (max-width: 767px) {
+  .landing-page .emend-landing-editor .ProseMirror h2 {
+    margin-top: 5rem;
+  }
 }
 
 .landing-page .emend-landing-editor .ProseMirror hr {
@@ -37,8 +50,13 @@
 }
 
 /* The hero call to action node view. */
-.landing-page .emend-landing-editor .ProseMirror > .react-renderer {
-  margin-top: 3rem;
+.landing-page .emend-landing-editor .ProseMirror > .node-heroCta {
+  margin-top: 2rem;
+}
+
+/* The component showcase grid node view. */
+.landing-page .emend-landing-editor .ProseMirror > .node-componentShowcase {
+  margin-top: 2rem;
 }
 
 /* Mention nodes created from the @ suggestion list. */
