@@ -4,6 +4,7 @@ import {
   type Mark,
   type Node as ProseMirrorNode,
   type NodeType,
+  type ResolvedPos,
   Slice,
 } from "@tiptap/pm/model"
 import type { EmendCapturedTarget } from "./types.js"
@@ -15,24 +16,21 @@ export function createSupportedTiptapSlice(
 ): Slice | null {
   const document = parseDocument(editor, json)
   if (!document) return null
-  if (
-    hasTable(document) &&
-    (target.placement !== "block" ||
-      target.slice.openStart !== 0 ||
-      target.slice.openEnd !== 0)
-  ) {
-    return null
-  }
+  if (hasTable(document) && target.placement !== "block") return null
 
   const paragraph = getNeutralParagraph(document)
 
   if (target.placement === "inline") {
-    if (!paragraph) return null
-
     const parent = getInlineParent(editor, target)
     if (!parent) return null
 
-    const content = addSourceMarks(paragraph.content, target.sourceMarks)
+    // Text inside a heading is captured as that heading, so accept it back.
+    const block = document.childCount === 1 ? document.firstChild : null
+    const source =
+      paragraph ?? (block?.hasMarkup(parent.type, parent.attrs) ? block : null)
+    if (!source) return null
+
+    const content = addSourceMarks(source.content, target.sourceMarks)
     return parent.type.validContent(content) ? new Slice(content, 0, 0) : null
   }
 
@@ -219,10 +217,12 @@ function createTextContent(
       const hardBreak = editor.schema.linebreakReplacement
       if (hardBreak?.name !== "hardBreak") return null
 
+      // Blank lines are dropped: consecutive hard breaks do not survive the
+      // Markdown round trip, so the next AI edit of this text would fail.
       const nodes: ProseMirrorNode[] = []
-      const lines = text.split("\n")
+      const lines = text.split("\n").filter((line) => line.trim())
       lines.forEach((line, index) => {
-        if (line) nodes.push(editor.schema.text(line, marks))
+        nodes.push(editor.schema.text(line, marks))
         if (index < lines.length - 1) nodes.push(hardBreak.create())
       })
       content = Fragment.fromArray(nodes)
@@ -249,14 +249,94 @@ function createTextBlock(
   }
 }
 
+/**
+ * Wraps content from a range in the fewest shared ancestors that make a valid
+ * document. The wrappers are the ancestors from `depth` to the shared depth.
+ */
+export function wrapInDocument(
+  from: ResolvedPos,
+  to: number,
+  content: Fragment
+): { readonly document: ProseMirrorNode; readonly depth: number } | null {
+  let depth = from.sharedDepth(to) + 1
+  if (content.size === 0) {
+    const document = from.doc.type.createAndFill()
+    return document ? { document, depth } : null
+  }
+
+  for (;;) {
+    try {
+      const document = from.doc.type.createChecked(null, content)
+      document.check()
+      return { document, depth }
+    } catch {
+      depth -= 1
+      if (depth === 0) return null
+      content = Fragment.from(from.node(depth).copy(content))
+    }
+  }
+}
+
 function createBlockSlice(
   content: Fragment,
   target: EmendCapturedTarget
 ): Slice | null {
-  const maximum = Slice.maxOpen(content)
-  const { openStart, openEnd } = target.slice
+  // Capture wrapped the slice in the ancestors it needed, so the proposal
+  // arrives wrapped the same way. Unwrap exactly those ancestors.
+  const from = target.range.fromResolved
+  const sharedDepth = from.sharedDepth(target.range.to)
+  const wrapped = wrapInDocument(from, target.range.to, target.slice.content)
+  let depth = wrapped?.depth ?? sharedDepth + 1
+  for (; depth <= sharedDepth; depth += 1) {
+    const wrapper = content.childCount === 1 ? content.firstChild : null
+    if (wrapper?.type !== from.node(depth).type) break
+    content = wrapper.content
+  }
 
-  return openStart <= maximum.openStart && openEnd <= maximum.openEnd
-    ? new Slice(content, openStart, openEnd)
-    : null
+  // A list answered as another list type (bullets to numbers) can replace
+  // whole items only; retyping part of an item's text has no sensible result.
+  const { openStart, openEnd } = target.slice
+  if (depth <= sharedDepth && retypes(content.firstChild, from.node(depth))) {
+    return openStart || openEnd ? null : new Slice(content, 0, 0)
+  }
+
+  // A flat answer for whole list items goes back into a list item.
+  const wrappers =
+    content.firstChild &&
+    from
+      .node(sharedDepth)
+      .contentMatchAt(from.index(sharedDepth))
+      .findWrapping(content.firstChild.type)
+  for (const type of [...(wrappers ?? [])].reverse()) {
+    content = Fragment.from(type.create(null, content))
+  }
+
+  // Tables are isolating, so an open edge never merges into one. An open edge
+  // that retypes a list stays closed too, or the old type would win or spread.
+  const maximum = Slice.maxOpen(content, false)
+  const edgeNode = ($pos: ResolvedPos) =>
+    $pos.depth > sharedDepth ? $pos.node(sharedDepth + 1) : null
+
+  return new Slice(
+    content,
+    retypes(content.firstChild, edgeNode(from))
+      ? 0
+      : Math.min(openStart, maximum.openStart),
+    retypes(content.lastChild, edgeNode(target.range.toResolved))
+      ? 0
+      : Math.min(openEnd, maximum.openEnd)
+  )
+}
+
+function retypes(
+  node: ProseMirrorNode | null,
+  existing: ProseMirrorNode | null
+): boolean {
+  return (
+    !!node &&
+    !!existing &&
+    !node.isTextblock &&
+    node.type !== existing.type &&
+    node.type.compatibleContent(existing.type)
+  )
 }

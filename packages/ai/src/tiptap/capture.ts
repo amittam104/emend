@@ -1,17 +1,14 @@
 import type { Editor, JSONContent } from "@tiptap/core"
+import type { EditorState } from "@tiptap/pm/state"
+import { NodeSelection, Selection } from "@tiptap/pm/state"
 import type {
-  EditorState,
-  Selection,
-} from "@tiptap/pm/state"
-import { NodeSelection } from "@tiptap/pm/state"
-import {
-  Fragment,
-  type Mark,
-  type Node as ProseMirrorNode,
-  type ResolvedPos,
-  type Slice,
+  Mark,
+  Node as ProseMirrorNode,
+  ResolvedPos,
+  Slice,
 } from "@tiptap/pm/model"
 import { getMarkdownManager } from "../content/inspect.js"
+import { wrapInDocument } from "./slice.js"
 import { serializeSourceMarkdown } from "../content/source.js"
 import {
   createEmendError,
@@ -206,10 +203,14 @@ function resolveMutationTarget(
   operation: EmendMutationOperation
 ): ResolvedRange | EmendAiError {
   switch (operation) {
-    case "replace-selection":
-      return selection.empty
-        ? createEmendError("selection_required")
-        : resolveRange(state, selection.from, selection.to)
+    case "replace-selection": {
+      const [from, to] = selection.empty
+        ? [0, 0]
+        : trimSelection(state, selection)
+      return from < to
+        ? resolveRange(state, from, to)
+        : createEmendError("selection_required")
+    }
     case "insert-at-cursor":
       return selection.empty
         ? resolveRange(state, selection.from, selection.from)
@@ -221,16 +222,110 @@ function resolveMutationTarget(
   }
 }
 
+function trimSelection(
+  state: EditorState,
+  selection: Selection
+): [number, number] {
+  let { from, to, $from, $to } = selection
+
+  // A drag that stops at the edge of the next block selects none of its text,
+  // and that empty block cannot round-trip through Markdown. Leave it out.
+  if ($to.parent.isTextblock && $to.parentOffset === 0 && from < $to.start()) {
+    to = Selection.findFrom(state.doc.resolve($to.before()), -1, true)?.to ?? to
+  }
+  if (
+    $from.parent.isTextblock &&
+    $from.parentOffset === $from.parent.content.size &&
+    to > $from.end()
+  ) {
+    from =
+      Selection.findFrom(state.doc.resolve($from.after()), 1, true)?.from ??
+      from
+  }
+
+  // Markdown drops whitespace at block edges, so leave it out of the target.
+  while (from < to && /\s/.test(state.doc.textBetween(from, from + 1))) {
+    from += 1
+  }
+  while (from < to && /\s/.test(state.doc.textBetween(to - 1, to))) to -= 1
+
+  // An edge that covers whole list items or lists moves outside them, so the
+  // answer replaces those nodes and can retype them (bullets to numbers).
+  $from = state.doc.resolve(from)
+  $to = state.doc.resolve(to)
+  if (!$from.sameParent($to)) {
+    const depth = Math.max(1, $from.sharedDepth(to))
+    $from = state.doc.resolve((from = outerEdge($from, -1, depth)))
+    $to = state.doc.resolve((to = outerEdge($to, 1, depth)))
+  }
+
+  // An edge that cuts through a table, or leaves a block invalid on its own
+  // (a list item that starts with a nested list), cannot round-trip through
+  // Markdown, so the selection grows to the whole blocks it touches.
+  const shared = $from.sharedDepth(to)
+  let widen = false
+  for (let depth = shared + 1; depth <= $from.depth; depth += 1) {
+    const node = $from.node(depth)
+    widen ||=
+      !!node.type.spec.tableRole || !node.canReplace(0, $from.index(depth))
+  }
+  for (let depth = shared + 1; depth <= $to.depth; depth += 1) {
+    const node = $to.node(depth)
+    widen ||=
+      !!node.type.spec.tableRole ||
+      !node.canReplace($to.indexAfter(depth), node.childCount)
+  }
+  const range = widen
+    ? $from.blockRange($to, (node) => !node.type.spec.tableRole)
+    : null
+  return range ? [range.start, range.end] : [from, to]
+}
+
+/**
+ * Returns the position outside the outermost container, from `minDepth` down
+ * and not a table part, whose start (side -1) or end (side 1) the position
+ * sits at, or the position itself.
+ */
+function outerEdge($pos: ResolvedPos, side: -1 | 1, minDepth: number): number {
+  const atEdge = (depth: number) =>
+    side < 0
+      ? $pos.index(depth) === 0
+      : $pos.indexAfter(depth) === $pos.node(depth).childCount
+  const atTextEdge =
+    $pos.parentOffset === (side < 0 ? 0 : $pos.parent.content.size)
+
+  for (let depth = minDepth; depth < $pos.depth; depth += 1) {
+    if ($pos.node(depth).type.spec.tableRole) continue
+    let covered = atTextEdge
+    for (let inner = depth; covered && inner < $pos.depth; inner += 1) {
+      covered = atEdge(inner)
+    }
+    if (covered) return side < 0 ? $pos.before(depth) : $pos.after(depth)
+  }
+  return $pos.pos
+}
+
 function resolveContextRange(
   state: EditorState,
   selection: Selection,
   scope: EmendContextScope
 ): ResolvedRange | EmendAiError {
   switch (scope) {
-    case "selection":
-      return resolveRange(state, selection.from, selection.to)
-    case "current-block":
-      return resolveCurrentBlock(state, selection)
+    case "selection": {
+      // Read the same range the edit targets, so it round-trips the same way.
+      const [from, to] = selection.empty
+        ? [selection.from, selection.to]
+        : trimSelection(state, selection)
+      return resolveRange(state, from, Math.max(from, to))
+    }
+    case "current-block": {
+      // A selection across several blocks reads the blocks it spans.
+      const block = resolveCurrentBlock(state, selection)
+      const spanned = selection.$from.blockRange(selection.$to)
+      return isError(block) && spanned
+        ? resolveRange(state, spanned.start, spanned.end)
+        : block
+    }
     case "document":
       return resolveRange(state, 0, state.doc.content.size)
   }
@@ -349,41 +444,8 @@ function sliceToDocumentJson(
   range: ResolvedRange,
   slice: Slice
 ): JSONContent | null {
-  try {
-    const document =
-      slice.content.size === 0
-        ? state.schema.topNodeType.createAndFill(null, Fragment.empty)
-        : state.schema.topNodeType.createChecked(null, slice.content)
-
-    if (document) {
-      document.check()
-      return freezeJson(document.toJSON())
-    }
-  } catch {
-    // An inline slice has no block wrapper. The fallback below restores only
-    // the captured textblock for serialization; the local Slice is untouched.
-  }
-
-  if (
-    range.from === range.to ||
-    !range.fromResolved.sameParent(range.toResolved) ||
-    !range.fromResolved.parent.isTextblock ||
-    !range.fromResolved.parent.type.validContent(slice.content)
-  ) {
-    return null
-  }
-
-  try {
-    const block = range.fromResolved.parent.copy(slice.content)
-    const document = state.schema.topNodeType.createChecked(
-      null,
-      Fragment.from(block)
-    )
-    document.check()
-    return freezeJson(document.toJSON())
-  } catch {
-    return null
-  }
+  const wrapped = wrapInDocument(range.fromResolved, range.to, slice.content)
+  return wrapped ? freezeJson(wrapped.document.toJSON()) : null
 }
 
 function sharedParent(range: ResolvedRange): ProseMirrorNode {
@@ -425,7 +487,15 @@ function getSourceMarks(
     return state.storedMarks ?? selection.$from.marks()
   }
   if (!selection.$from.sameParent(selection.$to)) return []
-  return selection.$from.marksAcross(selection.$to) ?? []
+
+  // Only marks on all of the selected text carry over to the proposal.
+  let marks: readonly Mark[] | null = null
+  state.doc.nodesBetween(selection.from, selection.to, (node) => {
+    if (node.isText) {
+      marks = marks?.filter((mark) => mark.isInSet(node.marks)) ?? node.marks
+    }
+  })
+  return marks ?? []
 }
 
 function isTextSafe(slice: Slice): boolean {
@@ -437,11 +507,14 @@ function isTextSafe(slice: Slice): boolean {
 }
 
 function isEditableBlock(node: ProseMirrorNode): boolean {
+  // A table row or cell has no Markdown form on its own; the table does.
+  const tableRole = node.type.spec.tableRole
   return (
     node.isBlock &&
     node.type !== node.type.schema.topNodeType &&
     !node.isLeaf &&
-    !node.isAtom
+    !node.isAtom &&
+    (!tableRole || tableRole === "table")
   )
 }
 
