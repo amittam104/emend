@@ -149,7 +149,7 @@ export function AISearchInput(props: ComponentProps<"form">) {
         {
           type: "data-client",
           data: {
-            location: location.href,
+            location: location.pathname,
           },
         },
         {
