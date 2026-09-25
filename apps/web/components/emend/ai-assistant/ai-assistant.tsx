@@ -228,7 +228,14 @@ function AiAssistantPanel({
   }
 
   function startNewChat(thread?: AssistantThread) {
-    if (threadId) saveThread({ id: threadId, messages: visibleMessages })
+    // Leaving mid-stream stops the turn, so only completed turns are saved.
+    const completedMessages =
+      busy && lastMessage?.role === "user" ? messages.slice(0, -1) : messages
+    if (threadId)
+      saveThread({
+        id: threadId,
+        messages: busy ? completedMessages : visibleMessages,
+      })
     setMessages(thread?.messages ?? [])
     setThreadId(thread?.id ?? crypto.randomUUID())
     setHistoryOpen(false)
