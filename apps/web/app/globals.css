@@ -74,3 +74,33 @@
   > button {
   margin-block-start: 0.5rem;
 }
+
+.prose .contains-task-list {
+  list-style: none;
+  padding-inline-start: 0;
+}
+
+.prose .task-list-item {
+  position: relative;
+  padding-inline-start: 1.75rem;
+}
+
+.prose .task-list-item > input[type="checkbox"] {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.3em;
+  margin: 0;
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 0.3rem;
+  background: var(--color-fd-card);
+  box-shadow: var(--shadow-layer-1);
+}
+
+.prose pre,
+.prose code {
+  font-family: var(--font-code), ui-monospace, monospace;
+  font-variant-ligatures: none;
+}
