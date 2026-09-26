@@ -7,18 +7,32 @@ icon: Rocket02Icon
 You do not need to understand Emend's internal architecture before choosing a
 starting point.
 
-<Cards>
-  <Card
+<PathCards>
+  <PathCard
+    icon="PuzzleIcon"
+    label="Existing editor"
     title="I already have a Tiptap editor"
     description="Keep your editor and add one Emend AI surface to it."
+    cta="Add Emend to your editor"
     href="/docs/existing-tiptap-editor"
-  />
-  <Card
+  >
+    - Your schema, extensions, toolbar, and persistence stay as they are
+    - Add the Bubble Menu, Composer, or AI Assistant
+    - Connect one server route for AI responses
+  </PathCard>
+  <PathCard
+    icon="PencilEdit02Icon"
+    label="New editor"
     title="I need an editor"
     description="Copy a complete Tiptap editor starter, with or without an AI surface."
+    cta="Copy the editor starter"
     href="/docs/emend-editor-starter"
-  />
-</Cards>
+  >
+    - A full editor with toolbar, formatting, tables, and a save boundary
+    - Start with no AI or one of the three AI surfaces
+    - The copied source is yours to adapt
+  </PathCard>
+</PathCards>
 
 Choose the existing-editor path when your app already owns its Tiptap schema,
 extensions, toolbar, and persistence. Choose the starter when you want a

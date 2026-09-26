@@ -37,23 +37,20 @@ npx shadcn@latest add @emend/ai-assistant
   until the preview release.
 </Callout>
 
-<Callout type="info" title="Set up the server route">
-  This component needs an Emend-compatible server route for real AI responses.
-  Follow the [Vercel AI Gateway recipe](/docs/vercel-ai-gateway) to install and
-  connect one.
-</Callout>
-
 ## Minimal usage
 
-Use controlled state when another control opens the chat.
+Use controlled state when another control opens the chat. Lines marked with
+**+** are the Emend additions.
 
-```tsx
-import { useState } from "react"
-import { createFetchTransport } from "@emend/ai/transport"
+```tsx title="components/document-chat.tsx"
+"use client"
+
+import { createFetchTransport } from "@emend/ai/transport" // [!code ++]
 import type { Editor } from "@tiptap/core"
-import { AiAssistant } from "@/components/emend/ai-assistant"
+import { useState } from "react"
+import { AiAssistant } from "@/components/emend/ai-assistant" // [!code ++]
 
-const transport = createFetchTransport({ url: "/api/editor-ai" })
+const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code ++]
 
 export function DocumentChat({ editor }: { readonly editor: Editor }) {
   const [open, setOpen] = useState(false)
@@ -63,6 +60,7 @@ export function DocumentChat({ editor }: { readonly editor: Editor }) {
       <button type="button" onClick={() => setOpen(true)}>
         Open AI Assistant
       </button>
+      {/* [!code ++:6] */}
       <AiAssistant
         editor={editor}
         transport={transport}
@@ -77,6 +75,10 @@ export function DocumentChat({ editor }: { readonly editor: Editor }) {
 The editor passed to this component must include `EmendAi`. The assistant uses
 the shadcn Popover built on Base UI. It stays open while you interact with the
 document. Close it with the launcher, close button, or Escape.
+
+## Connect the server route
+
+<include>../partials/server-route.mdx</include>
 
 ## Important options
 

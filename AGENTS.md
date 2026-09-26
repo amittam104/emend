@@ -10,3 +10,4 @@
 - PR description sould also be simple bullet points on what is done in it. Apart from this bullet points only more thing can be added which is which issue it closes if there is one. Don't add any bloated information.
 - Create github issue which will be closed by the PR that you are creating, and follow the same guidelines as PRs.
 - Add as much metadata information you can add for the PR and issue like type, labels, Develpment etc.
+- Don't write unnecessary comments in code

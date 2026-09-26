@@ -23,22 +23,33 @@ integration, and transports shared by every AI surface.
 - Node.js `24.19.0` or later
 - A server route for any AI-enabled surface
 
-## Registry setup
+## Set up your project
 
-Add the `@emend` namespace to `components.json`:
+<Steps>
+<Step>
 
-```json title="components.json"
+### Add the registry
+
+Add the `@emend` namespace to the `components.json` that Shadcn created:
+
+```jsonc title="components.json"
 {
-  "registries": {
-    "@emend": "https://emend.dev/r/{name}.json"
-  }
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "tailwind": { "css": "app/globals.css" },
+  "registries": { // [!code ++]
+    "@emend": "https://emend.dev/r/{name}.json" // [!code ++]
+  } // [!code ++]
 }
 ```
 
 Use `http://127.0.0.1:3000/r/{name}.json` instead when working against a local
 checkout of this repository.
 
-## Install the runtime
+</Step>
+<Step>
+
+### Install the runtime
 
 Install the `@emend/ai` runtime with the package manager you use in your
 project.
@@ -47,7 +58,10 @@ project.
 npm install @emend/ai
 ```
 
-## Add one registry item
+</Step>
+<Step>
+
+### Add one registry item
 
 The Bubble Menu is the smallest AI-enabled starting point:
 
@@ -60,6 +74,9 @@ dependencies, and copies the component into
 `components/emend/ai-bubble-menu`. The copied UI belongs to your application;
 shared editing behavior continues to come from `@emend/ai`.
 
+</Step>
+</Steps>
+
 ## Expected result
 
 You should have editable component source under `components/emend`, normal
@@ -68,5 +85,29 @@ monorepo packages.
 
 ## Choose your path
 
-Continue to [Getting Started](/docs/getting-started) to add Emend to an existing
-Tiptap editor or begin with a complete editor starter.
+<PathCards>
+  <PathCard
+    icon="PuzzleIcon"
+    label="Existing editor"
+    title="I already have a Tiptap editor"
+    description="Keep your editor and add one Emend AI surface to it."
+    cta="Add Emend to your editor"
+    href="/docs/existing-tiptap-editor"
+  >
+    - Your schema, extensions, toolbar, and persistence stay as they are
+    - Add the Bubble Menu, Composer, or AI Assistant
+    - Connect one server route for AI responses
+  </PathCard>
+  <PathCard
+    icon="PencilEdit02Icon"
+    label="New editor"
+    title="I need an editor"
+    description="Copy a complete Tiptap editor starter, with or without an AI surface."
+    cta="Copy the editor starter"
+    href="/docs/emend-editor-starter"
+  >
+    - A full editor with toolbar, formatting, tables, and a save boundary
+    - Start with no AI or one of the three AI surfaces
+    - The copied source is yours to adapt
+  </PathCard>
+</PathCards>
