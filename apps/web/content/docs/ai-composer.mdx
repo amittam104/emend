@@ -26,36 +26,46 @@ npx shadcn@latest add @emend/ai-composer
   until the preview release.
 </Callout>
 
-<Callout type="info" title="Set up the server route">
-  This component needs an Emend-compatible server route for real AI responses.
-  Follow the [Vercel AI Gateway recipe](/docs/vercel-ai-gateway) to install and
-  connect one.
-</Callout>
-
 ## Minimal usage
 
-```tsx
-import { EmendAi } from "@emend/ai/tiptap"
-import { createFetchTransport } from "@emend/ai/transport"
-import { Markdown } from "@tiptap/markdown"
+Add `EmendAi` to the same Tiptap editor and pass that editor to the copied
+component. Lines marked with **+** are what Emend adds to a standard Tiptap
+editor.
+
+```tsx title="components/document-editor.tsx"
+"use client"
+
+import { EmendAi } from "@emend/ai/tiptap" // [!code ++]
+import { createFetchTransport } from "@emend/ai/transport" // [!code ++]
+import { Markdown } from "@tiptap/markdown" // [!code ++]
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import { AiComposer } from "@/components/emend/ai-composer"
+import { AiComposer } from "@/components/emend/ai-composer" // [!code ++]
 
-const transport = createFetchTransport({ url: "/api/editor-ai" })
+const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code ++]
 
-const editor = useEditor({
-  immediatelyRender: false,
-  extensions: [StarterKit, Markdown, EmendAi],
-})
+export function DocumentEditor() {
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [StarterKit, Markdown, EmendAi], // [!code ++]
+  })
 
-return editor ? (
-  <>
-    <EditorContent editor={editor} />
-    <AiComposer editor={editor} transport={transport} />
-  </>
-) : null
+  if (!editor) return null
+
+  return (
+    <>
+      <EditorContent editor={editor} />
+      {/* [!code ++] */}
+      <AiComposer editor={editor} transport={transport} />
+    </>
+  )
+}
 ```
+
+
+## Connect the server route
+
+<include>../partials/server-route.mdx</include>
 
 ## Ask, Edit, and scopes
 

@@ -36,6 +36,15 @@ The recipe copies one editable file to `app/api/editor-ai/route.ts`. It defaults
 to the `openai/gpt-5.6-luna` Gateway model and separates Ask instructions from
 Edit instructions.
 
+## What the route does
+
+`createEmendAiHandler` validates each request, enforces size limits, and
+streams typed events back to the browser. `generate` is the only
+provider-specific part: change `MODEL`, or replace `streamText` with any AI SDK
+provider, and the rest of the route stays the same.
+
+<include lang="ts" meta='title="app/api/editor-ai/route.ts"'>../../../../registry/recipes/vercel-ai-gateway/route.ts</include>
+
 ## Configure the server key
 
 ```bash title=".env.local"
@@ -48,12 +57,19 @@ of a long-lived local key.
 
 ## Connect the client
 
-```tsx
+Point a transport at the route and pass it to any Emend surface.
+
+```tsx title="app/editor/page.tsx"
+"use client"
+
 import { createFetchTransport } from "@emend/ai/transport"
+import { EmendEditor } from "@/components/emend/emend-editor"
 
-const transport = createFetchTransport({ url: "/api/editor-ai" })
+const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code highlight]
 
-<EmendEditor transport={transport} />
+export default function EditorPage() {
+  return <EmendEditor transport={transport} />
+}
 ```
 
 ## Add your authorization boundary
@@ -61,11 +77,11 @@ const transport = createFetchTransport({ url: "/api/editor-ai" })
 The installed recipe does not know your users or permissions. Add the handler's
 `authorize` option using your existing server-side session logic:
 
-```ts
+```ts title="app/api/editor-ai/route.ts"
 export const POST = createEmendAiHandler({
-  authorize: async (request) => {
-    return userCanEdit(await getCurrentUser(request))
-  },
+  authorize: async (request) => { // [!code ++]
+    return userCanEdit(await getCurrentUser(request)) // [!code ++]
+  }, // [!code ++]
   async *generate(request, signal) {
     // Keep the installed Gateway generator here.
   },

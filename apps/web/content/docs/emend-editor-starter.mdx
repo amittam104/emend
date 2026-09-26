@@ -30,31 +30,38 @@ through `onEditorReady`.
 | AI Composer              | `@emend/emend-editor-composer`  | `EmendEditorComposer`  |
 | AI Assistant             | `@emend/emend-editor-assistant` | `EmendEditorAssistant` |
 
-Install only the choice you plan to ship. The default is:
+Install only the choice you plan to ship.
+
+<Tabs items={["AI Bubble Menu", "No AI", "AI Composer", "AI Assistant"]}>
+<Tab value="AI Bubble Menu">
 
 ```npm
 npx shadcn@latest add @emend/emend-editor
 ```
 
-The other choices use these exact commands:
-
-### No AI
+</Tab>
+<Tab value="No AI">
 
 ```npm
 npx shadcn@latest add @emend/emend-editor-base
 ```
 
-### AI Composer
+</Tab>
+<Tab value="AI Composer">
 
 ```npm
 npx shadcn@latest add @emend/emend-editor-composer
 ```
 
-### AI Assistant
+</Tab>
+<Tab value="AI Assistant">
 
 ```npm
 npx shadcn@latest add @emend/emend-editor-assistant
 ```
+
+</Tab>
+</Tabs>
 
 ## Render the default starter
 
@@ -74,6 +81,12 @@ export default function EditorPage() {
 Omit `transport` only for `EmendEditorBase`. AI-enabled starters need a
 transport before they render their AI surface.
 
+## Connect the server route
+
+The no-AI starter does not need this step.
+
+<include>../partials/server-route.mdx</include>
+
 ## Compare the four choices
 
 Switch previews without leaving this page. Every AI preview calls this site's
@@ -85,14 +98,15 @@ free models.
 ## Keep access to Tiptap
 
 Use `onEditorReady` when your application needs the underlying editor for save,
-collaboration, analytics, or other extensions.
+collaboration, analytics, or other extensions. Add it to the starter you
+rendered above:
 
-```tsx
+```tsx title="app/editor/page.tsx"
 <EmendEditor
   transport={transport}
-  onEditorReady={(editor) => {
-    editor.commands.focus()
-  }}
+  onEditorReady={(editor) => { // [!code ++]
+    editor.commands.focus() // [!code ++]
+  }} // [!code ++]
 />
 ```
 

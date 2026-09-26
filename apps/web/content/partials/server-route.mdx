@@ -1,0 +1,53 @@
+Every AI surface sends its requests to a route in your app. The
+[Vercel AI Gateway recipe](/docs/vercel-ai-gateway) installs a ready-made one
+at `app/api/editor-ai/route.ts`.
+
+<Steps>
+<Step>
+
+### Install the route recipe
+
+```npm
+npx shadcn@latest add @emend/recipe-vercel-ai-gateway
+```
+
+</Step>
+<Step>
+
+### Add your server key
+
+```bash title=".env.local"
+AI_GATEWAY_API_KEY=your_server_side_key
+```
+
+Keep this key on the server: never prefix it with `NEXT_PUBLIC_`. On Vercel
+you can use OIDC instead of a long-lived key.
+
+</Step>
+<Step>
+
+### Review the installed route
+
+The recipe copies this file into your app. `createEmendAiHandler` validates the
+request and streams the answer; `generate` is the only provider-specific part,
+so you can swap the model or use any AI SDK provider.
+
+<include lang="ts" meta='title="app/api/editor-ai/route.ts"'>../../../../registry/recipes/vercel-ai-gateway/route.ts</include>
+
+</Step>
+<Step>
+
+### Point the transport at the route
+
+The examples on this page already use this URL. Change it only if you move the
+route.
+
+```tsx
+const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code highlight]
+```
+
+</Step>
+</Steps>
+
+Before you ship, add an `authorize` check and rate limits to the route. See
+[Add your authorization boundary](/docs/vercel-ai-gateway#add-your-authorization-boundary).

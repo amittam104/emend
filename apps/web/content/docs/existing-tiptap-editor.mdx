@@ -19,28 +19,74 @@ Choose this path when your application already creates and owns a Tiptap
 - Shadcn initialized and the `@emend` registry configured
 - An Emend-compatible route such as `/api/editor-ai`
 
-## Install the Bubble Menu
+## Add the Bubble Menu
+
+These steps change one file: the client component that already creates your
+editor. Lines marked with **+** are the ones to add in that step.
+
+<Steps>
+<Step>
+
+### Install the component
 
 ```npm
 npx shadcn@latest add @emend/ai-bubble-menu
 ```
 
-## Add Emend to the editor
+This copies the Bubble Menu into `components/emend/ai-bubble-menu`.
 
-Install `EmendAi` beside the extensions your editor already uses. Then pass the
-same `Editor` and one transport to the copied surface.
+</Step>
+<Step>
+
+### Add the Emend extension
+
+Install `EmendAi` beside the extensions your editor already uses. `Markdown`
+lets Emend read and write the document as Markdown.
+
+```tsx title="components/document-editor.tsx"
+"use client"
+
+import { EmendAi } from "@emend/ai/tiptap" // [!code ++]
+import { Markdown } from "@tiptap/markdown" // [!code ++]
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+
+export function DocumentEditor() {
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [StarterKit, Markdown, EmendAi], // [!code ++]
+    content: "<p>Select this sentence and ask Emend to improve it.</p>",
+  })
+
+  if (!editor) return null
+
+  return (
+    <div className="relative">
+      <EditorContent editor={editor} />
+    </div>
+  )
+}
+```
+
+</Step>
+<Step>
+
+### Render the Bubble Menu
+
+Create one transport for your route and pass the same `editor` to the copied
+component.
 
 ```tsx title="components/document-editor.tsx"
 "use client"
 
 import { EmendAi } from "@emend/ai/tiptap"
-import { createFetchTransport } from "@emend/ai/transport"
+import { createFetchTransport } from "@emend/ai/transport" // [!code ++]
 import { Markdown } from "@tiptap/markdown"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import { AiBubbleMenu } from "@/components/emend/ai-bubble-menu"
+import { AiBubbleMenu } from "@/components/emend/ai-bubble-menu" // [!code ++]
 
-const transport = createFetchTransport({ url: "/api/editor-ai" })
+const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code ++]
 
 export function DocumentEditor() {
   const editor = useEditor({
@@ -54,6 +100,7 @@ export function DocumentEditor() {
   return (
     <div className="relative">
       <EditorContent editor={editor} />
+      {/* [!code ++] */}
       <AiBubbleMenu editor={editor} transport={transport} />
     </div>
   )
@@ -62,6 +109,13 @@ export function DocumentEditor() {
 
 Do not create a second editor for the AI surface. Capture, previews, stale
 checks, and Accept all depend on the same live `Editor` instance.
+
+</Step>
+</Steps>
+
+## Connect the server route
+
+<include>../partials/server-route.mdx</include>
 
 ## Try one Ask and Edit flow
 
