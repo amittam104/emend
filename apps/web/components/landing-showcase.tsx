@@ -5,8 +5,8 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { Node } from "@tiptap/core"
 import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react"
 import Link from "next/link"
-import { useTheme } from "next-themes"
-import { useEffect, useRef } from "react"
+
+import { ShowcaseClip } from "./showcase-clip"
 
 const showcaseItems = [
   {
@@ -38,48 +38,6 @@ const showcaseItems = [
     href: "/docs/emend-editor-starter",
   },
 ] as const
-
-/**
- * Clips are recorded from this page in both themes. They only play while on
- * screen, and not at all when the visitor prefers reduced motion; the poster
- * frame stands in for the clip in both cases.
- */
-function ShowcaseClip({ clip }: { readonly clip: string }) {
-  const { resolvedTheme } = useTheme()
-  const theme = resolvedTheme === "light" ? "light" : "dark"
-  const videoRef = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    const video = videoRef.current
-    if (!video) return
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) video.play().catch(() => {})
-        else video.pause()
-      },
-      { threshold: 0.4 }
-    )
-    observer.observe(video)
-    return () => observer.disconnect()
-  }, [theme])
-
-  return (
-    <video
-      key={theme}
-      ref={videoRef}
-      src={`/landing/${clip}-${theme}.webm`}
-      poster={`/landing/${clip}-${theme}.jpg`}
-      muted
-      loop
-      playsInline
-      preload="none"
-      aria-hidden
-      className="size-full object-cover"
-    />
-  )
-}
 
 function ComponentShowcaseView() {
   return (
