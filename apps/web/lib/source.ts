@@ -1,16 +1,10 @@
-import ApiIcon from "@hugeicons/core-free-icons/ApiIcon"
-import BookOpen02Icon from "@hugeicons/core-free-icons/BookOpen02Icon"
-import BracesIcon from "@hugeicons/core-free-icons/BracesIcon"
-import Bug01Icon from "@hugeicons/core-free-icons/Bug01Icon"
-import FileCodeIcon from "@hugeicons/core-free-icons/FileCodeIcon"
-import FunctionIcon from "@hugeicons/core-free-icons/FunctionIcon"
-import InstallingUpdates02Icon from "@hugeicons/core-free-icons/InstallingUpdates02Icon"
-import Rocket02Icon from "@hugeicons/core-free-icons/Rocket02Icon"
-import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
+import { HugeiconsIcon } from "@hugeicons/react"
 import type * as PageTree from "fumadocs-core/page-tree"
 import { llms, loader } from "fumadocs-core/source"
 import { defineDocs } from "fumadocs-mdx/macro"
 import { createElement } from "react"
+
+import { docsIcons } from "@/components/docs/docs-icons"
 
 const docs = defineDocs({
   dir: "content/docs",
@@ -36,17 +30,6 @@ export const source = loader({
     })
   },
 })
-
-const docsIcons = {
-  ApiIcon,
-  BookOpen02Icon,
-  BracesIcon,
-  Bug01Icon,
-  FileCodeIcon,
-  FunctionIcon,
-  InstallingUpdates02Icon,
-  Rocket02Icon,
-} satisfies Record<string, IconSvgElement>
 
 function groupSeparatorNodes(nodes: PageTree.Node[]): PageTree.Node[] {
   const grouped: PageTree.Node[] = []
@@ -116,7 +99,7 @@ export function getDocsPageTree(): PageTree.Root {
     root: true,
     index: introduction,
     icon: createElement(HugeiconsIcon, {
-      icon: BookOpen02Icon,
+      icon: docsIcons.BookOpen02Icon,
       "aria-hidden": true,
       className: "size-4",
       strokeWidth: 2,

@@ -1,9 +1,14 @@
 import type { MDXComponents } from "mdx/types"
 import defaultMdxComponents from "fumadocs-ui/mdx"
 import { CodeBlockTabsTrigger as FumadocsCodeBlockTabsTrigger } from "fumadocs-ui/components/codeblock"
+import { Step, Steps } from "fumadocs-ui/components/steps"
+import { Tab, Tabs } from "fumadocs-ui/components/tabs"
 import type { ComponentProps } from "react"
 
+import { Card, Cards, PathCard, PathCards } from "@/components/docs/docs-cards"
 import { DocsDemo } from "@/components/docs/docs-demo"
+import { DocsHero } from "@/components/docs/docs-hero"
+import { FlowDiagram } from "@/components/docs/flow-diagram"
 import { EditorDemo } from "@/components/docs/editor-demo"
 import {
   Bun,
@@ -44,9 +49,19 @@ function CodeBlockTabsTrigger({
 export function getMDXComponents(components?: MDXComponents) {
   return {
     ...defaultMdxComponents,
+    Card,
+    Cards,
     CodeBlockTabsTrigger,
     Demo: DocsDemo,
+    DocsHero,
     EditorDemo,
+    FlowDiagram,
+    PathCard,
+    PathCards,
+    Step,
+    Steps,
+    Tab,
+    Tabs,
     ...components,
   } satisfies MDXComponents
 }
