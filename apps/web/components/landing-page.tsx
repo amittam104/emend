@@ -26,7 +26,7 @@ import { LandingEditor } from "./landing-editor"
 import { ComponentShowcase } from "./landing-showcase"
 
 const transport = createFetchTransport({ url: "/api/editor-ai" })
-const installCommand = "pnpm install emend"
+const installCommand = "npx shadcn@latest add @emend/ai-bubble-menu"
 
 const initialContent: JSONContent = {
   type: "doc",
