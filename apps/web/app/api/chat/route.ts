@@ -5,6 +5,7 @@ import {
   streamText,
   toUIMessageStream,
 } from "ai"
+import { isBotRequest } from "@/lib/bot-protection"
 import { docsLlms } from "@/lib/source"
 import type { ChatUIMessage } from "@/components/ai/search"
 
@@ -22,6 +23,9 @@ const systemPrompt = [
 ].join("\n")
 
 export async function POST(req: Request) {
+  if (await isBotRequest())
+    return new Response("Access denied", { status: 403 })
+
   const reqJson = await req.json()
 
   const result = streamText({
