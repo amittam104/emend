@@ -1,23 +1,28 @@
 ---
 title: AI Assistant
-description: Add document-aware conversation, follow-up questions, and reviewable edits in a floating popover.
+description: A floating chat that knows your document. Ask questions or have it edit your text.
+icon: AiDrawingIcon
 ---
 
-AI Assistant opens a floating chat above a bottom-right launcher. Each turn can Ask about
-the draft or create an Edit proposal, while follow-ups carry the visible
-conversation into the next request.
+The AI Assistant is a chat window that opens from a button in the bottom-right
+corner. It can see your document, so you can:
 
-## Live demo
+- **Ask questions** about what you wrote, and follow up like a normal chat.
+- **Edit your text:** select some text, pick an action or type what you want,
+  and review the change before it is applied.
 
-Select the **AI Assistant** launcher in the bottom-right corner. Ask about the
-draft, send a follow-up, or select text and choose an Edit action.
+## Try it
+
+Click the AI Assistant button in the bottom-right corner. Ask something about
+the text, send a follow-up, or select some text and pick an action like
+**Improve**.
 
 <EditorDemo variant="chat" />
 
-## Toolbar launcher variation
+## Open it from the toolbar
 
-If your editor already has a toolbar, you can add an Assistant toggle there as
-another way to open the same chat. The floating launcher remains available.
+If your editor has a toolbar, you can also add a button there to open the
+chat. The corner button stays too.
 
 ```tsx
 <EmendEditorAssistant transport={transport} showToolbarAssistantToggle />
@@ -31,16 +36,16 @@ another way to open the same chat. The floating launcher remains available.
 npx shadcn@latest add @emend/ai-assistant
 ```
 
-<Callout type="warn" title="Preview package required">
-  This command depends on the unpublished `@emend/ai` package. It documents the
-  verified consumer flow but will not complete from the public npm registry
-  until the preview release.
+<Callout type="warn" title="Not on npm yet">
+  This command needs the `@emend/ai` package, which is not published to npm
+  yet. It will not work until the package is released.
 </Callout>
 
-## Minimal usage
+## Add it to your editor
 
-Use controlled state when another control opens the chat. Lines marked with
-**+** are the Emend additions.
+Render `AiAssistant` with your editor. This example also opens the chat from
+your own button by passing `open` and `onOpenChange`. Lines marked with **+**
+are the ones to add.
 
 ```tsx title="components/document-chat.tsx"
 "use client"
@@ -72,52 +77,56 @@ export function DocumentChat({ editor }: { readonly editor: Editor }) {
 }
 ```
 
-The editor passed to this component must include `EmendAi`. The assistant uses
-the shadcn Popover built on Base UI. It stays open while you interact with the
-document. Close it with the launcher, close button, or Escape.
+Your editor must include the `EmendAi` extension (see
+[Existing Tiptap Editor](/docs/existing-tiptap-editor#add-the-emend-extension)).
+The chat stays open while you work in the document. Close it with the corner
+button, the close button, or <kbd>Esc</kbd>.
 
 ## Connect the server route
 
 <include>../partials/server-route.mdx</include>
 
-## Important options
+## Props
 
 | Prop                    | Default                 | Purpose                                                                 |
 | ----------------------- | ----------------------- | ----------------------------------------------------------------------- |
-| `editor`                | Required                | Supplies document state and selection to every turn.                    |
-| `transport`             | Required                | Sends requests and conversation history to your route.                  |
-| `open` / `onOpenChange` | Uncontrolled            | Lets your application own the open state.                               |
-| `defaultOpen`           | `false`                 | Sets the initial state when it is uncontrolled.                         |
-| `storageKey`            | `emend:ai-assistant:v1` | Use a unique key per document or workspace to separate browser history. |
-| `policy`                | Adaptive scopes         | Restricts context and mutation choices in the chat composer.            |
+| `editor`                | Required                | Your Tiptap editor.                                                     |
+| `transport`             | Required                | Tells the chat which URL to send AI requests to.                        |
+| `open` / `onOpenChange` | Not set                 | Control when the chat is open from your own code.                       |
+| `defaultOpen`           | `false`                 | Whether the chat starts open.                                           |
+| `storageKey`            | `emend:ai-assistant:v1` | Where chat history is saved. Use a different key per document or user.  |
+| `policy`                | Adaptive scopes         | Limits what the AI can read and change.                                 |
 
-## Behavior notes
+## How it behaves
 
-- The welcome view puts the composer beneath “How can I help you today?” with
-  quick actions for selected text below it. During a conversation, the composer
-  docks at the bottom.
-- The action menu offers **Improve**, **Shorten**, **Longer**, **Fix grammar**,
-  **Tone**, and **Custom instruction**. Tone offers Friendly, Professional,
-  Confident, and Straightforward styles. Built-in edits require selected text.
-- **New chat** saves the current conversation and stops or dismisses its active turn.
-- **Chat history** reopens the latest 20 conversations saved in this browser.
-  Delete a saved chat with its delete button. Old turns are transcripts; old edit
-  proposals cannot be applied again.
-- Browser history has a total size budget of roughly 2 MB. Older chats are removed
-  first when the budget is reached. If the current chat cannot be saved, the UI
-  explains that it is available only in the current session.
-- History uses local storage without encryption or server sync. Use a distinct
-  `storageKey` for each document and signed-in user, and clear user-scoped storage
-  during sign-out in your application.
-- Follow-up requests include the visible conversation plus the new message, subject
-  to the existing transport request limits.
-- Ask answers stay informational. Edit turns retain Accept, Reject, and stale
-  proposal checks before changing the document.
+- **Actions:** **Improve**, **Shorten**, **Longer**, **Fix grammar**, **Tone**
+  (Friendly, Professional, Confident, or Straightforward), and **Custom
+  instruction**. The built-in actions need selected text.
+- **Questions:** anything you type without an action is a question. The answer
+  shows up in the chat and your document is not changed.
+- **Edits:** show a preview in your document with **Accept** and **Reject**
+  buttons, just like the other components.
+- **Follow-ups:** each new message includes the conversation so far, so the AI
+  remembers what you talked about.
+- **New chat** saves the current chat and starts a fresh one.
+- **Chat history** shows your last 20 chats. You can reopen or delete them. Old
+  chats can be read, but their edit suggestions can no longer be applied.
 
-The old `@emend/ai-side-chat` registry name and `AiSideChat` export remain
-compatibility aliases. Use `@emend/ai-assistant` and `AiAssistant` for new code.
+### Where chat history is saved
 
-## Next step
+Chats are saved in the browser's local storage. They are not encrypted and are
+not sent to your server.
 
-Read [Production Considerations](/docs/production-considerations) before storing
-conversation history or sending document content to a provider.
+- History is limited to about 2 MB. When it is full, the oldest chats are
+  removed first.
+- Use a different `storageKey` for each document and each signed-in user, so
+  people do not see each other's chats.
+- Clear the user's saved chats when they sign out.
+
+The old `@emend/ai-side-chat` and `AiSideChat` names still work. Use
+`@emend/ai-assistant` and `AiAssistant` in new code.
+
+## Next
+
+Read [Production Considerations](/docs/production-considerations) before you
+save chat history or send your users' documents to an AI provider.

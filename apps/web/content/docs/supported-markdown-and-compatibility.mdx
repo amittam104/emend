@@ -1,14 +1,16 @@
 ---
 title: Supported Markdown and Compatibility
-description: Check the V0 Markdown profile, table boundaries, and officially supported application stack.
+description: What content the AI can edit, and which frameworks and versions emend supports.
 ---
 
-Emend uses the Tiptap Markdown extension for the model-facing projection. The
-extensions in your editor determine what can round-trip safely.
+emend sends your text to the AI as Markdown and turns the answer back into
+editor content. This page lists what survives that trip. Your editor also needs
+the matching Tiptap extension for each type of content (for example, a table
+extension for tables).
 
-## Supported Markdown profile
+## What content is supported
 
-| Content                                                       | V0 support                      |
+| Content                                                       | Support                         |
 | ------------------------------------------------------------- | ------------------------------- |
 | Paragraphs and headings                                       | Supported                       |
 | Bold, italic, combined emphasis, strikethrough, and underline | Supported                       |
@@ -22,25 +24,25 @@ extensions in your editor determine what can round-trip safely.
 | Arbitrary raw HTML                                            | Not supported                   |
 | Generated images                                              | Not supported                   |
 
-Link destinations are protocol-validated. `javascript:`, `data:`, and
-`vbscript:` URLs are blocked.
+Links are checked for safety. `javascript:`, `data:`, and `vbscript:` links
+are blocked.
 
-## GFM table limits
+## Table limits
 
-A supported table has a complete header row, equal column counts, and one
-paragraph per cell. Alignment, escaped pipes, and a hard break inside a cell
-are supported.
+Tables work when they have a header row, the same number of columns in every
+row, and one paragraph per cell. Column alignment, `|` characters inside
+cells, and line breaks inside cells also work.
 
-Merged cells, row or column spans, column widths, mixed or missing headers, and
-multiple block children inside a cell are outside the automatic V0 guarantee.
+These are not supported yet: merged cells, column widths, missing headers, and
+cells with more than one paragraph or block.
 
-## Custom content
+## Your own custom content
 
-A custom node or mark is not supported only because its name resembles a
-built-in type. If its target cannot be represented by the configured Markdown
-and editor schema, Emend blocks automatic apply rather than dropping content.
+If you added your own Tiptap nodes or marks, emend does not guess how to handle
+them. If a suggestion includes content your editor cannot display, emend will
+not apply it. It never silently drops your content.
 
-## Official V0 compatibility
+## Supported setup
 
 | Layer            | Supported baseline                                                                          |
 | ---------------- | ------------------------------------------------------------------------------------------- |
@@ -51,9 +53,11 @@ and editor schema, Emend blocks automatic apply rather than dropping content.
 | Styling          | Tailwind CSS 4 and semantic Shadcn tokens                                                   |
 | Runtime          | Node.js `24.19.0` or later                                                                  |
 
-Other React frameworks may be adaptable because the core handler uses Web
-Platform requests and responses, but they are not part of the verified V0
-consumer path.
+Next.js is the only framework we support for now. The AI components are plain
+React and the server handler uses standard `Request` and `Response` objects, so
+other React apps such as Vite or TanStack Start may work if they have a backend
+for the server route. We do not test them yet. Support for other frameworks is
+coming soon.
 
-Continue to [Troubleshooting and Limitations](/docs/troubleshooting-and-limitations)
-when a schema or version mismatch blocks a request.
+If a request is blocked because of your content or versions, see
+[Troubleshooting and Limitations](/docs/troubleshooting-and-limitations).

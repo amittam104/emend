@@ -1,27 +1,28 @@
 ---
-title: Emend Editor Starter
-description: Copy a complete Tiptap editor with no AI or one of three reviewable AI surfaces.
+title: emend Editor Starter
+description: Get a complete, ready-to-use editor in your app, with or without AI.
 ---
 
-Choose this path when you want a complete editor copied into your application.
-The starter keeps the source editable and exposes the underlying Tiptap editor
-through `onEditorReady`.
+Use this guide if you do not have an editor yet. One command copies a complete
+editor into your app, with a toolbar, formatting, tables, and saving. The code
+is yours, so you can change anything.
 
-## Starter choices
+## Pick a version
 
-- **AI Bubble Menu:** the default and smallest AI-first starting point.
-- **No AI:** the editor, toolbar, formatting, and save boundary only.
-- **AI Composer:** prompt and review controls below the document.
-- **AI Assistant:** a floating, document-aware chat over the editor.
+- **AI Bubble Menu (recommended):** select text and the AI menu opens next to
+  it.
+- **No AI:** just the editor. You can add AI later.
+- **AI Composer:** a prompt bar under the document.
+- **AI Assistant:** a floating chat panel over the editor.
 
-<Callout type="warn" title="Preview package required">
-  The three AI starters depend on the unpublished `@emend/ai` package. Their
-  registry flow is verified with a packed package, but public installation will
-  not complete until that package is released. The no-AI starter has no
-  `@emend/ai` dependency.
+<Callout type="warn" title="Not on npm yet">
+  The three AI versions need the `@emend/ai` package, which is not published to
+  npm yet. The No AI version works today.
 </Callout>
 
-## Install one starter
+<include>../partials/nextjs-only.mdx</include>
+
+## Install it
 
 | Choice                   | Registry item                   | Export                 |
 | ------------------------ | ------------------------------- | ---------------------- |
@@ -30,7 +31,7 @@ through `onEditorReady`.
 | AI Composer              | `@emend/emend-editor-composer`  | `EmendEditorComposer`  |
 | AI Assistant             | `@emend/emend-editor-assistant` | `EmendEditorAssistant` |
 
-Install only the choice you plan to ship.
+Pick one and run its command:
 
 <Tabs items={["AI Bubble Menu", "No AI", "AI Composer", "AI Assistant"]}>
 <Tab value="AI Bubble Menu">
@@ -63,7 +64,7 @@ npx shadcn@latest add @emend/emend-editor-assistant
 </Tab>
 </Tabs>
 
-## Render the default starter
+## Add it to a page
 
 ```tsx title="app/editor/page.tsx"
 "use client"
@@ -78,28 +79,26 @@ export default function EditorPage() {
 }
 ```
 
-Omit `transport` only for `EmendEditorBase`. AI-enabled starters need a
-transport before they render their AI surface.
+The `transport` tells the editor which URL to send AI requests to. The No AI
+version (`EmendEditorBase`) does not need one.
 
 ## Connect the server route
 
-The no-AI starter does not need this step.
+Skip this if you picked the No AI version.
 
 <include>../partials/server-route.mdx</include>
 
-## Compare the four choices
+## Try all four
 
-Switch previews without leaving this page. Every AI preview calls this site's
-`/api/editor-ai` route, running the Vercel AI Gateway recipe on OpenRouter's
-free models.
+Switch between the versions below. The AI versions use free models through
+OpenRouter.
 
 <EditorDemo variantPicker />
 
-## Keep access to Tiptap
+## Get the Tiptap editor
 
-Use `onEditorReady` when your application needs the underlying editor for save,
-collaboration, analytics, or other extensions. Add it to the starter you
-rendered above:
+The starter is built on Tiptap. If you need the Tiptap editor itself, for
+example to save content or add your own extensions, use `onEditorReady`:
 
 ```tsx title="app/editor/page.tsx"
 <EmendEditor
@@ -110,8 +109,11 @@ rendered above:
 />
 ```
 
-## Expected result
+## What you should see
 
-The selected registry item copies one editor foundation and only its chosen AI
-surface. Continue to [Vercel AI Gateway](/docs/vercel-ai-gateway) to connect a
-production route, or read the page for your chosen component.
+A full editor on your page. If you picked an AI version, select some text or
+open the AI component and try it.
+
+Next, read the page for the AI component you picked, or see
+[Vercel AI Gateway](/docs/vercel-ai-gateway) to set up the server route for
+production.

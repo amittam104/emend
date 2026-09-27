@@ -1,12 +1,16 @@
 ---
 title: EmendAi Extension
-description: Add revision tracking, selection highlights, and proposal decorations to a Tiptap editor.
+description: The Tiptap extension every emend editor needs.
 icon: BracesIcon
 ---
 
-`EmendAi` is a Tiptap extension backed by one ProseMirror plugin. It tracks
-document revisions and owns the temporary decorations used during capture and
-proposal review.
+`EmendAi` is the Tiptap extension that lets emend work with your editor. Every
+editor that uses an emend AI component needs it. It does two things:
+
+- It keeps a version number for your document, so emend knows when a
+  suggestion is out of date.
+- It draws the highlight and the suggestion preview on top of your text,
+  without saving them into the document.
 
 ```ts
 import { EmendAi } from "@emend/ai/tiptap"
@@ -22,25 +26,24 @@ import StarterKit from "@tiptap/starter-kit"
 const extensions = [StarterKit, Markdown, EmendAi]
 ```
 
-The extension has no configuration options. Add it to the same editor passed
-to `useEditorAi` or an Emend registry component.
+It has no options. Add it to the same editor you pass to your AI component or
+to `useEditorAi`.
 
 ## Editor commands
 
+Most apps never call these. The AI components and `useEditorAi` call them for
+you.
+
 ### `showEmendProposal(options)`
 
-Shows proposal decorations for a captured range and revision. It returns
-`false` when the plugin is unavailable, the range is invalid, another proposal
-is active, or the source revision is no longer current.
-
-`useEditorAi` calls this command through the Tiptap adapter. Most applications
-do not need to call it directly.
+Shows a suggestion preview over a range of text. It returns `false` if the
+extension is missing, the range is invalid, another suggestion is already
+showing, or the document has changed since the request.
 
 ### `clearEmendProposal(options?)`
 
-Clears the active proposal decorations. Pass `{ proposalId }` to avoid clearing
-a different proposal, or omit the argument to clear whichever proposal is
-active.
+Removes the suggestion preview. Pass `{ proposalId }` to remove only that
+suggestion, or pass nothing to remove whichever one is showing.
 
 ```ts
 editor.commands.clearEmendProposal({ proposalId })
@@ -50,36 +53,36 @@ editor.commands.clearEmendProposal({ proposalId })
 
 ### `getEmendAiEditorState(editor)`
 
-Returns `null` when the editor is unavailable, destroyed, or missing the
-extension. Otherwise it returns:
+Returns what emend knows about the editor right now, or `null` if the editor
+is missing, destroyed, or does not have the extension.
 
-| Field              | Meaning                                                 |
-| ------------------ | ------------------------------------------------------- |
-| `revisionCounter`  | Increments after every document-changing transaction.   |
-| `activeProposalId` | Proposal currently represented by decorations.          |
-| `targetRange`      | ProseMirror range captured for the active proposal.     |
-| `sourceRevision`   | Counter and fingerprint captured with the request.      |
-| `stale`            | The document changed while that proposal was open.      |
-| `previewKind`      | `supported-markdown`, `plain-text-fallback`, or `null`. |
+| Field              | Meaning                                                   |
+| ------------------ | --------------------------------------------------------- |
+| `revisionCounter`  | The document version. Goes up by one on every change.     |
+| `activeProposalId` | The ID of the suggestion being previewed.                 |
+| `targetRange`      | Where in the document the suggestion will go.             |
+| `sourceRevision`   | The document version when the request was sent.           |
+| `stale`            | `true` if the document changed while the suggestion was showing. |
+| `previewKind`      | `supported-markdown`, `plain-text-fallback`, or `null`.   |
 
 ### `setEmendSelectionDecoration(editor, range)`
 
-Shows a temporary selection highlight while an action is being prepared. Pass
-`null` to clear it. The helper returns `false` for invalid ranges, missing
-editors, or when proposal review already owns the decoration layer.
+Highlights the selected text while the AI is working, so it stays visible
+after the editor loses focus. Pass `null` to remove it. Returns `false` if the
+range is invalid, the editor is missing, or a suggestion is already showing.
 
-## Revision behavior
+## When a suggestion goes out of date
 
-Any transaction with `docChanged` increments the revision counter. If a
-proposal is active, Emend clears its decorations and marks it stale. Cursor and
-selection movement alone do not make a proposal stale.
+Every change to the document raises the version number. If a suggestion is
+showing when that happens, emend removes the preview and marks it out of date.
+Moving the cursor or changing the selection does not count as a change.
 
-## Low-level adapter
+## Using emend without React
 
-`createEmendTiptapAdapter(editor, options?)` exposes the capture, preparation,
-show, hide, Accept, Reject, state, and cleanup operations orchestrated by
-`useEditorAi`. Use it only when integrating outside React or implementing a
-custom session lifecycle.
+`createEmendTiptapAdapter(editor, options?)` gives you the building blocks that
+`useEditorAi` uses: reading text, checking the answer, showing and hiding the
+preview, and Accept and Reject. Only use it if you are not using React, or you
+need full control over each step.
 
 ```ts
 import { createEmendTiptapAdapter } from "@emend/ai/tiptap"
@@ -92,10 +95,9 @@ const adapter = createEmendTiptapAdapter(editor, {
 })
 ```
 
-`contextProjection` accepts a plain-text string or a callback that receives the
-captured context. Use the callback when the projection must reflect the
-document at request time, such as an editor with nodes that have no Markdown
-serialization.
+`contextProjection` is plain text to send to the AI when part of your document
+cannot be turned into Markdown. Pass a string, or a function that builds the
+text from the document when each request starts.
 
-Continue to [`useEditorAi`](/docs/api-reference/use-editor-ai) for the standard
-React integration.
+For React apps, use [`useEditorAi`](/docs/api-reference/use-editor-ai)
+instead.

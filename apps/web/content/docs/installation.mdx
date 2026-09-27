@@ -1,36 +1,47 @@
 ---
 title: Installation
-description: Prepare a Next.js and Tiptap app for the Emend registry and runtime package.
+description: Set up your Next.js app and install emend in three steps.
 icon: InstallingUpdates02Icon
 ---
 
-Emend uses two pieces together: the Shadcn registry copies the UI source into
-your project, while `@emend/ai` supplies the protocol, controller, Tiptap
-integration, and transports shared by every AI surface.
+emend comes in two parts:
 
-<Callout type="warn" title="Public installation is not available yet">
-  `@emend/ai` remains unpublished. Registry commands that include AI will not
-  complete from the public npm registry until the preview package is released.
-  The same flow is verified today with a packed package in clean consumer
-  fixtures.
+- **The AI components** (Bubble Menu, Composer, AI Assistant). The Shadcn CLI
+  copies their source code into your project, so you can edit them like your
+  own files.
+- **The `@emend/ai` package.** An npm package that does the work behind the
+  components: it talks to your server, streams the AI response, and applies
+  changes to your editor.
+
+<Callout type="warn" title="Not on npm yet">
+  `@emend/ai` is not published to npm yet, so the install commands below will
+  not work until it is released. We test the same steps with a local build of
+  the package.
 </Callout>
 
-## Prerequisites
+<include>../partials/nextjs-only.mdx</include>
 
-- Next.js App Router and React 19
-- Tiptap packages aligned to `3.30.1`
-- Shadcn initialized with Tailwind CSS 4
+## Before you start
+
+Make sure your project has everything below before you install emend.
+
+- Next.js with the App Router, and React 19
+- Tiptap `3.30.1` (all `@tiptap/*` packages on the same version)
+- Shadcn set up with Tailwind CSS 4 (run `npx shadcn@latest init` if you have
+  not)
 - Node.js `24.19.0` or later
-- A server route for any AI-enabled surface
+- A server route that calls the AI model. You add this later with
+  [one command](/docs/vercel-ai-gateway).
 
 ## Set up your project
 
 <Steps>
 <Step>
 
-### Add the registry
+### Tell Shadcn where to find emend
 
-Add the `@emend` namespace to the `components.json` that Shadcn created:
+Open the `components.json` file that Shadcn created and add the `@emend`
+registry:
 
 ```jsonc title="components.json"
 {
@@ -43,16 +54,15 @@ Add the `@emend` namespace to the `components.json` that Shadcn created:
 }
 ```
 
-Use `http://127.0.0.1:3000/r/{name}.json` instead when working against a local
-checkout of this repository.
+If you are running the emend repository locally, use
+`http://127.0.0.1:3000/r/{name}.json` instead.
 
 </Step>
 <Step>
 
-### Install the runtime
+### Install the package
 
-Install the `@emend/ai` runtime with the package manager you use in your
-project.
+Install `@emend/ai` with your package manager:
 
 ```npm
 npm install @emend/ai
@@ -61,42 +71,41 @@ npm install @emend/ai
 </Step>
 <Step>
 
-### Add one registry item
+### Add your first component
 
-The Bubble Menu is the smallest AI-enabled starting point:
+Start with the Bubble Menu. It is the simplest one:
 
 ```npm
 npx shadcn@latest add @emend/ai-bubble-menu
 ```
 
-Shadcn reads the generated registry item, installs only its declared
-dependencies, and copies the component into
-`components/emend/ai-bubble-menu`. The copied UI belongs to your application;
-shared editing behavior continues to come from `@emend/ai`.
+This copies the component into `components/emend/ai-bubble-menu` and installs
+anything it needs. The copied files are yours to change. The AI logic stays in
+`@emend/ai`, so you get fixes by updating the package.
 
 </Step>
 </Steps>
 
-## Expected result
+## What you should see
 
-You should have editable component source under `components/emend`, normal
-Shadcn primitives under `components/ui`, and no dependency on Emend's private
-monorepo packages.
+- A new `components/emend` folder with the component files
+- Any Shadcn building blocks it uses (buttons, popovers) in `components/ui`
+- `@emend/ai` in your `package.json`
 
-## Choose your path
+## Next, pick your path
 
 <PathCards>
   <PathCard
     icon="PuzzleIcon"
     label="Existing editor"
     title="I already have a Tiptap editor"
-    description="Keep your editor and add one Emend AI surface to it."
-    cta="Add Emend to your editor"
+    description="Keep your editor and add one or more emend AI surfaces to it."
+    cta="Add emend to your editor"
     href="/docs/existing-tiptap-editor"
   >
     - Your schema, extensions, toolbar, and persistence stay as they are
     - Add the Bubble Menu, Composer, or AI Assistant
-    - Connect one server route for AI responses
+    - Add one server route that talks to the AI model
   </PathCard>
   <PathCard
     icon="PencilEdit02Icon"
@@ -106,7 +115,7 @@ monorepo packages.
     cta="Copy the editor starter"
     href="/docs/emend-editor-starter"
   >
-    - A full editor with toolbar, formatting, tables, and a save boundary
+    - A full editor with a toolbar, formatting, tables, and saving
     - Start with no AI or one of the three AI surfaces
     - The copied source is yours to adapt
   </PathCard>

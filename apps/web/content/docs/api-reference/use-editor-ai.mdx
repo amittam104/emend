@@ -1,11 +1,12 @@
 ---
 title: useEditorAi
-description: Run Emend AI requests and manage streaming, proposals, review, and recovery in React.
+description: The React hook that runs AI requests and gives you the answer, preview, and errors.
 icon: FunctionIcon
 ---
 
-`useEditorAi` connects one Tiptap editor, one transport, and Emend's controller
-to React state.
+`useEditorAi` is the React hook behind all the AI components. Use it if you want
+to build your own AI UI. You give it your editor and a transport, and it gives
+you methods like `run` and `accept`, plus state like the streamed answer.
 
 ```ts
 import { useEditorAi } from "@emend/ai/react"
@@ -26,54 +27,54 @@ interface UseEditorAiOptions {
 
 | Option              | Required | Purpose                                                                                                                                              |
 | ------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `editor`            | Yes      | The live Tiptap editor, or `null` while it initializes.                                                                                              |
-| `transport`         | Yes      | Sends requests and yields validated stream events.                                                                                                   |
-| `previewMode`       | Yes      | Shows proposal decorations inline or prepares them for a card.                                                                                       |
-| `limits`            | No       | Overrides client request limits before a request is sent.                                                                                            |
-| `linkProtocols`     | No       | Adds trusted URL protocols to proposal preparation.                                                                                                  |
-| `contextProjection` | No       | Plain-text context used when the document cannot be serialized as Markdown. A callback receives the captured context and runs when a request starts. |
+| `editor`            | Yes      | Your Tiptap editor, or `null` while it is loading.                                                                                                   |
+| `transport`         | Yes      | Sends requests to your server. See [Transports](/docs/transports).                                                                                   |
+| `previewMode`       | Yes      | `inline` shows the suggestion inside the editor. `card` lets you show it in your own UI.                                                             |
+| `limits`            | No       | Changes the maximum request sizes.                                                                                                                   |
+| `linkProtocols`     | No       | Extra link types to allow in suggestions, besides `http` and `https`.                                                                                |
+| `contextProjection` | No       | Plain text to send to the AI when the document cannot be turned into Markdown. Pass a string, or a function that builds the text when a request starts. |
 
-<Callout type="info" title="Keep the transport stable">
-  Create the transport outside the component or memoize it. A new transport
-  reference rebuilds the editor AI session.
+<Callout type="info" title="Create the transport once">
+  Create the transport outside your component, or wrap it in `useMemo`. If you
+  create a new one on every render, the hook starts over each time.
 </Callout>
 
-## Result state
+## What the hook returns
 
 | Field                   | Type                             | Meaning                                                                |
 | ----------------------- | -------------------------------- | ---------------------------------------------------------------------- |
-| `state`                 | `EmendAiState`                   | `idle`, `submitting`, `streaming`, `reviewing`, `error`, or `aborted`. |
-| `activeRequest`         | `EmendAiRequest \| null`         | The request currently owned by the session.                            |
-| `streamedMarkdown`      | `string`                         | Text received so far for the active request.                           |
-| `informationalMarkdown` | `string`                         | Completed Ask output.                                                  |
-| `streamCompleted`       | `boolean`                        | Whether the active stream reached a valid `done` event.                |
-| `pendingProposal`       | `EmendProposal \| null`          | Completed Edit output waiting for review.                              |
-| `proposalMarkdown`      | `string \| null`                 | Review Markdown, including local edits to the proposal.                |
-| `preparation`           | `EmendTiptapPreparation \| null` | Supported, plain-text fallback, or blocked preparation.                |
-| `error`                 | `EmendAiError \| null`           | Request or transport failure.                                          |
-| `reviewError`           | `EmendAiError \| null`           | Preparation, preview, Accept, or Reject failure.                       |
-| `editorState`           | `EmendTiptapEditorState \| null` | Revision and active-decoration state.                                  |
-| `stale`                 | `boolean`                        | Whether the document changed after capture.                            |
+| `state`                 | `EmendAiState`                   | What is happening now: `idle`, `submitting`, `streaming`, `reviewing`, `error`, or `aborted`. |
+| `activeRequest`         | `EmendAiRequest \| null`         | The request that is running now.                                       |
+| `streamedMarkdown`      | `string`                         | The answer received so far.                                            |
+| `informationalMarkdown` | `string`                         | The finished answer to a question.                                     |
+| `streamCompleted`       | `boolean`                        | Whether the whole answer has arrived.                                  |
+| `pendingProposal`       | `EmendProposal \| null`          | The finished edit suggestion, waiting for Accept or Reject.            |
+| `proposalMarkdown`      | `string \| null`                 | The suggestion's text, including any changes the user made to it.      |
+| `preparation`           | `EmendTiptapPreparation \| null` | Whether the suggestion can be applied, applied as plain text, or is blocked. See [Content and Proposals](/docs/content-and-proposals#step-2-emend-checks-the-answer). |
+| `error`                 | `EmendAiError \| null`           | An error from sending the request or receiving the answer.             |
+| `reviewError`           | `EmendAiError \| null`           | An error from previewing, accepting, or rejecting.                     |
+| `editorState`           | `EmendTiptapEditorState \| null` | The document version and the preview currently shown.                  |
+| `stale`                 | `boolean`                        | `true` if the document changed after the request, so the suggestion is out of date. |
 
 ## Methods
 
 | Method                         | Purpose                                                        |
 | ------------------------------ | -------------------------------------------------------------- |
-| `run(actionId, options?)`      | Capture the editor and run one built-in or `custom` action.    |
-| `stop()`                       | Abort the active request.                                      |
-| `retry()`                      | Re-run the last failed or aborted request.                     |
-| `regenerate()`                 | Capture again and generate a fresh result for the last action. |
-| `setProposalMarkdown(value)`   | Edit and re-prepare the proposal before Accept.                |
-| `accept(confirm?)`             | Apply the prepared proposal as one Tiptap change.              |
-| `reject()`                     | Clear the proposal without changing the document.              |
-| `dismissInformationalResult()` | Clear a completed Ask result.                                  |
-| `copy()`                       | Return the best available Ask or Edit Markdown.                |
+| `run(actionId, options?)`      | Run an action, such as `"improve"`, or `"custom"` for your own instruction. |
+| `stop()`                       | Stop the request that is running.                              |
+| `retry()`                      | Run the last failed or stopped request again.                  |
+| `regenerate()`                 | Ask for a new answer to the last action, using the current text. |
+| `setProposalMarkdown(value)`   | Change the suggestion's text before accepting it.              |
+| `accept(confirm?)`             | Apply the suggestion as one change the user can undo.          |
+| `reject()`                     | Remove the suggestion without changing the document.           |
+| `dismissInformationalResult()` | Hide a finished answer to a question.                          |
+| `copy()`                       | Get the text of the current answer or suggestion.              |
 
-`accept` and `reject` return an `EmendTiptapApplyResult`. Request failures are
-reported through `state` and `error`; `run`, `retry`, and `regenerate` resolve
-after the controller finishes handling the stream.
+`accept` and `reject` return an `EmendTiptapApplyResult` that says whether they
+worked. `run`, `retry`, and `regenerate` finish when the whole answer has
+arrived. They do not throw. If something fails, check `state` and `error`.
 
-## Minimal integration
+## Example
 
 ```tsx
 "use client"
@@ -120,6 +121,6 @@ export function EditorWithAi() {
 }
 ```
 
-The editor must include the [`EmendAi` extension](/docs/api-reference/emend-ai-extension).
-Use [error codes](/docs/api-reference/error-codes) instead of matching message
-text when the UI needs code-specific recovery.
+Your editor must include the [`EmendAi` extension](/docs/api-reference/emend-ai-extension).
+To show a different message for each error, check `error.code` (see
+[error codes](/docs/api-reference/error-codes)), not the message text.

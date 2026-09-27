@@ -1,41 +1,46 @@
 ---
 title: Introduction
-description: Add reviewable AI writing tools to Tiptap without giving up control of the editor, document, or server.
+description: Add AI writing tools to your Tiptap editor. You review every change, and your editor, documents, and server stay yours.
 icon: BookOpen02Icon
 ---
 
-<DocsHero />
-
-Emend is an open-source, MIT-licensed AI editing layer for Tiptap and
-ProseMirror. It combines a provider-neutral runtime with editable Shadcn
-registry components, while keeping generated edits separate from the live
-document until the person writing accepts them.
-
-<Callout type="warn" title="Pre-release documentation">
-  The registry is ready, but `@emend/ai` is not published to npm yet. Commands
-  in these docs describe the verified preview flow and will work publicly after
-  the package is released.
+<Callout type="warn" title="emend is in beta">
+  APIs and components may still change between releases, and `@emend/ai` is not
+  published to npm yet. Test it thoroughly before relying on it in production.
 </Callout>
 
-## What Emend gives you
+<DocsHero />
 
-- **Three AI surfaces:** a selection-aware Bubble Menu, a Composer for focused
-  prompts, and a document-aware AI Assistant.
-- **Reviewable changes:** Ask returns an answer. Edit creates a proposal that
-  can be accepted, rejected, or left untouched.
-- **Provider-neutral infrastructure:** your server route chooses the model,
-  provider, authentication, rate limits, and logging.
-- **Two ways to start:** add one surface to an editor you already own, or copy a
-  complete editor starter into your app.
+emend is an open-source, MIT-licensed AI editing layer for rich text editors
+built with Tiptap. It combines a provider-neutral runtime with editable AI
+components that you install through the Shadcn registry CLI. AI changes stay
+out of your document until you accept them.
+
+## What emend gives you
+
+- **Three AI surfaces, one runtime:** the Bubble Menu appears next to selected
+  text, the Composer is a prompt bar under your document, and the AI Assistant
+  is a floating chat panel. All three can edit your writing or answer
+  questions.
+- **Changes you review first:** when AI edits your text, you see the change
+  before it lands and choose to accept or reject it.
+- **Your own server route:** the route decides the model, provider,
+  authentication, rate limits, and logging. emend currently ships a recipe for
+  the Vercel AI SDK, with more providers planned.
+- **Two ways to start:** add one or more AI surfaces to an editor you already
+  own, or copy a complete editor starter into your app.
 
 ## Choose an integration path
 
-| Starting point         | What you keep                                     | What Emend adds                                     |
+| Starting point         | What you keep                                     | What emend adds                                     |
 | ---------------------- | ------------------------------------------------- | --------------------------------------------------- |
 | Existing Tiptap editor | Your schema, extensions, toolbar, and persistence | One or more AI surfaces and the review runtime      |
-| Emend editor starter   | Full ownership of the copied component source     | A complete editor with your choice of AI experience |
+| emend editor starter   | Full ownership of the copied component source     | A complete editor with your choice of AI experience |
 
-## How Emend is distributed
+Both paths are written for Next.js for now. Support for other React frameworks
+is coming soon.
+
+## How emend is distributed
 
 | Part          | Distribution        | Purpose                                                          |
 | ------------- | ------------------- | ---------------------------------------------------------------- |
@@ -43,39 +48,44 @@ document until the person writing accepts them.
 | UI components | Shadcn registry     | Bubble Menu, Composer, AI Assistant, and editor starters         |
 | Server recipe | Shadcn registry     | Consumer-owned Vercel AI Gateway route                           |
 
+## How emend works
+
 ### The editing flow
 
-1. Your Tiptap editor captures a target and any read-only context.
-2. Emend sends Markdown through a transport to your server route.
-3. Ask displays an answer; Edit prepares a proposal and temporary preview.
-4. Accept applies one undoable Tiptap change. Reject leaves the document as it
-   was.
+1. Select text and pick an action or write your own instruction to edit it. Or
+   select nothing and type a question to chat with the AI.
+2. emend sends the relevant part of your document to your server route, which
+   calls the model.
+3. For an edit, the proposed change appears as a preview in your document. For
+   a question, the answer appears in the AI surface.
+4. Accept applies the change as a single step you can undo. Reject leaves the
+   document as it was.
 
-## What stays yours
+### What stays yours
 
 The editor, copied component source, server route, provider credentials,
 authentication, persistence, and deployment remain inside your application.
-Emend does not replace your product's permissions, content model, or backend.
+emend does not replace your product's permissions, content model, or backend.
 
-## Explore the system
+## What to read next
 
 <Cards>
   <Card
     icon="WorkflowSquare10Icon"
-    title="How Emend works"
-    description="Understand the runtime, copied UI, transport, server route, and review boundary."
+    title="How emend works"
+    description="See what happens between typing a request and seeing the change in your editor."
     href="/docs/how-emend-works"
   />
   <Card
     icon="ApiIcon"
     title="API reference"
-    description="Use the React hook, Tiptap extension, transports, handler, actions, and typed errors."
+    description="Learn about the React hook, Tiptap extension, transports, server handler, actions, and error types."
     href="/docs/api-reference"
   />
   <Card
     icon="InstallingUpdates02Icon"
-    title="Install Emend"
-    description="Check the prerequisites and understand what the registry copies."
+    title="Install emend"
+    description="Check the prerequisites, install emend, and add the AI components to your app."
     href="/docs/installation"
   />
   <Card

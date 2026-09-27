@@ -1,12 +1,13 @@
 ---
 title: Action Manifest
-description: Understand the built-in action constraints and server-side manifest helpers.
+description: The built-in AI actions, and the rules for what each one can do.
 icon: BracesIcon
 ---
 
-The action manifest is the policy table used to validate an Emend request. It
-defines which interaction modes, scopes, mutations, selections, and
-instructions are valid for each action ID.
+An **action** is something the AI can do, like Improve or Shorten. The **action
+manifest** is a list of every action and its rules: whether it needs selected
+text, what it can read, and what it can change. emend checks every request
+against this list.
 
 ```ts
 import { DEFAULT_ACTION_MANIFEST, getAction, validateAction } from "@emend/ai"
@@ -14,21 +15,21 @@ import { DEFAULT_ACTION_MANIFEST, getAction, validateAction } from "@emend/ai"
 
 ## Built-in actions
 
-| Action ID     | Mode        | Target requirement     | Mutation                 |
-| ------------- | ----------- | ---------------------- | ------------------------ |
-| `improve`     | Edit        | Non-empty selection    | Replace selection        |
-| `shorten`     | Edit        | Non-empty selection    | Replace selection        |
-| `expand`      | Edit        | Non-empty selection    | Replace selection        |
-| `fix-grammar` | Edit        | Non-empty selection    | Replace selection        |
-| `continue`    | Edit        | Collapsed selection    | Insert at cursor         |
-| `summarize`   | Ask         | Any supported scope    | None                     |
-| `custom`      | Ask or Edit | Depends on run options | Any compatible operation |
+| Action ID     | Kind              | Needs                      | Changes                  |
+| ------------- | ----------------- | -------------------------- | ------------------------ |
+| `improve`     | Edit              | Selected text              | Replaces the selection   |
+| `shorten`     | Edit              | Selected text              | Replaces the selection   |
+| `expand`      | Edit              | Selected text              | Replaces the selection   |
+| `fix-grammar` | Edit              | Selected text              | Replaces the selection   |
+| `continue`    | Edit              | A cursor, no selection     | Inserts at the cursor    |
+| `summarize`   | Question          | Anything                   | Nothing                  |
+| `custom`      | Question or edit  | Depends on how you run it  | What you choose          |
 
-All built-in actions may read selection, current-block, or document context.
-`custom` requires a non-empty instruction. When using `custom` in Edit mode,
-the client must explicitly supply its target scope and mutation operation.
+Every built-in action can read the selection, the current paragraph, or the
+whole document. `custom` needs an instruction, such as "make this friendlier".
+If you use `custom` to edit, you must also say what it may change.
 
-## Manifest entry
+## Shape of an action
 
 ```ts
 interface EmendActionManifestEntry {
@@ -45,10 +46,10 @@ interface EmendActionManifestEntry {
 }
 ```
 
-## Restrict the server manifest
+## Allow only some actions on your server
 
-Pass a manifest to `createEmendAiHandler` to restrict the actions accepted by
-that route.
+Pass a shorter list to `createEmendAiHandler`. Requests for any other action are
+rejected.
 
 ```ts
 import { DEFAULT_ACTION_MANIFEST } from "@emend/ai"
@@ -65,18 +66,16 @@ export const POST = createEmendAiHandler({
 })
 ```
 
-<Callout type="warn" title="Custom action IDs are not a useEditorAi API yet">
-  The V0 React controller resolves the built-in IDs plus `custom` before it
-  sends a request. A server manifest can validate additional IDs, but
-  `useEditorAi` cannot initiate those IDs in the current source. Use the
-  `custom` action with an instruction until client-side custom manifests are
-  supported.
+<Callout type="warn" title="You cannot add new action IDs yet">
+  `useEditorAi` can only run the built-in actions and `custom`. Your server can
+  accept other action IDs, but nothing in the browser can send them yet. For
+  now, use `custom` with an instruction.
 </Callout>
 
 ## `getAction(actionId, manifest?)`
 
-Returns the matching manifest entry or `undefined`. When `manifest` is omitted,
-it searches `DEFAULT_ACTION_MANIFEST`.
+Finds an action by ID, or returns `undefined`. Searches the built-in list
+unless you pass your own.
 
 ```ts
 const action = getAction("improve")
@@ -84,10 +83,10 @@ const action = getAction("improve")
 
 ## `validateAction(input, manifest?)`
 
-Checks an action ID, interaction mode, scopes, mutation, range, and instruction.
-The result is either `{ ok: true, action }` or `{ ok: false, reason }`.
+Checks whether a request follows an action's rules. Returns
+`{ ok: true, action }` if it does, or `{ ok: false, reason }` if not.
 
-Failure reasons are stable string values:
+The possible reasons are:
 
 - `unknown-action`
 - `interaction-mode-not-allowed`
@@ -97,4 +96,4 @@ Failure reasons are stable string values:
 - `selection-requirement-not-met`
 - `instruction-required`
 
-The server handler runs this validation as part of parsing every request.
+The server handler runs this check on every request for you.

@@ -1,59 +1,64 @@
 ---
 title: API Reference
-description: Use the public React, Tiptap, transport, server, action, and error APIs in the Emend runtime.
+description: Every function, hook, and type that the @emend/ai package exports.
 icon: ApiIcon
 ---
 
-The Emend runtime is split into focused entry points so client components,
-Tiptap integrations, and server routes import only the layer they use.
+This section lists what the `@emend/ai` package gives you. If you use the
+ready-made AI components, you only need a few of these. Read on if you want to
+build your own AI UI or server route.
 
-<Callout type="warn" title="Preview API">
-  `@emend/ai` is not published to npm yet. This reference describes the API in
-  the current repository and the packed package verified in consumer fixtures.
+<Callout type="warn" title="Not on npm yet">
+  `@emend/ai` is not published to npm yet. This reference matches the current
+  code in the repository.
 </Callout>
 
-## Entry points
+## Where to import from
 
-| Entry point           | Primary use                                              |
-| --------------------- | -------------------------------------------------------- |
-| `@emend/ai/react`     | React session lifecycle with `useEditorAi`               |
-| `@emend/ai/tiptap`    | Tiptap extension, adapter, capture, preview, and apply   |
-| `@emend/ai/transport` | Fetch/SSE and deterministic mock transports              |
-| `@emend/ai/server`    | Web Platform handler, SSE helpers, and mock generation   |
-| `@emend/ai/protocol`  | Requests, stream events, actions, controller, and errors |
-| `@emend/ai`           | Common exports from the public runtime                   |
+The package is split into parts, so browser code and server code only load
+what they need.
 
-## Start with the integration APIs
+| Import from           | What it has                                                        |
+| --------------------- | ------------------------------------------------------------------ |
+| `@emend/ai/react`     | `useEditorAi`, the React hook for running AI requests             |
+| `@emend/ai/tiptap`    | The `EmendAi` Tiptap extension, plus preview and apply helpers     |
+| `@emend/ai/transport` | Transports that send requests from the browser, including a mock  |
+| `@emend/ai/server`    | The server route handler and a mock AI for testing                |
+| `@emend/ai/protocol`  | Types for requests, streamed answers, actions, and errors         |
+| `@emend/ai`           | The most common exports from all of the above                     |
+
+## Start here
 
 <Cards>
   <Card
     icon="FunctionIcon"
     title="useEditorAi"
-    description="Run requests and manage streaming, proposal review, stale state, and errors in React."
+    description="The React hook that runs AI requests and tracks the answer, preview, and errors."
     href="/docs/api-reference/use-editor-ai"
   />
   <Card
     icon="PuzzleIcon"
     title="EmendAi extension"
-    description="Install revision tracking and proposal decorations in a Tiptap editor."
+    description="The Tiptap extension every emend editor needs."
     href="/docs/api-reference/emend-ai-extension"
   />
   <Card
     icon="Plug01Icon"
     title="createFetchTransport"
-    description="Connect the browser to an Emend-compatible JSON and SSE route."
+    description="Send AI requests from the browser to your server route."
     href="/docs/api-reference/create-fetch-transport"
   />
   <Card
     icon="ServerStack01Icon"
     title="createEmendAiHandler"
-    description="Validate, authorize, generate, and stream from a Web Platform route."
+    description="Build the server route that checks requests and calls the AI model."
     href="/docs/api-reference/create-emend-ai-handler"
   />
 </Cards>
 
-## Protocol references
+## Also useful
 
-Use the [action manifest](/docs/api-reference/action-manifest) to understand
-built-in action constraints and [error codes](/docs/api-reference/error-codes)
-to build recovery UI around stable typed failures.
+- [Action manifest](/docs/api-reference/action-manifest): the built-in actions
+  like Improve and Shorten, and what each one is allowed to do.
+- [Error codes](/docs/api-reference/error-codes): every error emend can return,
+  and what to show the user.

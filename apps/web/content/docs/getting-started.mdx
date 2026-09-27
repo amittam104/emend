@@ -1,24 +1,25 @@
 ---
 title: Getting Started
-description: Choose the shortest Emend setup path for the editor you have today.
+description: Pick the setup path that matches your app.
 icon: Rocket02Icon
 ---
 
-You do not need to understand Emend's internal architecture before choosing a
-starting point.
+There are two ways to use emend. Pick the one that matches your app.
+
+<include>../partials/nextjs-only.mdx</include>
 
 <PathCards>
   <PathCard
     icon="PuzzleIcon"
     label="Existing editor"
     title="I already have a Tiptap editor"
-    description="Keep your editor and add one Emend AI surface to it."
-    cta="Add Emend to your editor"
+    description="Keep your editor and add one or more emend AI surfaces to it."
+    cta="Add emend to your editor"
     href="/docs/existing-tiptap-editor"
   >
     - Your schema, extensions, toolbar, and persistence stay as they are
     - Add the Bubble Menu, Composer, or AI Assistant
-    - Connect one server route for AI responses
+    - Add one server route that talks to the AI model
   </PathCard>
   <PathCard
     icon="PencilEdit02Icon"
@@ -28,25 +29,28 @@ starting point.
     cta="Copy the editor starter"
     href="/docs/emend-editor-starter"
   >
-    - A full editor with toolbar, formatting, tables, and a save boundary
+    - A full editor with a toolbar, formatting, tables, and saving
     - Start with no AI or one of the three AI surfaces
     - The copied source is yours to adapt
   </PathCard>
 </PathCards>
 
-Choose the existing-editor path when your app already owns its Tiptap schema,
-extensions, toolbar, and persistence. Choose the starter when you want a
-complete editor surface that you can copy and adapt.
+**Already have a Tiptap editor?** Keep it and add AI to it.
 
-## Preview the default editor
+**Starting from scratch?** Copy the complete editor starter and change it to fit
+your app.
 
-Select text in the editor to open the Bubble Menu. Its AI responses stream from
-this site's `/api/editor-ai` route, which runs the Vercel AI Gateway recipe on
-OpenRouter's free models.
+## Try it here
+
+Select some text in the editor below. The Bubble Menu opens next to it. Pick an
+action and watch the AI suggest a change. This demo uses free models through
+OpenRouter.
 
 <EditorDemo />
 
-## Expected result
+## What happens when you use it
 
-An Edit action shows a proposal before it changes the document. Accept applies
-the proposal as one undoable change; Reject keeps the original content.
+1. The AI's suggested change shows up as a preview. Your text is not changed
+   yet.
+2. Click **Accept** to apply it. You can undo it like any other edit.
+3. Click **Reject** to throw it away. Your text stays as it was.

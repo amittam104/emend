@@ -1,88 +1,99 @@
 ---
 title: Troubleshooting and Limitations
-description: Diagnose common installation, editor, transport, proposal, and schema failures, and understand the V0 boundary.
+description: Fix common problems, and see what emend does not do yet.
 ---
 
-Start with the error shown by the Emend surface. Typed runtime errors describe
-the boundary that rejected the request or proposal.
+Most problems show an error message in the AI component. Find it below. Each
+entry says what went wrong and how to fix it.
 
-## The registry command cannot install `@emend/ai`
+## The install command fails on `@emend/ai`
 
-**Cause:** the runtime package is not published to npm yet.
+**Why:** `@emend/ai` is not published to npm yet.
 
-**Fix:** wait for the preview release for a public install. Repository
-contributors should use the packed-package consumer fixtures; do not replace
-the dependency with a private workspace alias in a consumer app.
+**Fix:** wait for the release. If you are working on the emend repository
+itself, use the test apps in the repository, which use a local build of the
+package.
 
-## The Bubble Menu does not appear
+## The Bubble Menu does not open
 
-**Check:**
+**Check that:**
 
-1. The editor has a non-empty text selection and still has focus.
-2. The same editor includes `EmendAi` and is passed to `AiBubbleMenu`.
-3. A pending review is not already holding the surface open in another state.
-4. The editor is editable and has not been destroyed.
+1. You selected some text, and the editor still has focus.
+2. Your editor includes `EmendAi`, and you passed that same editor to
+   `AiBubbleMenu`.
+3. There is no suggestion already waiting for Accept or Reject.
+4. The editor is editable.
 
 ## `editor_not_configured`
 
-**Cause:** the AI session does not have a live Tiptap editor with the Emend
-extension.
+**Why:** the AI component did not get an editor with the `EmendAi` extension.
 
-**Fix:** add `EmendAi` to that editor's extensions, wait until `useEditor`
-returns an instance, and pass that same instance to the AI component.
+**Fix:** add `EmendAi` to your editor's extensions. Wait until `useEditor`
+returns an editor, then pass that same editor to the AI component.
 
 ## `context_too_large` or HTTP `413`
 
-**Cause:** the instruction, target, context, or conversation exceeds the
-runtime request limits.
+**Why:** the request has too much text. This can be the instruction, the
+selected text, the text the AI reads, or a long chat.
 
-**Fix:** reduce the read context, start a new AI Assistant conversation, or choose
-a smaller target. Do not silently truncate the change target.
+**Fix:** select less text, let the AI read less (for example, the current
+paragraph instead of the whole document), or start a new chat in the AI
+Assistant.
 
 ## `stale_revision`
 
-**Cause:** document content changed after the Edit request captured its source.
+**Why:** the document changed after you sent the request, so the suggestion is
+out of date.
 
-**Fix:** reject or dismiss the stale proposal, select the current content, and
-run the request again. A stale proposal cannot be forced through Accept.
+**Fix:** reject the suggestion, select the text again, and run the request
+again. An out-of-date suggestion can never be accepted.
 
-## `schema_unsupported` or a blocked proposal
+## `schema_unsupported` or a blocked suggestion
 
-**Cause:** the target or generated Markdown cannot round-trip through the
-configured Tiptap schema.
+**Why:** the text or the AI's answer contains something your editor cannot
+display.
 
-**Fix:** align the editor's Tiptap packages to `3.30.1`, include the Markdown
-handlers for the content you support, or revise the proposal to use the
-[supported profile](/docs/supported-markdown-and-compatibility). Raw Markdown
-remains available to copy when automatic apply is blocked.
+**Fix:** make sure all your `@tiptap/*` packages are on `3.30.1`, and that your
+editor has the extensions for the content you use (for example, tables). See
+[supported content](/docs/supported-markdown-and-compatibility). You can still
+copy the AI's answer by hand.
 
-## Accept is unavailable
+## The Accept button is disabled
 
-Accept remains unavailable while a response is streaming, when a proposal is
-stale or blocked, or when a whole-document replacement still needs explicit
-confirmation. Resolve the status shown in review rather than bypassing it.
+Accept is disabled when:
 
-## The route returns no stream
+- the AI is still writing its answer;
+- the suggestion is out of date or blocked;
+- the suggestion replaces the whole document and you have not confirmed yet.
 
-Check that the client URL matches the installed route, the request is a `POST`
-with JSON content, the server credential exists, and your authorization layer
-allows the request. The Emend handler returns SSE with
-`text/event-stream; charset=utf-8`.
+The message in the component tells you which one it is.
 
-## V0 limitations
+## The route returns nothing
 
-- `@emend/ai` is not publicly published yet.
-- The verified consumer stack is Next.js App Router, React 19, Tailwind CSS 4,
-  Shadcn, and aligned Tiptap `3.30.1` packages.
-- Automatic apply is limited to the documented Markdown profile and compatible
-  editor schemas. Arbitrary raw HTML and generated images are disabled.
-- Authentication, authorization, rate limiting, persistence, provider billing,
-  and deployment remain consumer-owned.
-- V0 includes one production server recipe: Vercel AI Gateway.
-- **AI Composer** is the current prompt-and-review surface. **Agent Composer**
-  and an **Agentic Editor** are future concepts, not alternate names for the
-  component shipped today.
+Check that:
 
-If the issue is specific to one surface, return to [AI Bubble Menu](/docs/ai-bubble-menu),
-[AI Composer](/docs/ai-composer), or [AI Assistant](/docs/ai-assistant) and
-compare the minimal usage first.
+- the URL in `createFetchTransport` matches your route;
+- the request is a `POST` with JSON;
+- your API key is set on the server;
+- your `authorize` check allows the request.
+
+A working route responds with `text/event-stream; charset=utf-8`.
+
+## What emend does not do yet
+
+- `@emend/ai` is not on npm yet.
+- Only Next.js (App Router) is supported for now, together with React 19,
+  Tailwind CSS 4, Shadcn, and Tiptap `3.30.1`. Other React frameworks may work,
+  but we do not test them yet. Support for them is coming soon.
+- Suggestions can only be applied if they use
+  [supported content](/docs/supported-markdown-and-compatibility). Raw HTML and
+  AI-generated images are not supported.
+- Sign-in, permissions, rate limits, saving, AI costs, and hosting are up to
+  your app.
+- There is one server recipe so far: Vercel AI Gateway.
+- The **AI Composer** is the prompt bar available today. "Agent Composer" and
+  "Agentic Editor" are ideas for the future, not other names for it.
+
+If the problem is with one component, compare your code with the example on its
+page: [AI Bubble Menu](/docs/ai-bubble-menu), [AI Composer](/docs/ai-composer),
+or [AI Assistant](/docs/ai-assistant).
