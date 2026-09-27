@@ -1,11 +1,12 @@
-Every AI surface sends its requests to a route in your app. The
-[Vercel AI Gateway recipe](/docs/vercel-ai-gateway) installs a ready-made one
-at `app/api/editor-ai/route.ts`.
+The AI components do not call the AI model from the browser. They send each
+request to a server route in your app, and that route calls the model. This
+keeps your API key secret. The [Vercel AI Gateway recipe](/docs/vercel-ai-gateway)
+adds a ready-made route at `app/api/editor-ai/route.ts`.
 
 <Steps>
 <Step>
 
-### Install the route recipe
+### Add the route
 
 ```npm
 npx shadcn@latest add @emend/recipe-vercel-ai-gateway
@@ -20,27 +21,28 @@ npx shadcn@latest add @emend/recipe-vercel-ai-gateway
 AI_GATEWAY_API_KEY=your_server_side_key
 ```
 
-Keep this key on the server: never prefix it with `NEXT_PUBLIC_`. On Vercel
-you can use OIDC instead of a long-lived key.
+Do not start the name with `NEXT_PUBLIC_`. That would send the key to the
+browser. If you deploy on Vercel, you can skip the key and use Vercel OIDC.
 
 </Step>
 <Step>
 
-### Review the installed route
+### Look at the route
 
-The recipe copies this file into your app. `createEmendAiHandler` validates the
-request and streams the answer; `generate` is the only provider-specific part,
-so you can swap the model or use any AI SDK provider.
+This is the file the command adds to your app. `createEmendAiHandler` checks
+each request and streams the answer back. The `generate` function is the only
+part that talks to the AI provider, so change it to use a different model or
+provider.
 
 <include lang="ts" meta='title="app/api/editor-ai/route.ts"'>../../../../registry/recipes/vercel-ai-gateway/route.ts</include>
 
 </Step>
 <Step>
 
-### Point the transport at the route
+### Connect your component to the route
 
-The examples on this page already use this URL. Change it only if you move the
-route.
+A transport tells a component which URL to send requests to. The examples on
+this page already use `/api/editor-ai`. Change it only if you move the route.
 
 ```tsx
 const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code highlight]
@@ -49,5 +51,6 @@ const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code high
 </Step>
 </Steps>
 
-Before you ship, add an `authorize` check and rate limits to the route. See
-[Add your authorization boundary](/docs/vercel-ai-gateway#add-your-authorization-boundary).
+Before you go live, make sure only signed-in users can call the route, and
+limit how often they can call it. See
+[Protect the route](/docs/vercel-ai-gateway#protect-the-route).

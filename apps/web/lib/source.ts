@@ -95,7 +95,7 @@ export function getDocsPageTree(): PageTree.Root {
   const documentation: PageTree.Folder = {
     type: "folder",
     name: "Documentation",
-    description: "Guides for installing, integrating, and shipping Emend.",
+    description: "Guides for installing, integrating, and shipping emend.",
     root: true,
     index: introduction,
     icon: createElement(HugeiconsIcon, {

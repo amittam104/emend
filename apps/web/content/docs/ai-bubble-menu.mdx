@@ -1,16 +1,17 @@
 ---
 title: AI Bubble Menu
-description: Add selection-aware AI edits beside the text a person is already working on.
+description: A small AI menu that opens next to the text you select.
+icon: AiReplaceIcon
 ---
 
-The AI Bubble Menu appears for a non-empty text selection. It offers AI edits
-in a compact bar, shows the proposal inline in the editor, and keeps Keep and
-Discard beside the selection.
+When you select text, the Bubble Menu opens right next to it. Pick an action
+or type what you want, and the AI's suggested change shows up in place. Then
+click **Accept** or **Reject**.
 
-## Live demo
+## Try it
 
-Select the sentence in the editor. Choose a quick edit or describe your own
-edit in the bar. Expand the arrow to see more actions.
+Select the sentence in the editor below. Pick an action like **Improve**, or
+type your own request in the bar. Click the arrow to see more actions.
 
 <EditorDemo variant="bubble" />
 
@@ -20,17 +21,16 @@ edit in the bar. Expand the arrow to see more actions.
 npx shadcn@latest add @emend/ai-bubble-menu
 ```
 
-<Callout type="warn" title="Preview package required">
-  This command depends on the unpublished `@emend/ai` package. It documents the
-  verified consumer flow but will not complete from the public npm registry
-  until the preview release.
+<Callout type="warn" title="Not on npm yet">
+  This command needs the `@emend/ai` package, which is not published to npm
+  yet. It will not work until the package is released.
 </Callout>
 
-## Minimal usage
+## Add it to your editor
 
-Add `EmendAi` to the same Tiptap editor and pass that editor to the copied
-component. Lines marked with **+** are what Emend adds to a standard Tiptap
-editor.
+Add the `EmendAi` and `Markdown` extensions to your editor, then render the
+Bubble Menu with that editor. Lines marked with **+** are the ones to add to a
+normal Tiptap editor.
 
 ```tsx title="components/document-editor.tsx"
 "use client"
@@ -67,27 +67,27 @@ export function DocumentEditor() {
 
 <include>../partials/server-route.mdx</include>
 
-## Important options
+## Props
 
 | Prop         | Default  | Purpose                                                  |
 | ------------ | -------- | -------------------------------------------------------- |
-| `editor`     | Required | The existing Tiptap `Editor` instance.                   |
-| `transport`  | Required | Sends typed Emend requests to your mock or server route. |
-| `showReview` | `true`   | Shows inline proposal decisions in the Bubble Menu.      |
-| `className`  | —        | Extends the copied component's outer surface.            |
+| `editor`     | Required | Your Tiptap editor.                                      |
+| `transport`  | Required | Tells the menu which URL to send AI requests to.         |
+| `showReview` | `true`   | Shows the Accept and Reject buttons in the menu.         |
+| `className`  | -        | Adds your own classes to the menu.                       |
 
-## Behavior notes
+## How it behaves
 
-- Quick actions include Improve, Shorten, Expand, Tone, and Grammar. The compact
-  bar moves extra actions behind the arrow on narrow screens. Every action
-  targets only the selected text.
-- A custom instruction also edits only the selection.
-- A completed proposal appears inline. Keep applies it; Discard removes it.
-- A content-changing transaction makes an open proposal stale. The stale
-  proposal cannot be accepted.
+- The actions are Improve, Shorten, Expand, Tone, and Grammar. On small screens,
+  some of them move behind the arrow.
+- Actions and typed requests only change the text you selected.
+- The suggested change shows up in place. **Accept** applies it. **Reject**
+  removes it.
+- If the text changes while a suggestion is showing, the suggestion is out of
+  date and can no longer be accepted. Run the action again.
 
-## Next step
+## Next
 
-Compare the persistent prompt area in [AI Composer](/docs/ai-composer), or read
-[Content and Proposals](/docs/content-and-proposals) to understand the review
-model.
+See the [AI Composer](/docs/ai-composer) for a prompt bar that stays under your
+document, or read [Content and Proposals](/docs/content-and-proposals) to learn
+how AI suggestions work.

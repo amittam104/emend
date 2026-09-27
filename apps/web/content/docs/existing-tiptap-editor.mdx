@@ -1,28 +1,34 @@
 ---
 title: Existing Tiptap Editor
-description: Add one Emend AI surface to an Editor instance your application already owns.
+description: Add AI to the Tiptap editor you already have, without replacing it.
 ---
 
-Choose this path when your application already creates and owns a Tiptap
-`Editor`.
+Use this guide if your app already has a Tiptap editor. You keep your editor
+as it is and add the Bubble Menu to it. The same steps work for the Composer
+and the AI Assistant.
 
-<Callout type="warn" title="Preview package required">
-  This registry command depends on the unpublished `@emend/ai` package. It is
-  verified with a packed package in the consumer fixture, but it will not
-  complete from the public npm registry yet.
+<Callout type="warn" title="Not on npm yet">
+  This command needs the `@emend/ai` package, which is not published to npm
+  yet. It will not work until the package is released.
 </Callout>
 
-## Prerequisites
+<include>../partials/nextjs-only.mdx</include>
 
-- A client component that creates a Tiptap editor
-- Tiptap `3.30.1` packages, including `@tiptap/markdown`
-- Shadcn initialized and the `@emend` registry configured
-- An Emend-compatible route such as `/api/editor-ai`
+## Before you start
+
+Make sure your project has everything below before you add AI to your editor.
+
+- A component that creates your Tiptap editor (with `"use client"` at the top)
+- Tiptap `3.30.1`, including `@tiptap/markdown`
+- The `@emend` registry added to `components.json` (see
+  [Installation](/docs/installation))
+- A server route for AI requests, such as `/api/editor-ai`. The
+  [last section](#connect-the-server-route) shows how to add one.
 
 ## Add the Bubble Menu
 
-These steps change one file: the client component that already creates your
-editor. Lines marked with **+** are the ones to add in that step.
+You only change one file: the component that creates your editor. Lines
+marked with **+** are the ones to add.
 
 <Steps>
 <Step>
@@ -38,10 +44,11 @@ This copies the Bubble Menu into `components/emend/ai-bubble-menu`.
 </Step>
 <Step>
 
-### Add the Emend extension
+### Add the emend extension
 
-Install `EmendAi` beside the extensions your editor already uses. `Markdown`
-lets Emend read and write the document as Markdown.
+Add `EmendAi` and `Markdown` to your editor's extensions. `EmendAi` lets the AI
+components work with your editor. `Markdown` lets emend send your text to the
+AI as Markdown and turn the answer back into editor content.
 
 ```tsx title="components/document-editor.tsx"
 "use client"
@@ -55,7 +62,7 @@ export function DocumentEditor() {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [StarterKit, Markdown, EmendAi], // [!code ++]
-    content: "<p>Select this sentence and ask Emend to improve it.</p>",
+    content: "<p>Select this sentence and ask emend to improve it.</p>",
   })
 
   if (!editor) return null
@@ -71,10 +78,10 @@ export function DocumentEditor() {
 </Step>
 <Step>
 
-### Render the Bubble Menu
+### Show the Bubble Menu
 
-Create one transport for your route and pass the same `editor` to the copied
-component.
+Create a transport (it tells the component which URL to send AI requests to),
+then render the Bubble Menu with your `editor`.
 
 ```tsx title="components/document-editor.tsx"
 "use client"
@@ -92,7 +99,7 @@ export function DocumentEditor() {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [StarterKit, Markdown, EmendAi],
-    content: "<p>Select this sentence and ask Emend to improve it.</p>",
+    content: "<p>Select this sentence and ask emend to improve it.</p>",
   })
 
   if (!editor) return null
@@ -107,8 +114,9 @@ export function DocumentEditor() {
 }
 ```
 
-Do not create a second editor for the AI surface. Capture, previews, stale
-checks, and Accept all depend on the same live `Editor` instance.
+Pass the same `editor` you already render. Do not create a second one for the
+AI. The Bubble Menu needs your real editor to read the selected text and show
+its preview there.
 
 </Step>
 </Steps>
@@ -117,19 +125,17 @@ checks, and Accept all depend on the same live `Editor` instance.
 
 <include>../partials/server-route.mdx</include>
 
-## Try one Ask and Edit flow
+## Try it
 
-1. Select text in the editor.
-2. Open **AI**, enter an instruction, and choose **Ask** to get an answer without
-   changing the document.
-3. Run an Edit action such as **Improve**.
-4. Review the preview, then Accept or Reject it.
+1. Select some text in your editor. The Bubble Menu opens next to it.
+2. Pick an action such as **Improve**, or type what you want in **Describe
+   edits**.
+3. The suggested change shows up as a preview. Your text has not changed yet.
+4. Click **Accept** to apply it, or **Reject** to throw it away.
 
-## Expected result
+If you accept a change, you can undo it like any other edit
+(<kbd>Cmd</kbd>+<kbd>Z</kbd> on Mac, <kbd>Ctrl</kbd>+<kbd>Z</kbd> on Windows and Linux).
 
-Ask leaves the document untouched. Edit keeps the proposed Markdown separate
-until Accept applies one undoable transaction.
-
-Next, read [AI Bubble Menu](/docs/ai-bubble-menu) for its options, or use the
-[Editor Starter](/docs/emend-editor-starter) if you want Emend to create the
-complete editor surface.
+Next, see [AI Bubble Menu](/docs/ai-bubble-menu) for its options. If you would
+rather start with a complete editor, see the
+[Editor Starter](/docs/emend-editor-starter).

@@ -1,22 +1,25 @@
 ---
 title: Transports
-description: Choose the network boundary that carries typed Emend requests and streamed events.
+description: How AI components send requests to your server and get answers back.
 ---
 
-A transport connects the Emend controller in the browser to a generator. It
-accepts a validated request and an `AbortSignal`, then yields typed stream
-events without knowing which AI provider produced the text.
+A **transport** is how an AI component sends a request and gets the answer
+back. Most apps use the fetch transport, which sends requests to a URL on your
+server. You create one and pass it to your component as the `transport` prop.
 
-## Choose a transport
+The transport does not care which AI provider you use. It only moves requests
+and answers.
+
+## Which one to use
 
 | Option                                  | Use it for                                        | Network |
 | --------------------------------------- | ------------------------------------------------- | ------- |
-| `createFetchTransport`                  | Production routes that return an SSE stream       | Yes     |
-| `createMockTransport`                   | Deterministic demos and local component work      | No      |
-| `mockGenerate` + `createFetchTransport` | Exercising the real HTTP and SSE boundary locally | Yes     |
-| Custom `EmendTransport`                 | WebSockets, workers, queues, or another channel   | Varies  |
+| `createFetchTransport`                  | Your real app. Sends requests to your server route | Yes     |
+| `createMockTransport`                   | Demos and building UI without a server or API key  | No      |
+| `mockGenerate` + `createFetchTransport` | Testing your server route without calling a model  | Yes     |
+| Custom `EmendTransport`                 | WebSockets, workers, queues, or anything else      | Depends |
 
-## Fetch transport
+## Fetch transport (most apps)
 
 ```ts
 import { createFetchTransport } from "@emend/ai/transport"
@@ -26,14 +29,14 @@ const transport = createFetchTransport({
 })
 ```
 
-The fetch transport sends a JSON `POST`, requests `text/event-stream`, validates
-every event against the active request, and maps standard HTTP failures to
-typed Emend errors.
+It sends each request to your URL as a `POST`, and reads the answer as it
+streams back. If the server returns an error, such as `401` or `429`, it turns
+it into an [emend error](/docs/api-reference/error-codes) your UI can show.
 
-See [`createFetchTransport`](/docs/api-reference/create-fetch-transport) for
-headers, custom fetch implementations, and error mapping.
+To add headers or change other options, see
+[`createFetchTransport`](/docs/api-reference/create-fetch-transport).
 
-## Mock transport
+## Mock transport (no server needed)
 
 ```ts
 import { createMockTransport } from "@emend/ai/transport"
@@ -43,16 +46,16 @@ const transport = createMockTransport({
 })
 ```
 
-The mock transport produces action-aware Markdown without a server or provider
-credential. Use `failAfterDeltas` to exercise provider-error recovery.
+It returns fake answers that match the action, so you can build and test your
+UI without a server or API key. Set `failAfterDeltas` to fake an error partway
+through an answer.
 
-<Callout type="info" title="The docs demos call a real model">
-  The interactive examples on this site use `createFetchTransport` against
-  `/api/editor-ai`, which runs the Vercel AI Gateway recipe on OpenRouter's free
-  models router.
+<Callout type="info" title="The demos on this site use a real model">
+  The editors on this site use `createFetchTransport` with `/api/editor-ai`,
+  which runs the Vercel AI Gateway recipe on OpenRouter's free models.
 </Callout>
 
-## Custom transport contract
+## Build your own transport
 
 ```ts
 import type { EmendTransport } from "@emend/ai"
@@ -68,10 +71,13 @@ const transport: EmendTransport = {
 }
 ```
 
-A custom transport must stop work when the signal aborts and yield events with
-the active protocol version and request ID. The controller ignores mismatched
-events, but the transport should not continue spending resources on stale work.
+Your transport must:
 
-Continue to [Vercel AI Gateway](/docs/vercel-ai-gateway) for the supplied
-production route or [`createEmendAiHandler`](/docs/api-reference/create-emend-ai-handler)
-for the framework-neutral server API.
+- stop when `signal` is aborted (for example, when the user clicks Stop), so
+  you do not keep paying for an answer nobody will see;
+- send back events with the same protocol version and request ID as the
+  request. Events that do not match are ignored.
+
+Next, see [Vercel AI Gateway](/docs/vercel-ai-gateway) for a ready-made server
+route, or [`createEmendAiHandler`](/docs/api-reference/create-emend-ai-handler)
+to build your own.

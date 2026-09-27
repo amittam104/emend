@@ -1,11 +1,12 @@
 ---
 title: createFetchTransport
-description: Send Emend requests to an HTTP route and consume its validated SSE stream.
+description: Send AI requests from the browser to your server route.
 icon: ApiIcon
 ---
 
-`createFetchTransport` connects an Emend controller in the browser to a route
-that accepts JSON and returns Server-Sent Events.
+`createFetchTransport` sends each AI request from the browser to a URL on your
+server, and reads the answer as it streams back. Pass the result to your AI
+component as its `transport` prop.
 
 ```ts
 import { createFetchTransport } from "@emend/ai/transport"
@@ -27,15 +28,14 @@ interface FetchTransportOptions {
 
 | Option    | Required | Purpose                                                       |
 | --------- | -------- | ------------------------------------------------------------- |
-| `url`     | Yes      | Route that accepts one Emend request per `POST`.              |
-| `headers` | No       | Extra headers merged with the required request headers.       |
-| `fetch`   | No       | Custom fetch implementation for credentials or observability. |
+| `url`     | Yes      | Your server route, such as `/api/editor-ai`.                  |
+| `headers` | No       | Extra headers to send with every request.                     |
+| `fetch`   | No       | Your own `fetch` function, for example to add cookies or logging. |
 
-The transport always sets `Accept: text/event-stream` and
-`Content-Type: application/json`. Those required values override duplicates in
-`headers`.
+The transport always sends `Accept: text/event-stream` and
+`Content-Type: application/json`. You cannot override these two headers.
 
-## Add authorization
+## Send a sign-in token
 
 ```ts
 const transport = createFetchTransport({
@@ -46,8 +46,8 @@ const transport = createFetchTransport({
 })
 ```
 
-Use a custom fetch implementation when credentials must be resolved for every
-request or when the route lives on another origin.
+If the token changes between requests, or your route is on a different
+domain, pass your own `fetch` instead:
 
 ```ts
 const fetchWithCredentials: typeof fetch = (input, init) =>
@@ -59,13 +59,14 @@ const transport = createFetchTransport({
 })
 ```
 
-The server must still return the appropriate CORS headers for a cross-origin
-request.
+If the route is on a different domain, your server must also send the right
+CORS headers.
 
-## Stream contract
+## What the server must send back
 
-The response body is decoded as SSE. Each event must contain JSON matching one
-of the Emend stream event types:
+The server streams the answer as Server-Sent Events (SSE). Each event is JSON
+in one of these shapes. `text-delta` is a piece of the answer, `done` means the
+answer is finished, and `error` means something went wrong.
 
 ```ts
 type EmendStreamEvent =
@@ -79,14 +80,14 @@ type EmendStreamEvent =
     }
 ```
 
-The parser validates the event sequence and request ID. A missing body,
-malformed JSON, invalid event, or stream that closes without `done` becomes a
+Events must come in order and match the request ID. If the response is empty,
+has broken JSON, has an unknown event, or ends without `done`, you get a
 `transport_error`.
 
-## HTTP error mapping
+## HTTP errors
 
-If the response contains a valid serialized `EmendAiError`, the transport uses
-it. Otherwise it maps status codes as follows:
+If the server returns an emend error, the transport passes it on. Otherwise it
+turns the HTTP status into an [error code](/docs/api-reference/error-codes):
 
 | Status                    | Error code          |
 | ------------------------- | ------------------- |
@@ -96,7 +97,6 @@ it. Otherwise it maps status codes as follows:
 | `400`, `415`, or `422`    | `invalid_request`   |
 | Any other failed response | `transport_error`   |
 
-Create the transport once so `useEditorAi` does not rebuild its session on
-every render. Pair it with
-[`createEmendAiHandler`](/docs/api-reference/create-emend-ai-handler) for the
-supplied server contract.
+Create the transport once, outside your component, so it is not rebuilt on
+every render. To build the server side, use
+[`createEmendAiHandler`](/docs/api-reference/create-emend-ai-handler).

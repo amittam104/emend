@@ -1,16 +1,20 @@
 ---
 title: AI Composer
-description: Add a persistent prompt and review surface with explicit read context and change scopes.
+description: A prompt bar under your document for editing text or asking questions.
+icon: AiBackgroundIcon
 ---
 
-AI Composer sits below the document. It supports quick writing actions, free
-questions, custom edits, and explicit controls for what the model may read and
-what an Edit may replace.
+The Composer is a prompt bar that stays under your document. Use it two ways:
 
-## Live demo
+- **Edit your text:** select some text, then pick an action or type what you
+  want changed. You see the change before it is applied.
+- **Ask a question:** type a question without picking an action. The answer
+  shows up under the bar, and your document is not changed.
 
-Type a question for Ask. Select text and choose a slash or plus-menu action for
-Edit, then review the proposal before accepting it.
+## Try it
+
+Type a question and send it. Then select some text, open the **+** menu (or type
+**/**), and pick an action like **Improve**.
 
 <EditorDemo variant="composer" />
 
@@ -20,17 +24,16 @@ Edit, then review the proposal before accepting it.
 npx shadcn@latest add @emend/ai-composer
 ```
 
-<Callout type="warn" title="Preview package required">
-  This command depends on the unpublished `@emend/ai` package. It documents the
-  verified consumer flow but will not complete from the public npm registry
-  until the preview release.
+<Callout type="warn" title="Not on npm yet">
+  This command needs the `@emend/ai` package, which is not published to npm
+  yet. It will not work until the package is released.
 </Callout>
 
-## Minimal usage
+## Add it to your editor
 
-Add `EmendAi` to the same Tiptap editor and pass that editor to the copied
-component. Lines marked with **+** are what Emend adds to a standard Tiptap
-editor.
+Add the `EmendAi` and `Markdown` extensions to your editor, then render the
+Composer with that editor. Lines marked with **+** are the ones to add to a
+normal Tiptap editor.
 
 ```tsx title="components/document-editor.tsx"
 "use client"
@@ -67,34 +70,40 @@ export function DocumentEditor() {
 
 <include>../partials/server-route.mdx</include>
 
-## Ask, Edit, and scopes
+## Choose what the AI reads and changes
 
-- Plain prompt text is an **Ask** request. It reads the selected context or the
-  document and returns an answer without a mutation operation.
-- A built-in writing action is an **Edit** request with a predefined target and
-  mutation operation.
-- A custom Edit can replace the selection, current block, or document, or insert
-  at the cursor when the configured policy permits it.
-- **Context** is read-only input. **Change** is the exact target an accepted
-  proposal may replace.
+The Composer has two small pickers next to the prompt:
 
-## Important options
+- **Read:** what the AI can look at. For example, the selected text, the
+  current paragraph, or the whole document. The AI only reads this. It does
+  not change it.
+- **Change:** what the AI is allowed to replace. You can replace the selection,
+  the current block, or the whole document, or insert new text at the cursor.
+
+Questions read the whole document by default, so you can ask about anything
+in it, even with text selected. Built-in actions like **Improve** set these for
+you. You only need the pickers for your own instructions.
+
+## Props
 
 | Prop         | Default         | Purpose                                                    |
 | ------------ | --------------- | ---------------------------------------------------------- |
-| `editor`     | Required        | The Tiptap editor that owns selection and document state.  |
-| `transport`  | Required        | Connects the composer to an Emend-compatible route.        |
-| `policy`     | Adaptive scopes | Restricts allowed contexts, mutations, and user overrides. |
-| `showReview` | `true`          | Renders Ask results and Edit review beneath the composer.  |
-| `className`  | —               | Extends the copied component's outer surface.              |
+| `editor`     | Required        | Your Tiptap editor.                                        |
+| `transport`  | Required        | Tells the Composer which URL to send AI requests to.       |
+| `policy`     | Adaptive scopes | Limits what the AI can read and change.                    |
+| `showReview` | `true`          | Shows answers and Accept/Reject buttons under the bar.     |
+| `className`  | -               | Adds your own classes to the Composer.                     |
 
-## Expected result
+## What you should see
 
-Ask produces informational Markdown. Edit produces a proposal, preview, and
-Accept or Reject controls. Accept stays unavailable when the proposal is stale,
-blocked by the schema, or still streaming.
+- A question gives you an answer under the bar.
+- An edit shows a preview in your document with **Accept** and **Reject**
+  buttons.
+- **Accept** is disabled while the AI is still writing, if the text changed in
+  the meantime, or if your editor cannot display the result.
 
-## Next step
+## Next
 
-Read [Content and Proposals](/docs/content-and-proposals) for the safety model,
-or use [AI Assistant](/docs/ai-assistant) when a task needs follow-up turns.
+Read [Content and Proposals](/docs/content-and-proposals) to learn how AI
+suggestions work, or see the [AI Assistant](/docs/ai-assistant) for a chat
+where you can ask follow-up questions.

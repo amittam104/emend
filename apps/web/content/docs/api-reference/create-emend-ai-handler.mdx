@@ -1,12 +1,16 @@
 ---
 title: createEmendAiHandler
-description: Validate, authorize, generate, and stream Emend requests from a Web Platform route.
+description: Build the server route that checks AI requests and streams the model's answer.
 icon: FileCodeIcon
 ---
 
-`createEmendAiHandler` returns a standard
-`(request: Request) => Promise<Response>` handler. It is provider-neutral and
-works anywhere a framework exposes Web Platform requests and responses.
+`createEmendAiHandler` builds your server route. It checks each request from
+the browser, lets you decide who is allowed, calls your AI model through a
+`generate` function you write, and streams the answer back.
+
+It returns a standard `(request: Request) => Promise<Response>` function, so it
+works with Next.js route handlers and any framework that uses standard
+`Request` and `Response` objects. It works with any AI provider.
 
 ```ts
 import { createEmendAiHandler } from "@emend/ai/server"
@@ -31,12 +35,12 @@ interface EmendAiHandlerOptions {
 
 | Option      | Required | Purpose                                                  |
 | ----------- | -------- | -------------------------------------------------------- |
-| `generate`  | Yes      | Yields provider text chunks for a validated request.     |
-| `authorize` | No       | Allows or rejects a validated request before generation. |
-| `manifest`  | No       | Replaces the server's default action constraints.        |
-| `limits`    | No       | Overrides protocol and content-size limits.              |
+| `generate`  | Yes      | Calls your AI model and yields the answer piece by piece. |
+| `authorize` | No       | Returns `true` to allow a request, `false` to reject it. |
+| `manifest`  | No       | Limits which [actions](/docs/api-reference/action-manifest) this route accepts. |
+| `limits`    | No       | Changes the maximum request sizes.                       |
 
-## Start with the mock generator
+## Start without an AI model
 
 ```ts title="app/api/editor-ai/route.ts"
 import { createEmendAiHandler, mockGenerate } from "@emend/ai/server"
@@ -46,13 +50,13 @@ export const POST = createEmendAiHandler({
 })
 ```
 
-`mockGenerate` exercises request validation and the complete HTTP/SSE boundary
-without calling an AI provider.
+`mockGenerate` returns fake answers, so you can test the whole route without
+an API key.
 
-## Connect a provider
+## Connect an AI model
 
-The generator receives only a validated Emend request. Yield plain Markdown
-chunks as the provider streams them.
+`generate` only runs for requests that passed every check. Call your model,
+and `yield` each piece of Markdown text as it arrives.
 
 ```ts title="app/api/editor-ai/route.ts"
 import { createEmendAiHandler } from "@emend/ai/server"
@@ -73,10 +77,10 @@ export const POST = createEmendAiHandler({
 })
 ```
 
-The `AbortSignal` combines the incoming request lifecycle with server cleanup.
-Pass it to the provider so closing the browser request stops generation.
+Pass `signal` to your provider. If the user clicks Stop or closes the page,
+the model stops too, so you do not pay for an answer nobody sees.
 
-## Authorize before generation
+## Check who is making the request
 
 ```ts
 export const POST = createEmendAiHandler({
@@ -88,29 +92,28 @@ export const POST = createEmendAiHandler({
 })
 ```
 
-Return `false` for an intentional rejection. A thrown authorization error is
-converted to `internal_error`, so it does not expose server details.
+Return `false` to reject the request. If `authorize` throws, the browser gets
+a generic `internal_error`, so your server's error details stay private.
 
-## Request pipeline
+## What happens to each request
 
-1. Require `POST` and an `application/json` content type.
-2. Parse JSON and validate the protocol, action manifest, and request limits.
-3. Run `authorize`, when supplied.
-4. Convert yielded Markdown chunks to typed `text-delta` events.
-5. Finish with `done`, or emit a public error event when generation fails.
+1. The request must be a `POST` with JSON.
+2. The JSON is checked: format, action, and size.
+3. `authorize` runs, if you added it.
+4. Each piece of text from `generate` is sent to the browser.
+5. The stream ends with `done`, or with an error if `generate` failed.
 
 ## HTTP responses
 
 | Status | Trigger                                          |
 | ------ | ------------------------------------------------ |
-| `400`  | Invalid JSON or protocol request.                |
+| `400`  | The JSON is broken or not a valid emend request. |
 | `401`  | `authorize` returned `false`.                    |
-| `405`  | Request method was not `POST`.                   |
-| `413`  | The validated content exceeds configured limits. |
-| `415`  | Content type is not `application/json`.          |
-| `500`  | `authorize` threw unexpectedly.                  |
+| `405`  | The request was not a `POST`.                    |
+| `413`  | The request has too much text.                   |
+| `415`  | The request was not sent as JSON.                |
+| `500`  | `authorize` threw an error.                      |
 
-Successful responses use `text/event-stream; charset=utf-8` and disable
-transforming caches. Review the [action manifest](/docs/api-reference/action-manifest)
-and [production considerations](/docs/production-considerations) before
-exposing the route.
+A successful response streams with `text/event-stream; charset=utf-8`. Read
+[Production Considerations](/docs/production-considerations) before you go
+live.

@@ -1,24 +1,28 @@
 ---
 title: Vercel AI Gateway
-description: Install the consumer-owned server recipe and connect an Emend transport to it.
+description: Add a ready-made server route that connects your AI components to a model.
 ---
 
-The Vercel AI Gateway recipe installs a Next.js App Router handler at
-`app/api/editor-ai/route.ts`. It validates Emend requests, streams provider text
-as typed server-sent events, and keeps the provider key on the server.
+The AI components need a server route to talk to the AI model. This recipe
+adds one to your app at `app/api/editor-ai/route.ts`. It uses the Vercel AI SDK
+and Vercel AI Gateway, and keeps your API key on the server.
 
-<Callout type="info" title="The docs demos run this recipe">
-  Demos in these docs call this recipe unchanged, with the same handler and
-  system prompt. The model resolves through OpenRouter's free models router
-  (`openrouter/free`) instead of the Gateway.
+<Callout type="info" title="The demos on this site use this recipe">
+  The editors on this site run this exact route. The only difference is that
+  they use OpenRouter's free models (`openrouter/free`) instead of the
+  Gateway.
 </Callout>
 
-## Prerequisites
+<include>../partials/nextjs-only.mdx</include>
 
-- One AI-enabled Emend surface
-- A Next.js App Router application
-- Vercel AI Gateway credentials or Vercel OIDC
-- Authentication and rate-limit rules for your own product
+## Before you start
+
+Make sure your project has everything below before you add the route.
+
+- At least one emend AI component in your app
+- A Next.js app that uses the App Router
+- A Vercel AI Gateway API key (or Vercel OIDC if you deploy on Vercel)
+- A way to check who is signed in, so you can protect the route
 
 ## Install the route
 
@@ -26,38 +30,38 @@ as typed server-sent events, and keeps the provider key on the server.
 npx shadcn@latest add @emend/recipe-vercel-ai-gateway
 ```
 
-<Callout type="warn" title="Preview package required">
-  The recipe depends on the unpublished `@emend/ai` package. Its copied route
-  and production build are verified in consumer fixtures, but the public
-  registry command will not complete until the package is released.
+<Callout type="warn" title="Not on npm yet">
+  This recipe needs the `@emend/ai` package, which is not published to npm yet.
+  The command will not work until the package is released.
 </Callout>
 
-The recipe copies one editable file to `app/api/editor-ai/route.ts`. It defaults
-to the `openai/gpt-5.6-luna` Gateway model and separates Ask instructions from
-Edit instructions.
+This adds one file, `app/api/editor-ai/route.ts`, which you can edit. It uses
+the `openai/gpt-5.6-luna` model by default. It gives the model different
+instructions for questions and for edits.
 
 ## What the route does
 
-`createEmendAiHandler` validates each request, enforces size limits, and
-streams typed events back to the browser. `generate` is the only
-provider-specific part: change `MODEL`, or replace `streamText` with any AI SDK
-provider, and the rest of the route stays the same.
+- `createEmendAiHandler` checks each request, rejects requests that are too
+  large, and streams the answer back to the browser.
+- `generate` is the only part that calls the AI provider. To use a different
+  model, change `MODEL`. To use a different provider, replace `streamText` with
+  any Vercel AI SDK provider. Nothing else needs to change.
 
 <include lang="ts" meta='title="app/api/editor-ai/route.ts"'>../../../../registry/recipes/vercel-ai-gateway/route.ts</include>
 
-## Configure the server key
+## Add your API key
 
 ```bash title=".env.local"
 AI_GATEWAY_API_KEY=your_server_side_key
 ```
 
-Do not prefix this variable with `NEXT_PUBLIC_` and do not pass it to a client
-component. When deployed on Vercel, you can use the platform's OIDC path instead
-of a long-lived local key.
+Do not start the name with `NEXT_PUBLIC_`, and never pass the key to a client
+component. Either would expose it in the browser. If you deploy on Vercel, you
+can use Vercel OIDC instead of a key.
 
-## Connect the client
+## Connect your components
 
-Point a transport at the route and pass it to any Emend surface.
+Create a transport with the route's URL and pass it to your AI component.
 
 ```tsx title="app/editor/page.tsx"
 "use client"
@@ -72,10 +76,10 @@ export default function EditorPage() {
 }
 ```
 
-## Add your authorization boundary
+## Protect the route
 
-The installed recipe does not know your users or permissions. Add the handler's
-`authorize` option using your existing server-side session logic:
+Right now, anyone who finds the URL can call the route and use your AI
+credits. Add an `authorize` check that uses your app's existing sign-in logic:
 
 ```ts title="app/api/editor-ai/route.ts"
 export const POST = createEmendAiHandler({
@@ -88,18 +92,19 @@ export const POST = createEmendAiHandler({
 })
 ```
 
-Replace `getCurrentUser` and `userCanEdit` with the server-side authorization
-helpers your application already uses.
+Replace `getCurrentUser` and `userCanEdit` with the functions your app already
+uses to check sign-in and permissions.
 
-Apply rate limits before generation starts, using the user or workspace identity
-your application trusts. The recipe intentionally does not invent an identity,
-quota, billing rule, or persistence model for you.
+You should also limit how many requests each user can make, before the AI model
+is called. The recipe does not include rate limits, because only your app knows
+who your users are and what they are allowed to use.
 
-## Expected result
+## What you should see
 
-A `POST` to `/api/editor-ai` accepts a valid Emend request and returns an SSE
-stream. Invalid input returns a typed error, oversized context returns `413`,
-and unauthorized requests should return `401` after you add `authorize`.
+- A valid request to `/api/editor-ai` streams the AI's answer back.
+- An invalid request returns an [emend error](/docs/api-reference/error-codes).
+- A request with too much text returns `413`.
+- After you add `authorize`, a request from someone not allowed returns `401`.
 
-Next, review [Production Considerations](/docs/production-considerations) before
-deploying the route.
+Next, read [Production Considerations](/docs/production-considerations) before
+you go live.

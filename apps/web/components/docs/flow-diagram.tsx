@@ -94,18 +94,18 @@ export function FlowDiagram() {
           <Layer
             icon="LayoutBottomIcon"
             name="Copied UI"
-            detail="Bubble Menu, Composer, or AI Assistant source in your app."
+            detail="The Bubble Menu, Composer, or AI Assistant, copied into your app."
           />
           <Layer
             icon="PencilEdit02Icon"
             name="Your Tiptap editor"
-            detail="Owns the document, schema, selection, and undo history."
+            detail="Holds your document and undo history."
           />
           <Layer
             accent
             icon="Layers01Icon"
             name={<code className="font-semibold">@emend/ai</code>}
-            detail="Captures Markdown, tracks revisions, and prepares proposals."
+            detail="Sends your text to the server and shows the AI's suggestion."
           />
         </Group>
 
@@ -128,7 +128,7 @@ export function FlowDiagram() {
           <Layer
             icon="ServerStack01Icon"
             name="Your route"
-            detail="Authorizes, rate-limits, and calls the model."
+            detail="Checks who is asking, then calls the AI model."
           />
           <Flow
             icon={ArrowDown01Icon}
@@ -138,13 +138,13 @@ export function FlowDiagram() {
           <Layer
             icon="AiChat02Icon"
             name="Model provider"
-            detail="Any AI SDK provider. Credentials never reach the browser."
+            detail="Any AI provider. Your API key never reaches the browser."
           />
         </Group>
       </div>
       <figcaption className="text-fd-muted-foreground relative mt-4 text-center text-[13px] text-pretty">
-        Nothing changes the document until the person writing accepts a
-        proposal. Accept applies one undoable Tiptap change.
+        Your document does not change until you accept the AI&apos;s
+        suggestion. You can undo it like any other edit.
       </figcaption>
     </figure>
   )

@@ -98,7 +98,7 @@ export const bubbleContent = doc(
     italic("Try it: "),
     "select this sentence and choose ",
     bold("Improve"),
-    ". The proposal appears inline, with Keep and Discard right beside it."
+    ". The suggestion appears in place. Accept it or reject it right there."
   ),
   heading(2, "What it does"),
   bulletList(
@@ -109,9 +109,9 @@ export const bubbleContent = doc(
     [
       bold("Inline review: "),
       "a completed proposal shows in place. ",
-      bold("Keep"),
+      bold("Accept"),
       " applies it as one undoable change; ",
-      bold("Discard"),
+      bold("Reject"),
       " removes it.",
     ],
     [
@@ -120,7 +120,7 @@ export const bubbleContent = doc(
     ],
     [
       bold("Stale protection: "),
-      "if the document changes while a proposal is open, that proposal can no longer be kept.",
+      "if the document changes while a proposal is open, that proposal can no longer be accepted.",
     ]
   ),
   heading(2, "Quick actions"),
@@ -146,19 +146,21 @@ export const bubbleContent = doc(
     bold("Shorten"),
     " on the result. Use ",
     code("⌘Z"),
-    " to undo any change you keep."
+    " or ",
+    code("Ctrl+Z"),
+    " to undo any change you accept."
   ),
   heading(2, "Things to try"),
   taskList(
     [false, "Select a sentence and run a quick action"],
     [false, "Write a custom instruction in the bar"],
     [false, "Edit the document while a proposal is open to see it go stale"],
-    [false, "Keep one proposal, then undo it"]
+    [false, "Accept one suggestion, then undo it"]
   )
 )
 
 export const baseContent = doc(
-  heading(1, "Emend Editor"),
+  heading(1, "emend editor"),
   paragraph(
     "This is the editor foundation with no AI attached: a Tiptap editor, a responsive toolbar, rich formatting, and a save boundary. Every AI starter builds on exactly this surface."
   ),
