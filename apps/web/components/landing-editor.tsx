@@ -15,24 +15,12 @@ import StarterKit from "@tiptap/starter-kit"
 import { useCallback, useMemo, useState, type ReactNode } from "react"
 
 import { AiBubbleMenuView } from "@/components/emend/ai-bubble-menu"
-import {
-  AiComposerView,
-  type AiComposerPolicy,
-} from "@/components/emend/ai-composer"
+import { AiComposerView } from "@/components/emend/ai-composer"
 import { AiAssistantView } from "@/components/emend/ai-assistant"
+import { SurfaceIcon } from "@/components/surface-icon"
 
 import { LandingEditorToolbar } from "./landing-editor-toolbar"
 import { landingMention } from "./landing-mention"
-
-/**
- * The landing document holds a custom call-to-action node and a hero line
- * break, neither of which survives the AI runtime's Markdown round trip.
- * Reading the block around the cursor is the scope that works for the copy.
- */
-const composerPolicy = {
-  allowedContextScopes: ["current-block", "selection"],
-  defaultContextScope: "current-block",
-} satisfies AiComposerPolicy
 
 const editorContentClasses = [
   "min-h-0 flex-1 overflow-x-hidden overflow-y-auto",
@@ -174,7 +162,6 @@ function LandingAiWorkspace({
               <AiComposerView
                 editor={editor}
                 session={session}
-                policy={composerPolicy}
               />
             </div>
           </div>
@@ -192,6 +179,7 @@ function LandingAiWorkspace({
         onOpenChange={onOpenChange}
         storageKey="emend:landing-assistant:v1"
         className="bottom-14"
+        triggerIcon={<SurfaceIcon name="assistant" size={22} />}
       />
     </div>
   )

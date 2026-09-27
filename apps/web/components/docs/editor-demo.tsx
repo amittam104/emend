@@ -17,6 +17,7 @@ import {
   bubbleContent,
   composerContent,
 } from "./editor-demo-content"
+import { SurfaceIcon, type SurfaceIconName } from "@/components/surface-icon"
 import { Button } from "@/components/ui/button"
 import {
   Tooltip,
@@ -35,6 +36,12 @@ const variants = {
 } as const
 
 type DemoVariant = keyof typeof variants
+
+const variantIcons: Partial<Record<DemoVariant, SurfaceIconName>> = {
+  bubble: "bubble-menu",
+  composer: "composer",
+  chat: "assistant",
+}
 
 const demoContent: Record<DemoVariant, JSONContent> = {
   bubble: bubbleContent,
@@ -85,18 +92,22 @@ export function EditorDemo({
         <fieldset className="flex flex-wrap gap-2 border-b px-4 py-3 sm:px-5">
           <legend className="sr-only">Editor starter preview</legend>
           {(Object.entries(variants) as [DemoVariant, string][]).map(
-            ([value, label]) => (
-              <Button
-                key={value}
-                type="button"
-                size="sm"
-                variant={activeVariant === value ? "default" : "outline"}
-                aria-pressed={activeVariant === value}
-                onClick={() => setActiveVariant(value)}
-              >
-                {label}
-              </Button>
-            )
+            ([value, label]) => {
+              const icon = variantIcons[value]
+              return (
+                <Button
+                  key={value}
+                  type="button"
+                  size="sm"
+                  variant={activeVariant === value ? "default" : "outline"}
+                  aria-pressed={activeVariant === value}
+                  onClick={() => setActiveVariant(value)}
+                >
+                  {icon && <SurfaceIcon name={icon} />}
+                  {label}
+                </Button>
+              )
+            }
           )}
         </fieldset>
       ) : null}

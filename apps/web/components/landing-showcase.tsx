@@ -7,10 +7,12 @@ import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react"
 import Link from "next/link"
 
 import { ShowcaseClip } from "./showcase-clip"
+import { SurfaceIcon } from "./surface-icon"
 
 const showcaseItems = [
   {
     clip: "composer",
+    icon: "composer",
     name: "Composer",
     description:
       "A prompt bar under your document. Pick an action, then review the change before it lands.",
@@ -18,13 +20,15 @@ const showcaseItems = [
   },
   {
     clip: "bubble",
+    icon: "bubble-menu",
     name: "Bubble menu",
     description:
-      "Select text and rewrite it in place, with Keep and Discard right beside it.",
+      "Select text and rewrite it in place, then decide whether to keep or reject the AI change.",
     href: "/docs/ai-bubble-menu",
   },
   {
     clip: "assistant",
+    icon: "assistant",
     name: "AI Assistant",
     description:
       "A floating chat that reads your document, answers questions, and proposes edits.",
@@ -32,6 +36,7 @@ const showcaseItems = [
   },
   {
     clip: "starter",
+    icon: "editor",
     name: "Editor starter",
     description:
       "A complete Tiptap editor with formatting, tables, and your choice of AI surface.",
@@ -52,8 +57,9 @@ function ComponentShowcaseView() {
             <ShowcaseClip clip={item.clip} />
           </div>
           <div className="flex flex-col gap-1 px-4 pt-3 pb-4">
-            <span className="flex items-center justify-between gap-2 text-[15px] font-semibold">
-              {item.name}
+            <span className="flex items-center gap-2 text-[15px] font-semibold">
+              <SurfaceIcon name={item.icon} className="size-4" />
+              <span className="flex-1">{item.name}</span>
               <HugeiconsIcon
                 icon={ArrowRight01Icon}
                 className="size-4 text-muted-foreground transition-[translate,color] duration-300 ease-out group-hover:translate-x-0.5 group-hover:text-foreground"

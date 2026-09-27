@@ -3,7 +3,6 @@
 import type { Editor } from "@tiptap/core"
 import { useEditorState } from "@tiptap/react"
 import {
-  AiChat02Icon,
   ALargeSmallIcon,
   AlignHorizontalCenterIcon,
   AlignLeftIcon,
@@ -24,7 +23,6 @@ import {
   LeftToRightListBulletIcon,
   LeftToRightListNumberIcon,
   Link01Icon,
-  MagicWand01Icon,
   PaintBucketIcon,
   RedoIcon,
   SeparatorHorizontalIcon,
@@ -61,6 +59,7 @@ import {
 import { cn } from "@workspace/ui/lib/utils"
 
 import { LandingFindReplace } from "./landing-find-replace"
+import { SurfaceIcon, type SurfaceIconName } from "./surface-icon"
 
 const headingLevels = [1, 2, 3, 4, 5, 6] as const
 const fontSizeOptions = ["12", "14", "16", "18", "24", "32"] as const
@@ -347,7 +346,7 @@ export function LandingEditorToolbar({
       <Link
         href="/"
         className="mx-2 flex shrink-0 items-center gap-1.5 rounded-md pr-1.5 text-sm font-medium tracking-[-0.01em] whitespace-nowrap text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        aria-label="Emend home"
+        aria-label="emend home"
       >
         <Image src="/emend-logo.svg" alt="" width={18} height={18} priority />
         <span className="max-sm:sr-only">emend</span>
@@ -439,19 +438,19 @@ export function LandingEditorToolbar({
         </div>
 
         <div
-          className="flex shrink-0 items-center gap-0.5 px-0.5"
+          className="flex shrink-0 items-center gap-1.5 px-0.5"
           role="group"
           aria-label="AI surfaces"
         >
           <ToolbarToggle
             label="AI Assistant"
-            icon={AiChat02Icon}
+            surface="assistant"
             pressed={sideChatOpen}
             onClick={onToggleSideChat}
           />
           <ToolbarToggle
             label="AI Composer"
-            icon={MagicWand01Icon}
+            surface="composer"
             pressed={composerOpen}
             onClick={onToggleComposer}
           />
@@ -564,39 +563,27 @@ function promptForValue(message: string, fallback: string): string | null {
 
 function ToolbarToggle({
   label,
-  icon,
+  surface,
   pressed,
   onClick,
 }: {
   readonly label: string
-  readonly icon: IconSvgElement
+  readonly surface: SurfaceIconName
   readonly pressed: boolean
   readonly onClick: () => void
 }) {
   return (
-    <Tooltip>
-      <TooltipTrigger
-        render={
-          <Button
-            type="button"
-            variant={pressed ? "outline" : "ghost"}
-            size="xs"
-            className={cn(
-              "border-border",
-              landingEditorControlClasses,
-              pressed ? "hover:bg-muted" : "hover:bg-foreground/8"
-            )}
-            aria-label={`${pressed ? "Hide" : "Show"} ${label}`}
-            aria-pressed={pressed}
-            onClick={onClick}
-          />
-        }
-      >
-        <HugeiconsIcon icon={icon} strokeWidth={2} />
-        <span className="max-sm:hidden">{label.replace("AI ", "")}</span>
-      </TooltipTrigger>
-      <TooltipContent>{label}</TooltipContent>
-    </Tooltip>
+    <Button
+      type="button"
+      variant={pressed ? "default" : "outline"}
+      size="xs"
+      className={landingEditorControlClasses}
+      aria-pressed={pressed}
+      onClick={onClick}
+    >
+      <SurfaceIcon name={surface} />
+      {label}
+    </Button>
   )
 }
 

@@ -10,9 +10,12 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from "react"
 
 import { cn } from "@workspace/ui/lib/utils"
 
+import { SurfaceIcon, type SurfaceIconName } from "./surface-icon"
+
 interface MentionItem {
   readonly id: string
   readonly label: string
+  readonly icon: SurfaceIconName
 }
 
 interface MentionListProps {
@@ -25,10 +28,10 @@ interface MentionListRef {
 }
 
 const mentionItems: readonly MentionItem[] = [
-  { id: "bubble-menu", label: "AI Bubble Menu" },
-  { id: "composer", label: "AI Composer" },
-  { id: "side-chat", label: "AI Assistant" },
-  { id: "editor", label: "Emend Editor" },
+  { id: "bubble-menu", icon: "bubble-menu", label: "AI Bubble Menu" },
+  { id: "composer", icon: "composer", label: "AI Composer" },
+  { id: "side-chat", icon: "assistant", label: "AI Assistant" },
+  { id: "editor", icon: "editor", label: "emend editor" },
 ]
 
 const MentionList = forwardRef<MentionListRef, MentionListProps>(
@@ -65,7 +68,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
     return (
       <div
         role="listbox"
-        aria-label="Mention an Emend component"
+        aria-label="Mention an emend component"
         className="w-52 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-lg"
       >
         {items.map((item, index) => (
@@ -75,7 +78,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
             role="option"
             aria-selected={index === active}
             className={cn(
-              "flex w-full items-center rounded-md px-2 py-1.5 text-left text-sm outline-none",
+              "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm outline-none",
               index === active
                 ? "bg-muted text-foreground"
                 : "text-muted-foreground"
@@ -83,6 +86,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>(
             onMouseEnter={() => setActive(index)}
             onClick={() => select(index)}
           >
+            <SurfaceIcon name={item.icon} className="size-4" />
             {item.label}
           </button>
         ))}

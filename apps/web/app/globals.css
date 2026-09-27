@@ -104,3 +104,94 @@
   font-family: var(--font-code), ui-monospace, monospace;
   font-variant-ligatures: none;
 }
+
+@keyframes ai-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ai-shimmer-text {
+  from {
+    background-position: 150%;
+  }
+  to {
+    background-position: -50%;
+  }
+}
+
+@keyframes ai-pixel {
+  0%,
+  62%,
+  100% {
+    opacity: 0.15;
+  }
+  18%,
+  42% {
+    opacity: 1;
+  }
+}
+
+.ai-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-fd-muted-foreground) 35%,
+    var(--color-fd-foreground) 50%,
+    var(--color-fd-muted-foreground) 65%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  color: transparent;
+  animation: ai-shimmer-text 1.4s linear infinite;
+}
+
+.ai-pixel {
+  opacity: 0.15;
+  animation: ai-pixel 650ms ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-shimmer {
+    animation: none;
+    background: none;
+    color: var(--color-fd-muted-foreground);
+  }
+
+  .ai-pixel {
+    animation: none;
+    opacity: 0.5;
+  }
+}
+
+.prose.ai-chat-prose {
+  font-size: 0.84375rem;
+  line-height: 1.65;
+}
+
+.prose.ai-chat-prose > :first-child {
+  margin-top: 0;
+}
+
+.prose.ai-chat-prose > :last-child {
+  margin-bottom: 0;
+}
+
+.prose.ai-chat-prose :where(p, ul, ol, pre, figure, blockquote, table) {
+  margin-block: 0.75em;
+}
+
+.prose.ai-chat-prose :where(li) {
+  margin-block: 0.25em;
+}
+
+.prose.ai-chat-prose :where(h1, h2, h3, h4) {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: 1.25em;
+  margin-bottom: 0.5em;
+}

@@ -48,7 +48,7 @@ const initialContent: JSONContent = {
       content: [
         {
           type: "text",
-          text: "emend is an open-source rich text editor with plug-and-play AI components and recipes, built on Tiptap. Add it to your existing Tiptap editor or start with the Emend Editor.",
+          text: "emend is an open-source rich text editor with plug-and-play AI components and recipes, built on Tiptap. Add it to your existing Tiptap editor or start with the emend editor.",
         },
       ],
     },
@@ -91,7 +91,7 @@ const initialContent: JSONContent = {
       content: [
         {
           type: "text",
-          text: "Use Emend in one of two ways:",
+          text: "Use emend in one of two ways:",
         },
       ],
     },
@@ -100,25 +100,25 @@ const initialContent: JSONContent = {
       content: [
         listItem(
           "I already use Tiptap",
-          "add the AI Bubble Menu, Composer, or AI Assistant without replacing your editor"
+          "add the AI Bubble Menu, Composer, or AI Assistant without replacing your Tiptap editor"
         ),
         listItem(
           "I need an editor",
-          "start with the complete Emend Editor and choose the AI experience your product needs"
+          "start with the complete emend editor and choose the AI experience your product needs"
         ),
       ],
     },
     {
       type: "heading",
       attrs: { level: 2 },
-      content: [{ type: "text", text: "What Emend gives you." }],
+      content: [{ type: "text", text: "What emend gives you." }],
     },
     {
       type: "paragraph",
       content: [
         {
           type: "text",
-          text: "Emend has two layers: an AI editing runtime and UI components whose source is copied into your app.",
+          text: "emend has two layers: an AI editing runtime and UI components whose source is copied into your app.",
         },
       ],
     },
@@ -169,7 +169,7 @@ const initialContent: JSONContent = {
           content: [
             {
               type: "text",
-              text: "Emend provides that missing layer, so you can add reviewable AI editing without rebuilding your editor.",
+              text: "emend provides that missing layer, so you can add reviewable AI editing without rebuilding your editor.",
             },
           ],
         },
@@ -178,14 +178,14 @@ const initialContent: JSONContent = {
     {
       type: "heading",
       attrs: { level: 2 },
-      content: [{ type: "text", text: "How Emend is different." }],
+      content: [{ type: "text", text: "How emend is different." }],
     },
     {
       type: "paragraph",
       content: [
         {
           type: "text",
-          text: "Tiptap, BlockNote, and Emend solve different parts of the editor stack.",
+          text: "Tiptap, BlockNote, and emend solve different parts of the editor stack.",
         },
       ],
     },
@@ -194,14 +194,14 @@ const initialContent: JSONContent = {
       content: [
         listItem(
           "Tiptap",
-          "the MIT-licensed, headless editor foundation. Choose it when you want to build the editor UI yourself. Managed AI, collaboration, and conversion are Tiptap Platform features"
+          "the MIT-licensed, headless editor foundation. Choose it when you want to build the editor UI yourself. Managed AI, collaboration, and conversion are paid Tiptap Platform features"
         ),
         listItem(
           "BlockNote",
           "a ready-made, block-based editor built on Tiptap. Its core uses MPL 2.0. Its XL AI, multi-column, and export packages use GPL 3.0 for open-source projects or require a commercial license for closed-source apps"
         ),
         listItem(
-          "Emend",
+          "emend",
           "the MIT-licensed AI editing runtime, components, editor starters, and server recipe for Tiptap. Your source, provider route, credentials, and documents stay in your app"
         ),
       ],
@@ -211,7 +211,7 @@ const initialContent: JSONContent = {
       content: [
         {
           type: "text",
-          text: "Emend is in active development. The public package is not available yet, so this demo calls our own Emend route backed by OpenRouter's free models.",
+          text: "emend is in active development. The public package is not available yet, so this demo calls our own emend route backed by OpenRouter's free models.",
         },
       ],
     },
@@ -240,7 +240,7 @@ function listItem(label: string, detail: string): JSONContent {
         type: "paragraph",
         content: [
           { type: "text", marks: [{ type: "bold" }], text: label },
-          { type: "text", text: ` — ${detail}` },
+          { type: "text", text: ` - ${detail}` },
         ],
       },
     ],
@@ -420,8 +420,8 @@ export function LandingPage() {
                       "border-border transition-[background-color,color,scale] duration-100 active:translate-y-0 motion-safe:active:scale-96",
                   })
                 )}
-                aria-label="View Emend on GitHub"
-                title="View Emend on GitHub"
+                aria-label="View emend on GitHub"
+                title="View emend on GitHub"
               >
                 <HugeiconsIcon icon={Github01Icon} className="size-3.5" />
               </a>

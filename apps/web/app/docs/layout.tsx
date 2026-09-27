@@ -1,7 +1,6 @@
 import type { ReactNode } from "react"
-import AiChat02Icon from "@hugeicons/core-free-icons/AiChat02Icon"
+import AiArtIcon from "@hugeicons/core-free-icons/AiArtIcon"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { buttonVariants } from "fumadocs-ui/components/ui/button"
 import { DocsLayout } from "fumadocs-ui/layouts/notebook"
 
 import {
@@ -11,7 +10,6 @@ import {
 } from "@/components/ai/search"
 import { baseOptions } from "@/lib/layout.shared"
 import { getDocsPageTree } from "@/lib/source"
-import { cn } from "@workspace/ui/lib/utils"
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
@@ -25,17 +23,12 @@ export default function Layout({ children }: { children: ReactNode }) {
         <AISearchPanel />
         <AISearchTrigger
           position="float"
-          className={cn(
-            buttonVariants({
-              variant: "secondary",
-              className: "text-fd-muted-foreground rounded-2xl",
-            })
-          )}
+          className="bg-fd-popover text-fd-foreground shadow-elevation-2 hover:bg-fd-accent focus-visible:ring-fd-ring flex h-10 items-center gap-2 rounded-full border px-4 text-sm font-medium transition-[background-color,translate,opacity,scale] duration-200 focus-visible:ring-2 focus-visible:outline-none motion-safe:active:scale-[0.97]"
         >
           <HugeiconsIcon
-            icon={AiChat02Icon}
+            icon={AiArtIcon}
             aria-hidden="true"
-            className="size-4.5"
+            className="size-4"
             strokeWidth={1.8}
           />
           Ask AI

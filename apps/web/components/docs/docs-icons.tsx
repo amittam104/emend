@@ -1,4 +1,7 @@
+import AiBackgroundIcon from "@hugeicons/core-free-icons/AiBackgroundIcon"
 import AiChat02Icon from "@hugeicons/core-free-icons/AiChat02Icon"
+import AiDrawingIcon from "@hugeicons/core-free-icons/AiDrawingIcon"
+import AiReplaceIcon from "@hugeicons/core-free-icons/AiReplaceIcon"
 import ApiIcon from "@hugeicons/core-free-icons/ApiIcon"
 import BookOpen02Icon from "@hugeicons/core-free-icons/BookOpen02Icon"
 import BracesIcon from "@hugeicons/core-free-icons/BracesIcon"
@@ -20,7 +23,10 @@ import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
 
 /** Icons that page frontmatter and MDX components can refer to by name. */
 export const docsIcons = {
+  AiBackgroundIcon,
   AiChat02Icon,
+  AiDrawingIcon,
+  AiReplaceIcon,
   ApiIcon,
   BookOpen02Icon,
   BracesIcon,
