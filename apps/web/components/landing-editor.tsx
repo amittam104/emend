@@ -15,12 +15,28 @@ import StarterKit from "@tiptap/starter-kit"
 import { useCallback, useMemo, useState, type ReactNode } from "react"
 
 import { AiBubbleMenuView } from "@/components/emend/ai-bubble-menu"
-import { AiComposerView } from "@/components/emend/ai-composer"
-import { AiAssistantView } from "@/components/emend/ai-assistant"
+import {
+  AiComposerView,
+  type AiComposerPolicy,
+} from "@/components/emend/ai-composer"
+import {
+  AiAssistantView,
+  type AiAssistantPolicy,
+} from "@/components/emend/ai-assistant"
 import { SurfaceIcon } from "@/components/surface-icon"
 
 import { LandingEditorToolbar } from "./landing-editor-toolbar"
 import { landingMention } from "./landing-mention"
+
+// The hero call-to-action and component showcase nodes have no Markdown form,
+// so the whole landing document cannot be an edit target.
+const landingPolicy = {
+  allowedMutationOperations: [
+    "replace-selection",
+    "replace-current-block",
+    "insert-at-cursor",
+  ],
+} satisfies AiComposerPolicy & AiAssistantPolicy
 
 const editorContentClasses = [
   "min-h-0 flex-1 overflow-x-hidden overflow-y-auto",
@@ -162,6 +178,7 @@ function LandingAiWorkspace({
               <AiComposerView
                 editor={editor}
                 session={session}
+                policy={landingPolicy}
               />
             </div>
           </div>
@@ -175,6 +192,7 @@ function LandingAiWorkspace({
       <AiAssistantView
         editor={editor}
         session={session}
+        policy={landingPolicy}
         open={sideChatOpen}
         onOpenChange={onOpenChange}
         storageKey="emend:landing-assistant:v1"
