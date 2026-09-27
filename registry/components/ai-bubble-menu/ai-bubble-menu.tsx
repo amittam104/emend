@@ -249,17 +249,12 @@ export function AiBubbleMenuView({
                   buttonClass,
                   "bg-foreground text-background hover:bg-foreground/90 hover:text-background"
                 )}
-                title={
-                  session.preparation?.kind === "plain-text-fallback"
-                    ? "Apply as plain text"
-                    : undefined
-                }
                 onClick={accept}
               >
                 <Icon icon={Tick01Icon} />
                 {session.preparation?.kind === "plain-text-fallback"
-                  ? "Keep text"
-                  : "Keep"}
+                  ? "Apply as plain text"
+                  : "Accept"}
               </button>
               <button
                 type="button"
@@ -267,7 +262,7 @@ export function AiBubbleMenuView({
                 onClick={() => session.reject()}
               >
                 <Icon icon={Cancel01Icon} />
-                Discard
+                Reject
               </button>
               <span className="mx-0.5 h-4 w-px shrink-0 bg-border" />
               <button

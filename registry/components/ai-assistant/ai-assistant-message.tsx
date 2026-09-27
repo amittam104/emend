@@ -8,10 +8,15 @@ import Copy01Icon from "@hugeicons/core-free-icons/Copy01Icon"
 import InformationCircleIcon from "@hugeicons/core-free-icons/InformationCircleIcon"
 import Refresh01Icon from "@hugeicons/core-free-icons/Refresh01Icon"
 import ReloadIcon from "@hugeicons/core-free-icons/ReloadIcon"
+import TextCheckIcon from "@hugeicons/core-free-icons/TextCheckIcon"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
+import { AiMarkdown } from "@/components/emend/_shared/ai-markdown"
+import { Bubble, BubbleContent } from "@/components/ui/bubble"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
+import { Marker, MarkerContent, MarkerIcon } from "@/components/ui/marker"
+import { Message, MessageContent, MessageFooter } from "@/components/ui/message"
 import { Textarea } from "@/components/ui/textarea"
 import {
   Tooltip,
@@ -73,9 +78,14 @@ export function AiAssistantMessage({
     setEmendSelectionDecoration(editor, active && range ? range : null)
   }
 
+  const status = isRunning
+    ? isAsk
+      ? "Thinking…"
+      : "Writing a suggestion…"
+    : null
+
   return (
-    <div
-      className="max-w-[92%] space-y-3 rounded-2xl rounded-bl-md bg-muted px-3.5 py-3 text-sm text-foreground"
+    <Message
       onMouseEnter={() => highlightTarget(true)}
       onMouseLeave={() => highlightTarget(false)}
       onFocusCapture={() => highlightTarget(true)}
@@ -85,89 +95,132 @@ export function AiAssistantMessage({
         }
       }}
     >
-      {visibleError && (
-        <p
-          className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-destructive"
-          role="alert"
-        >
-          {visibleError.message}
-        </p>
-      )}
+      <MessageContent>
+        {status && !session.streamedMarkdown && (
+          <Marker role="status">
+            <MarkerContent className="shimmer motion-reduce:shimmer-none">
+              {status}
+            </MarkerContent>
+          </Marker>
+        )}
 
-      {isRunning && (
-        <p className="leading-relaxed whitespace-pre-wrap">
-          {session.streamedMarkdown || "Thinking…"}
-        </p>
-      )}
+        {visibleError && (
+          <Bubble variant="destructive">
+            <BubbleContent role="alert">{visibleError.message}</BubbleContent>
+          </Bubble>
+        )}
 
-      {isAsk && !isRunning && (
-        <p className="leading-relaxed whitespace-pre-wrap">
-          {session.informationalMarkdown || session.streamedMarkdown}
-        </p>
-      )}
+        {isRunning && isAsk && session.streamedMarkdown && (
+          <AnswerBubble>{session.streamedMarkdown}</AnswerBubble>
+        )}
 
-      {!isRunning && !isAsk && !isEdit && visibleError && (
-        <p className="leading-relaxed whitespace-pre-wrap">
-          {session.streamedMarkdown || "No response was received."}
-        </p>
-      )}
+        {isAsk && !isRunning && (
+          <AnswerBubble>
+            {session.informationalMarkdown || session.streamedMarkdown}
+          </AnswerBubble>
+        )}
 
-      {isEdit && (
-        <div className="space-y-3">
-          {!proposalRenderedInline && (
-            <Textarea
-              className="h-44 resize-none overflow-y-auto bg-background font-mono text-sm leading-relaxed md:text-sm dark:bg-background"
-              aria-label={
-                isPlainTextFallback
-                  ? "Plain-text proposal"
-                  : "Editable proposal Markdown"
-              }
-              readOnly={isPlainTextFallback}
-              value={
-                isPlainTextFallback &&
-                preparation.kind === "plain-text-fallback"
-                  ? preparation.text
-                  : proposalMarkdown
-              }
-              onChange={(event) =>
-                session.setProposalMarkdown(event.target.value)
-              }
-            />
-          )}
+        {!isRunning && !isAsk && !isEdit && visibleError && (
+          <AnswerBubble>
+            {session.streamedMarkdown || "No response was received."}
+          </AnswerBubble>
+        )}
 
-          {isBlocked && preparation.kind === "blocked" && (
-            <p
-              className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-destructive"
-              role="alert"
-            >
-              {preparation.error.message}
-            </p>
-          )}
+        {isRunning && !isAsk && session.streamedMarkdown && (
+          <Marker role="status">
+            <MarkerContent className="shimmer motion-reduce:shimmer-none">
+              {status}
+            </MarkerContent>
+          </Marker>
+        )}
 
-          {preparation &&
-            preparation.kind !== "blocked" &&
-            preparation.requiresDocumentConfirmation &&
-            !session.stale && (
-              <Label className="items-start rounded-xl border border-destructive/30 bg-destructive/10 p-3 leading-normal font-normal">
-                <Checkbox
-                  className="mt-1"
-                  checked={confirmDocumentReplacement}
-                  onCheckedChange={(checked) =>
-                    setConfirmation({
-                      key: confirmationKey,
-                      checked,
-                    })
-                  }
-                />
-                Confirm replacing the non-empty Document.
-              </Label>
+        {isEdit && (
+          <div className="space-y-3">
+            {proposalRenderedInline ? (
+              <Marker>
+                <MarkerIcon>
+                  <HugeiconsIcon icon={TextCheckIcon} size={16} />
+                </MarkerIcon>
+                <MarkerContent>
+                  {session.stale
+                    ? "The document changed, so this suggestion is out of date."
+                    : "The suggested change is shown in your document."}
+                </MarkerContent>
+              </Marker>
+            ) : (
+              <Textarea
+                className="h-44 resize-none overflow-y-auto bg-background font-mono text-sm leading-relaxed md:text-sm dark:bg-background"
+                aria-label={
+                  isPlainTextFallback
+                    ? "Plain-text proposal"
+                    : "Editable proposal Markdown"
+                }
+                readOnly={isPlainTextFallback}
+                value={
+                  isPlainTextFallback &&
+                  preparation.kind === "plain-text-fallback"
+                    ? preparation.text
+                    : proposalMarkdown
+                }
+                onChange={(event) =>
+                  session.setProposalMarkdown(event.target.value)
+                }
+              />
             )}
-        </div>
-      )}
 
-      {!isRunning && (
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-1">
+            {isBlocked && preparation.kind === "blocked" && (
+              <Bubble variant="destructive">
+                <BubbleContent role="alert">
+                  {preparation.error.message}
+                </BubbleContent>
+              </Bubble>
+            )}
+
+            {preparation &&
+              preparation.kind !== "blocked" &&
+              preparation.requiresDocumentConfirmation &&
+              !session.stale && (
+                <Label className="items-start rounded-xl border border-destructive/30 bg-destructive/10 p-3 leading-normal font-normal">
+                  <Checkbox
+                    className="mt-1"
+                    checked={confirmDocumentReplacement}
+                    onCheckedChange={(checked) =>
+                      setConfirmation({
+                        key: confirmationKey,
+                        checked,
+                      })
+                    }
+                  />
+                  Confirm replacing the whole document.
+                </Label>
+              )}
+
+            {!isRunning && (
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={!canApply}
+                  onClick={() => session.accept(confirmDocumentReplacement)}
+                >
+                  <HugeiconsIcon icon={CheckmarkCircle01Icon} size={14} />
+                  {isPlainTextFallback ? "Apply as plain text" : "Accept"}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => session.reject()}
+                >
+                  <HugeiconsIcon icon={CancelCircleIcon} size={14} />
+                  Reject
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+        {!isRunning && (
+          <MessageFooter className="-mt-1 gap-0.5 px-0">
             <MessageAction
               label="Copy"
               icon={Copy01Icon}
@@ -209,45 +262,31 @@ export function AiAssistantMessage({
                 </TooltipContent>
               </Tooltip>
             )}
-          </div>
+          </MessageFooter>
+        )}
+      </MessageContent>
+    </Message>
+  )
+}
 
-          {isEdit ? (
-            <div className="flex items-center gap-1">
-              <MessageAction
-                label="Reject"
-                icon={CancelCircleIcon}
-                variant="destructive"
-                size="icon-sm"
-                onClick={() => session.reject()}
-              />
-              <MessageAction
-                label={isPlainTextFallback ? "Apply as plain text" : "Accept"}
-                icon={CheckmarkCircle01Icon}
-                variant="default"
-                size="icon-sm"
-                disabled={!canApply}
-                onClick={() => session.accept(confirmDocumentReplacement)}
-              />
-            </div>
-          ) : null}
-        </div>
-      )}
-    </div>
+export function AnswerBubble({ children }: { readonly children: string }) {
+  return (
+    <Bubble variant="ghost" className="w-full">
+      <BubbleContent>
+        <AiMarkdown>{children}</AiMarkdown>
+      </BubbleContent>
+    </Bubble>
   )
 }
 
 function MessageAction({
   label,
   icon,
-  variant = "ghost",
-  size = "icon-xs",
   disabled,
   onClick,
 }: {
   readonly label: string
   readonly icon: IconSvgElement
-  readonly variant?: "default" | "destructive" | "ghost" | "outline"
-  readonly size?: "icon-sm" | "icon-xs"
   readonly disabled?: boolean
   readonly onClick: () => void
 }) {
@@ -256,8 +295,8 @@ function MessageAction({
       <TooltipTrigger
         render={
           <Button
-            variant={variant}
-            size={size}
+            variant="ghost"
+            size="icon-xs"
             type="button"
             aria-label={label}
             disabled={disabled}

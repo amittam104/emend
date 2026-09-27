@@ -15,7 +15,9 @@ import ArrowLeft01Icon from "@hugeicons/core-free-icons/ArrowLeft01Icon"
 import Cancel01Icon from "@hugeicons/core-free-icons/Cancel01Icon"
 import Delete02Icon from "@hugeicons/core-free-icons/Delete02Icon"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { Bubble, BubbleContent } from "@/components/ui/bubble"
 import { Button } from "@/components/ui/button"
+import { Message, MessageContent } from "@/components/ui/message"
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -38,12 +40,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { useEffect, useLayoutEffect, useState } from "react"
+import { useEffect, useLayoutEffect, useState, type ReactNode } from "react"
 import {
   AiAssistantComposer,
   type AiAssistantPolicy,
 } from "./ai-assistant-composer"
-import { AiAssistantMessage } from "./ai-assistant-message"
+import { AiAssistantMessage, AnswerBubble } from "./ai-assistant-message"
 import {
   useAssistantHistory,
   type AssistantThread,
@@ -65,6 +67,7 @@ export interface AiAssistantProps {
   readonly inline?: boolean
   readonly className?: string
   readonly panelClassName?: string
+  readonly triggerIcon?: ReactNode
 }
 
 export interface AiAssistantViewProps {
@@ -78,6 +81,7 @@ export interface AiAssistantViewProps {
   readonly inline?: boolean
   readonly className?: string
   readonly panelClassName?: string
+  readonly triggerIcon?: ReactNode
 }
 
 export function AiAssistant({
@@ -91,6 +95,7 @@ export function AiAssistant({
   inline,
   className,
   panelClassName,
+  triggerIcon,
 }: AiAssistantProps) {
   const session = useEditorAi({ editor, transport, previewMode: "inline" })
 
@@ -106,6 +111,7 @@ export function AiAssistant({
       inline={inline}
       className={className}
       panelClassName={panelClassName}
+      triggerIcon={triggerIcon}
     />
   )
 }
@@ -125,6 +131,7 @@ function AiAssistantPanel({
   inline = false,
   className,
   panelClassName,
+  triggerIcon,
 }: AiAssistantViewProps) {
   const [localOpen, setLocalOpen] = useState(defaultOpen)
   const isOpen = open ?? localOpen
@@ -399,7 +406,7 @@ function AiAssistantPanel({
               How can I help you today?
             </h3>
             <p className="text-sm text-muted-foreground">
-              Select text to edit, or chat without a selection.
+              Ask anything about your document, or select text to edit it.
             </p>
           </div>
           <AiAssistantComposer
@@ -450,22 +457,26 @@ function AiAssistantPanel({
                           }
                         >
                           {message.role === "user" ? (
-                            <div className="flex justify-end">
-                              <div className="max-w-[85%] rounded-2xl rounded-br-md bg-primary px-3.5 py-2.5 text-sm text-primary-foreground">
-                                {message.content}
-                              </div>
-                            </div>
+                            <Message align="end">
+                              <MessageContent>
+                                <Bubble align="end">
+                                  <BubbleContent className="whitespace-pre-wrap">
+                                    {message.content}
+                                  </BubbleContent>
+                                </Bubble>
+                              </MessageContent>
+                            </Message>
                           ) : currentAssistant ? (
                             <AiAssistantMessage
                               editor={editor}
                               session={chatSession}
                             />
                           ) : (
-                            <div className="max-w-[92%] rounded-2xl rounded-bl-md bg-muted px-3.5 py-3 text-sm text-foreground">
-                              <p className="leading-relaxed whitespace-pre-wrap">
-                                {message.content}
-                              </p>
-                            </div>
+                            <Message>
+                              <MessageContent>
+                                <AnswerBubble>{message.content}</AnswerBubble>
+                              </MessageContent>
+                            </Message>
                           )}
                         </MessageScrollerItem>
                       )
@@ -475,12 +486,11 @@ function AiAssistantPanel({
                       <MessageScrollerItem
                         messageId={`error-${detachedError.code}`}
                       >
-                        <p
-                          className="max-w-[92%] rounded-2xl rounded-bl-md border border-destructive/30 bg-destructive/10 px-3.5 py-3 text-sm text-destructive"
-                          role="alert"
-                        >
-                          {detachedError.message}
-                        </p>
+                        <Bubble variant="destructive">
+                          <BubbleContent role="alert">
+                            {detachedError.message}
+                          </BubbleContent>
+                        </Bubble>
                       </MessageScrollerItem>
                     )}
                   </MessageScrollerContent>
@@ -547,11 +557,13 @@ function AiAssistantPanel({
           />
         }
       >
-        <HugeiconsIcon
-          icon={isOpen ? ArrowDown01Icon : AiChat02Icon}
-          size={22}
-          className="transition-transform duration-200 motion-reduce:transition-none"
-        />
+        {triggerIcon ?? (
+          <HugeiconsIcon
+            icon={isOpen ? ArrowDown01Icon : AiChat02Icon}
+            size={22}
+            className="transition-transform duration-200 motion-reduce:transition-none"
+          />
+        )}
       </PopoverTrigger>
       <PopoverContent
         side="top"
