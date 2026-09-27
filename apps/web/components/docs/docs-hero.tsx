@@ -14,17 +14,17 @@ const surfaces: readonly {
   {
     clip: "bubble",
     label: "Bubble Menu",
-    icon: "TextSelectionIcon",
+    icon: "AiReplaceIcon",
   },
   {
     clip: "composer",
     label: "Composer",
-    icon: "LayoutBottomIcon",
+    icon: "AiBackgroundIcon",
   },
   {
     clip: "assistant",
     label: "AI Assistant",
-    icon: "AiChat02Icon",
+    icon: "AiDrawingIcon",
   },
   {
     clip: "starter",
@@ -58,7 +58,7 @@ export function DocsHero() {
 
   return (
     <section
-      aria-label="Emend components"
+      aria-label="emend components"
       className="not-prose bg-fd-card relative my-8 overflow-hidden rounded-2xl border"
       onPointerEnter={() => setPaused(true)}
       onPointerLeave={() => setPaused(false)}
@@ -116,7 +116,7 @@ export function DocsHero() {
           <div className="bg-fd-background shadow-elevation-3 aspect-[16/10] overflow-hidden rounded-xl border">
             <div
               key={surface.clip}
-              className="animate-in fade-in-0 zoom-in-[0.985] size-full duration-500 ease-out motion-reduce:animate-none"
+              className="size-full animate-in duration-500 ease-out fade-in-0 zoom-in-[0.985] motion-reduce:animate-none"
             >
               <ShowcaseClip clip={surface.clip} />
             </div>

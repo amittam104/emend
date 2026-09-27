@@ -38,6 +38,10 @@
   }
 }
 
+.landing-page .emend-landing-editor .ProseMirror > h2 + * {
+  margin-top: 0.5rem;
+}
+
 .landing-page .emend-landing-editor .ProseMirror hr {
   margin-block: 4.5rem;
 }

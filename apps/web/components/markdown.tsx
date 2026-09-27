@@ -21,11 +21,19 @@ export interface Processor {
   process: (content: string) => Promise<ReactNode>
 }
 
+const tableElements = new Set(["table", "thead", "tbody", "tfoot", "tr"])
+
 export function rehypeWrapWords() {
   return (tree: Root) => {
     visit(tree, ["text", "element"], (node, index, parent) => {
       if (node.type === "element" && node.tagName === "pre") return "skip"
       if (node.type !== "text" || !parent || index === undefined) return
+      if (
+        parent.type === "element" &&
+        tableElements.has(parent.tagName) &&
+        node.value.trim().length === 0
+      )
+        return
 
       const words = node.value.split(/(?=\s)/)
 

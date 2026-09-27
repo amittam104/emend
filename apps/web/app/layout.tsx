@@ -25,8 +25,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Emend",
-    template: "%s | Emend",
+    default: "emend",
+    template: "%s | emend",
   },
   description: "AI editing components and editor starters for Tiptap.",
 }
