@@ -1,6 +1,10 @@
 import type { JSONContent } from "@tiptap/core"
 import type { MarkdownManager } from "@tiptap/markdown"
-import type { Node as ProseMirrorNode } from "@tiptap/pm/model"
+import {
+  Fragment,
+  type Mark,
+  type Node as ProseMirrorNode,
+} from "@tiptap/pm/model"
 import { createEmendError } from "../protocol/errors.js"
 import { DEFAULT_REQUEST_LIMITS } from "../protocol/types.js"
 import {
@@ -100,12 +104,106 @@ function serializeContent(
 
     const reparsed = checkedNode(schema.nodeFromJSON(manager.parse(markdown)))
     if (inspectTiptapContent(reparsed, linkProtocols).length > 0) return null
-    if (!original.eq(reparsed)) return null
+    if (
+      !normalizeMarkBoundaryWhitespace(original).eq(
+        normalizeMarkBoundaryWhitespace(reparsed)
+      )
+    ) {
+      return null
+    }
 
     return { markdown }
   } catch {
     return null
   }
+}
+
+/**
+ * Markdown cannot express whitespace at the edge of an emphasis run, so
+ * `**Note: **text` round-trips as `**Note:** text`. Whitespace between two
+ * inline items keeps only the marks both neighbours share, which makes those
+ * documents compare equal without hiding any change to text or structure.
+ */
+function normalizeMarkBoundaryWhitespace(
+  node: ProseMirrorNode
+): ProseMirrorNode {
+  if (node.isTextblock) return normalizeTextblock(node)
+  if (node.isLeaf) return node
+
+  const children: ProseMirrorNode[] = []
+  node.forEach((child) => children.push(normalizeMarkBoundaryWhitespace(child)))
+  return node.copy(Fragment.fromArray(children))
+}
+
+type InlineItem =
+  | { readonly text: string; marks: readonly Mark[] }
+  | { readonly node: ProseMirrorNode; readonly marks: readonly Mark[] }
+
+function normalizeTextblock(node: ProseMirrorNode): ProseMirrorNode {
+  const items: InlineItem[] = []
+  node.forEach((child) => {
+    if (child.isText) {
+      for (const text of child.text ?? "")
+        items.push({ text, marks: child.marks })
+    } else {
+      items.push({ node: child, marks: child.marks })
+    }
+  })
+
+  const isSpace = (item: InlineItem | undefined) =>
+    item !== undefined && "text" in item && /\s/.test(item.text)
+
+  let index = 0
+  while (index < items.length) {
+    if (!isSpace(items[index])) {
+      index += 1
+      continue
+    }
+
+    const start = index
+    while (isSpace(items[index])) index += 1
+    const before = items[start - 1]?.marks ?? []
+    const after = items[index]?.marks ?? []
+
+    for (let position = start; position < index; position += 1) {
+      const item = items[position]
+      if (item && "text" in item) {
+        item.marks = item.marks.filter(
+          (mark) => mark.isInSet(before) && mark.isInSet(after)
+        )
+      }
+    }
+  }
+
+  const children: ProseMirrorNode[] = []
+  let text = ""
+  let marks: readonly Mark[] = []
+  const flush = () => {
+    if (text) children.push(node.type.schema.text(text, marks))
+    text = ""
+  }
+
+  for (const item of items) {
+    if ("node" in item) {
+      flush()
+      children.push(item.node)
+    } else if (text && sameMarks(marks, item.marks)) {
+      text += item.text
+    } else {
+      flush()
+      text = item.text
+      marks = item.marks
+    }
+  }
+  flush()
+
+  return node.copy(Fragment.fromArray(children))
+}
+
+function sameMarks(left: readonly Mark[], right: readonly Mark[]): boolean {
+  return (
+    left.length === right.length && left.every((mark) => mark.isInSet(right))
+  )
 }
 
 function checkedNode(node: ProseMirrorNode): ProseMirrorNode {
