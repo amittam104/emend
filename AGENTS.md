@@ -1,5 +1,3 @@
-## Git and GitHub workflow
-
 - Keep `main` as the integration branch; create short-lived branches from an updated `main` and merge them back through pull requests.
 - When switching to `main` and pulling from `origin`, delete merged local feature branches and prune their stale `origin/*` tracking refs.
 - Name branches with a type and short kebab-case description, for example `feat/editor-toolbar` or `fix/selection-loss`.
@@ -10,4 +8,6 @@
 - PR description sould also be simple bullet points on what is done in it. Apart from this bullet points only more thing can be added which is which issue it closes if there is one. Don't add any bloated information.
 - Create github issue which will be closed by the PR that you are creating, and follow the same guidelines as PRs.
 - Add as much metadata information you can add for the PR and issue like type, labels, Develpment etc.
+- Resolve the comments in PR only if they are legit, not all of them will be. But in any case you need to reply to the comments in one line or so stating what you have done. The  resolve that conversation.
+- Once you have replied to all the comments in the PR, you need to resolve that conversation. And then you can tag @greptile-apps to review the PR again if the initial PR review score was less than 4. We need the score to be 4 or higher before merging.
 - Don't write unnecessary comments in code
