@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "emend",
-  "homepage": "https://emend.dev",
+  "homepage": "https://getemend.vercel.app",
   "items": [
     {
       "name": "ai-bubble-menu",
@@ -9,12 +9,15 @@
       "title": "AI Bubble Menu",
       "description": "Selection-aware AI actions for an existing Tiptap editor.",
       "dependencies": [
-        "@emend/ai",
+        "@emend/ai@0.1.0",
         "@hugeicons/core-free-icons@4.2.3",
         "@hugeicons/react@^1.1.9",
-        "@tiptap/react@3.30.1",
+        "@tiptap/react@3.31.4",
         "clsx@^2.1.1",
-        "tailwind-merge@^3.6.0"
+        "tailwind-merge@^3.6.0",
+        "@tiptap/core@3.31.4",
+        "@tiptap/markdown@3.31.4",
+        "@tiptap/pm@3.31.4"
       ],
       "registryDependencies": [],
       "files": [
@@ -37,6 +40,11 @@
           "path": "packages/ui/src/lib/utils.ts",
           "type": "registry:lib",
           "target": "lib/utils.ts"
+        },
+        {
+          "path": "THIRD_PARTY_NOTICES.md",
+          "type": "registry:file",
+          "target": "components/emend/THIRD_PARTY_NOTICES.md"
         }
       ]
     },
@@ -46,14 +54,17 @@
       "title": "AI Composer",
       "description": "Prompt and review controls for an existing Tiptap editor.",
       "dependencies": [
-        "@emend/ai",
+        "@emend/ai@0.1.0",
         "@hugeicons/core-free-icons@4.2.3",
         "@hugeicons/react@^1.1.9",
-        "@tiptap/react@3.30.1",
+        "@tiptap/react@3.31.4",
         "clsx@^2.1.1",
         "react-markdown@^10.1.0",
         "remark-gfm@^4.0.1",
-        "tailwind-merge@^3.6.0"
+        "tailwind-merge@^3.6.0",
+        "@tiptap/core@3.31.4",
+        "@tiptap/markdown@3.31.4",
+        "@tiptap/pm@3.31.4"
       ],
       "registryDependencies": [
         "badge",
@@ -96,6 +107,11 @@
           "path": "packages/ui/src/lib/utils.ts",
           "type": "registry:lib",
           "target": "lib/utils.ts"
+        },
+        {
+          "path": "THIRD_PARTY_NOTICES.md",
+          "type": "registry:file",
+          "target": "components/emend/THIRD_PARTY_NOTICES.md"
         }
       ]
     },
@@ -105,14 +121,17 @@
       "title": "AI Assistant",
       "description": "Floating AI assistant with document-aware writing actions and local chat history.",
       "dependencies": [
-        "@emend/ai",
+        "@emend/ai@0.1.0",
         "@hugeicons/core-free-icons@4.2.3",
         "@hugeicons/react@^1.1.9",
-        "@tiptap/react@3.30.1",
+        "@tiptap/react@3.31.4",
         "clsx@^2.1.1",
         "react-markdown@^10.1.0",
         "remark-gfm@^4.0.1",
-        "tailwind-merge@^3.6.0"
+        "tailwind-merge@^3.6.0",
+        "@tiptap/core@3.31.4",
+        "@tiptap/markdown@3.31.4",
+        "@tiptap/pm@3.31.4"
       ],
       "registryDependencies": [
         "button",
@@ -168,6 +187,11 @@
           "path": "packages/ui/src/lib/utils.ts",
           "type": "registry:lib",
           "target": "lib/utils.ts"
+        },
+        {
+          "path": "THIRD_PARTY_NOTICES.md",
+          "type": "registry:file",
+          "target": "components/emend/THIRD_PARTY_NOTICES.md"
         }
       ]
     },
@@ -177,12 +201,15 @@
       "title": "AI Assistant (legacy alias)",
       "description": "Compatibility entry point. Use @emend/ai-assistant for new installations.",
       "dependencies": [
-        "@emend/ai",
+        "@emend/ai@0.1.0",
         "@hugeicons/core-free-icons@4.2.3",
         "@hugeicons/react@^1.1.9",
-        "@tiptap/react@3.30.1",
+        "@tiptap/react@3.31.4",
         "clsx@^2.1.1",
-        "tailwind-merge@^3.6.0"
+        "tailwind-merge@^3.6.0",
+        "@tiptap/core@3.31.4",
+        "@tiptap/markdown@3.31.4",
+        "@tiptap/pm@3.31.4"
       ],
       "registryDependencies": ["@emend/ai-assistant"],
       "files": [
@@ -216,15 +243,16 @@
       "dependencies": [
         "@hugeicons/core-free-icons@4.2.3",
         "@hugeicons/react@^1.1.9",
-        "@tiptap/core@3.30.1",
-        "@tiptap/extension-list@3.30.1",
-        "@tiptap/extension-table@3.30.1",
-        "@tiptap/extensions@3.30.1",
-        "@tiptap/markdown@3.30.1",
-        "@tiptap/react@3.30.1",
-        "@tiptap/starter-kit@3.30.1",
+        "@tiptap/core@3.31.4",
+        "@tiptap/extension-list@3.31.4",
+        "@tiptap/extension-table@3.31.4",
+        "@tiptap/extensions@3.31.4",
+        "@tiptap/markdown@3.31.4",
+        "@tiptap/react@3.31.4",
+        "@tiptap/starter-kit@3.31.4",
         "clsx@^2.1.1",
-        "tailwind-merge@^3.6.0"
+        "tailwind-merge@^3.6.0",
+        "@tiptap/pm@3.31.4"
       ],
       "registryDependencies": ["button", "select", "separator", "tooltip"],
       "files": [
@@ -257,6 +285,11 @@
           "path": "packages/ui/src/lib/utils.ts",
           "type": "registry:lib",
           "target": "lib/utils.ts"
+        },
+        {
+          "path": "THIRD_PARTY_NOTICES.md",
+          "type": "registry:file",
+          "target": "components/emend/THIRD_PARTY_NOTICES.md"
         }
       ]
     },
@@ -265,7 +298,7 @@
       "type": "registry:block",
       "title": "Emend Editor with AI Bubble Menu",
       "description": "A Tiptap editor with AI Bubble Menu. The default starter.",
-      "dependencies": ["@emend/ai"],
+      "dependencies": ["@emend/ai@0.1.0"],
       "registryDependencies": [
         "@emend/emend-editor-base",
         "@emend/ai-bubble-menu"
@@ -288,7 +321,7 @@
       "type": "registry:block",
       "title": "Emend Editor with AI Assistant",
       "description": "A Tiptap editor with AI Assistant.",
-      "dependencies": ["@emend/ai"],
+      "dependencies": ["@emend/ai@0.1.0"],
       "registryDependencies": [
         "@emend/emend-editor-base",
         "@emend/ai-assistant"
@@ -306,7 +339,7 @@
       "type": "registry:block",
       "title": "Emend Editor with AI Assistant (legacy alias)",
       "description": "Compatibility entry point. Use @emend/emend-editor-assistant for new installations.",
-      "dependencies": ["@emend/ai"],
+      "dependencies": ["@emend/ai@0.1.0"],
       "registryDependencies": ["@emend/emend-editor-assistant"],
       "files": [
         {
@@ -321,7 +354,7 @@
       "type": "registry:block",
       "title": "Emend Editor with AI Composer",
       "description": "A Tiptap editor with AI Composer.",
-      "dependencies": ["@emend/ai"],
+      "dependencies": ["@emend/ai@0.1.0"],
       "registryDependencies": [
         "@emend/emend-editor-base",
         "@emend/ai-composer"
@@ -339,7 +372,7 @@
       "type": "registry:item",
       "title": "Vercel AI Gateway Route",
       "description": "An Emend AI route backed by Vercel AI Gateway.",
-      "dependencies": ["@emend/ai", "ai@^7.0.97"],
+      "dependencies": ["@emend/ai@0.1.0", "ai@^7.0.97"],
       "files": [
         {
           "path": "registry/recipes/vercel-ai-gateway/route.ts",

@@ -9,7 +9,7 @@ import StarterKit from "@tiptap/starter-kit"
 import { useEffect, useState } from "react"
 import { AiBubbleMenuView } from "@/components/emend/ai-bubble-menu"
 import { AiComposerView } from "@/components/emend/ai-composer"
-import { AiSideChatView } from "@/components/emend/ai-side-chat"
+import { AiAssistantView } from "@/components/emend/ai-assistant"
 
 const transport = createFetchTransport({ url: "/api/demo-ai" })
 
@@ -54,7 +54,7 @@ export function ExistingEditor() {
             <AiComposerView editor={editor} session={session} />
           </div>
         </div>
-        <AiSideChatView
+        <AiAssistantView
           editor={editor}
           session={session}
           inline

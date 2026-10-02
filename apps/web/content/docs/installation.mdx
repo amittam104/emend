@@ -26,7 +26,7 @@ emend comes in two parts:
 Make sure your project has everything below before you install emend.
 
 - Next.js with the App Router, and React 19
-- Tiptap `3.30.1` (all `@tiptap/*` packages on the same version)
+- Tiptap `3.31.4` (all `@tiptap/*` packages on the same version)
 - Shadcn set up with Tailwind CSS 4 (run `npx shadcn@latest init` if you have
   not)
 - Node.js `24.19.0` or later
@@ -49,7 +49,7 @@ registry:
   "style": "new-york",
   "tailwind": { "css": "app/globals.css" },
   "registries": { // [!code ++]
-    "@emend": "https://emend.dev/r/{name}.json" // [!code ++]
+    "@emend": "https://getemend.vercel.app/r/{name}.json" // [!code ++]
   } // [!code ++]
 }
 ```
@@ -65,7 +65,7 @@ If you are running the emend repository locally, use
 Install `@emend/ai` with your package manager:
 
 ```npm
-npm install @emend/ai
+npm install @emend/ai@preview
 ```
 
 </Step>

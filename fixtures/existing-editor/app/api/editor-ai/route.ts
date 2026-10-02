@@ -44,8 +44,11 @@ function buildPrompt(request: EmendAiRequest): string {
     `Mutation operation\n${request.mutationOperation ?? "none"}`,
     `Conversation\n${JSON.stringify(request.messages ?? [])}`,
     // Raw Markdown, not JSON strings: models echo quoted, escaped answers.
-    `<target_markdown>\n${request.targetMarkdown}\n</target_markdown>`,
+    request.targetMarkdown &&
+      `<target_markdown>\n${request.targetMarkdown}\n</target_markdown>`,
     `<context_markdown>\n${request.contextMarkdown}\n</context_markdown>`,
     `Custom instruction\n${JSON.stringify(request.instruction ?? "")}`,
-  ].join("\n\n")
+  ]
+    .filter(Boolean)
+    .join("\n\n")
 }

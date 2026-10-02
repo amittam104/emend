@@ -1,6 +1,6 @@
 {
   "name": "@emend/ai",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Provider-neutral human-in-the-loop AI editing runtime for Tiptap.",
   "license": "MIT",
   "type": "module",
@@ -12,9 +12,9 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@tiptap/core": "3.30.1",
-    "@tiptap/markdown": "3.30.1",
-    "@tiptap/pm": "3.30.1",
+    "@tiptap/core": "3.31.4",
+    "@tiptap/markdown": "3.31.4",
+    "@tiptap/pm": "3.31.4",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "@types/react": "^19",
@@ -27,7 +27,9 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md",
+    "THIRD_PARTY_NOTICES.md"
   ],
   "exports": {
     ".": {
@@ -70,9 +72,9 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@tiptap/core": "3.30.1",
-    "@tiptap/markdown": "3.30.1",
-    "@tiptap/pm": "3.30.1",
+    "@tiptap/core": "3.31.4",
+    "@tiptap/markdown": "3.31.4",
+    "@tiptap/pm": "3.31.4",
     "react": "^19.0.0"
   },
   "peerDependenciesMeta": {
@@ -82,5 +84,14 @@
   },
   "dependencies": {
     "eventsource-parser": "^4.0.0"
+  },
+  "homepage": "https://getemend.vercel.app/docs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amittam104/emend.git",
+    "directory": "packages/ai"
+  },
+  "bugs": {
+    "url": "https://github.com/amittam104/emend/issues"
   }
 }
