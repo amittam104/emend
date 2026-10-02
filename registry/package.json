@@ -11,14 +11,11 @@
   "exports": {
     "./blocks/emend-editor": "./blocks/emend-editor/index.ts",
     "./components/_shared/use-emend-ai-session": "./components/_shared/use-emend-ai-session.ts",
-    "./components/_shared/ai-review-card": "./components/_shared/ai-review-card.tsx",
     "./components/ai-bubble-menu": "./components/ai-bubble-menu/index.ts",
     "./components/ai-composer": "./components/ai-composer/index.tsx",
-    "./components/ai-side-chat": "./components/ai-side-chat/index.ts",
     "./recipes/vercel-ai-gateway": "./recipes/vercel-ai-gateway/route.ts",
     "./blocks/emend-editor-base": "./blocks/emend-editor/emend-editor-base.tsx",
     "./blocks/emend-editor-composer": "./blocks/emend-editor/emend-editor-composer.tsx",
-    "./blocks/emend-editor-side-chat": "./blocks/emend-editor/emend-editor-side-chat.tsx",
     "./components/ai-assistant": "./components/ai-assistant/index.ts",
     "./blocks/emend-editor-assistant": "./blocks/emend-editor/emend-editor-assistant.tsx"
   },

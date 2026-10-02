@@ -72,16 +72,16 @@ const landingEditorControlClasses =
 export function LandingEditorToolbar({
   editor,
   actions,
-  sideChatOpen,
+  assistantOpen,
   composerOpen,
-  onToggleSideChat,
+  onToggleAssistant,
   onToggleComposer,
 }: {
   readonly editor: Editor
   readonly actions?: ReactNode
-  readonly sideChatOpen: boolean
+  readonly assistantOpen: boolean
   readonly composerOpen: boolean
-  readonly onToggleSideChat: () => void
+  readonly onToggleAssistant: () => void
   readonly onToggleComposer: () => void
 }) {
   const state = useEditorState({
@@ -445,8 +445,8 @@ export function LandingEditorToolbar({
           <ToolbarToggle
             label="AI Assistant"
             surface="assistant"
-            pressed={sideChatOpen}
-            onClick={onToggleSideChat}
+            pressed={assistantOpen}
+            onClick={onToggleAssistant}
           />
           <ToolbarToggle
             label="AI Composer"

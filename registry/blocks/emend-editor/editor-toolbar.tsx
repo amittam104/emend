@@ -55,18 +55,18 @@ const headingLevels = [1, 2, 3, 4, 5, 6] as const
 export function EditorToolbar({
   editor,
   onSave,
-  onSideChatToggle,
+  onAssistantToggle,
   saveDisabled,
   saveStatus,
-  sideChatOpen,
+  assistantOpen,
   toolbarActions,
 }: {
   readonly editor: Editor
   readonly onSave?: () => Promise<void>
-  readonly onSideChatToggle?: () => void
+  readonly onAssistantToggle?: () => void
   readonly saveDisabled: boolean
   readonly saveStatus: "idle" | "saving" | "success" | "error"
-  readonly sideChatOpen?: boolean
+  readonly assistantOpen?: boolean
   readonly toolbarActions?: ReactNode
 }) {
   const [moreOpen, setMoreOpen] = useState(false)
@@ -383,10 +383,10 @@ export function EditorToolbar({
         </div>
       </div>
 
-      {(toolbarActions || onSideChatToggle || onSave) && (
+      {(toolbarActions || onAssistantToggle || onSave) && (
         <div className="emend-editor__toolbar-actions">
           {toolbarActions}
-          {onSideChatToggle && (
+          {onAssistantToggle && (
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -395,8 +395,8 @@ export function EditorToolbar({
                     variant="outline"
                     size="icon"
                     aria-label="AI Assistant"
-                    aria-expanded={sideChatOpen}
-                    onClick={onSideChatToggle}
+                    aria-expanded={assistantOpen}
+                    onClick={onAssistantToggle}
                   />
                 }
               >

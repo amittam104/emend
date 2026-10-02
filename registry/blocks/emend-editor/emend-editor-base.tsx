@@ -34,8 +34,8 @@ export interface EmendEditorBaseProps {
   readonly onEditorReady?: (editor: Editor) => void
   readonly onSave?: (editor: Editor) => void | Promise<void>
   readonly renderWorkspace?: (editor: Editor, content: ReactNode) => ReactNode
-  readonly onSideChatToggle?: () => void
-  readonly sideChatOpen?: boolean
+  readonly onAssistantToggle?: () => void
+  readonly assistantOpen?: boolean
 }
 
 export function EmendEditorBase({
@@ -49,8 +49,8 @@ export function EmendEditorBase({
   onEditorReady,
   onSave,
   renderWorkspace,
-  onSideChatToggle,
-  sideChatOpen,
+  onAssistantToggle,
+  assistantOpen,
 }: EmendEditorBaseProps) {
   const [characterCount, setCharacterCount] = useState(0)
   const [saveStatus, setSaveStatus] = useState<
@@ -124,10 +124,10 @@ export function EmendEditorBase({
         <EditorToolbar
           editor={editor}
           onSave={onSave ? save : undefined}
-          onSideChatToggle={onSideChatToggle}
+          onAssistantToggle={onAssistantToggle}
           saveDisabled={saveStatus === "saving"}
           saveStatus={saveStatus}
-          sideChatOpen={sideChatOpen}
+          assistantOpen={assistantOpen}
           toolbarActions={toolbarActions}
         />
       )}

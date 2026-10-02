@@ -11,7 +11,7 @@ import { EditorBubbleMenu } from "./editor-bubble-menu"
 
 export interface EmendEditorAssistantProps extends Omit<
   EmendEditorBaseProps,
-  "renderWorkspace" | "onSideChatToggle" | "sideChatOpen"
+  "renderWorkspace" | "onAssistantToggle" | "assistantOpen"
 > {
   readonly transport?: EmendTransport
   readonly storageKey?: string
@@ -33,12 +33,12 @@ export function EmendEditorAssistant({
     <EmendEditorBase
       {...props}
       extensions={extensions}
-      onSideChatToggle={
+      onAssistantToggle={
         transport && showToolbarAssistantToggle
           ? () => setOpen((value) => !value)
           : undefined
       }
-      sideChatOpen={open}
+      assistantOpen={open}
       renderWorkspace={
         transport
           ? (editor, content) => (

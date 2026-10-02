@@ -11,7 +11,7 @@ import { EditorBubbleMenu } from "./editor-bubble-menu"
 
 export interface EmendEditorComposerProps extends Omit<
   EmendEditorBaseProps,
-  "renderWorkspace" | "onSideChatToggle" | "sideChatOpen"
+  "renderWorkspace" | "onAssistantToggle" | "assistantOpen"
 > {
   readonly transport?: EmendTransport
 }

@@ -91,7 +91,7 @@ export function LandingEditor({
   readonly onEditorReady?: (editor: Editor) => void
   readonly transport: EmendTransport
 }) {
-  const [sideChatOpen, setSideChatOpen] = useState(false)
+  const [assistantOpen, setAssistantOpen] = useState(false)
   const [composerOpen, setComposerOpen] = useState(false)
   const configuredExtensions = useMemo(
     () => [
@@ -123,9 +123,9 @@ export function LandingEditor({
           editor={editor}
           actions={actions}
           composerOpen={composerOpen}
-          sideChatOpen={sideChatOpen}
+          assistantOpen={assistantOpen}
           onToggleComposer={() => setComposerOpen((open) => !open)}
-          onToggleSideChat={() => setSideChatOpen((open) => !open)}
+          onToggleAssistant={() => setAssistantOpen((open) => !open)}
         />
       )}
       {editor && (
@@ -133,8 +133,8 @@ export function LandingEditor({
           editor={editor}
           transport={transport}
           composerOpen={composerOpen}
-          sideChatOpen={sideChatOpen}
-          onOpenChange={setSideChatOpen}
+          assistantOpen={assistantOpen}
+          onOpenChange={setAssistantOpen}
         />
       )}
     </section>
@@ -145,13 +145,13 @@ function LandingAiWorkspace({
   editor,
   transport,
   composerOpen,
-  sideChatOpen,
+  assistantOpen,
   onOpenChange,
 }: {
   readonly editor: Editor
   readonly transport: EmendTransport
   readonly composerOpen: boolean
-  readonly sideChatOpen: boolean
+  readonly assistantOpen: boolean
   readonly onOpenChange: (open: boolean) => void
 }) {
   const contextProjection = useCallback(
@@ -186,14 +186,14 @@ function LandingAiWorkspace({
         <AiBubbleMenuView
           editor={editor}
           session={session}
-          showReview={!composerOpen && !sideChatOpen}
+          showReview={!composerOpen && !assistantOpen}
         />
       </div>
       <AiAssistantView
         editor={editor}
         session={session}
         policy={landingPolicy}
-        open={sideChatOpen}
+        open={assistantOpen}
         onOpenChange={onOpenChange}
         storageKey="emend:landing-assistant:v1"
         className="bottom-14"
