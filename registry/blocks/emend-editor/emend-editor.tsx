@@ -10,7 +10,7 @@ import { EmendEditorBase, type EmendEditorBaseProps } from "./emend-editor-base"
 
 export interface EmendEditorProps extends Omit<
   EmendEditorBaseProps,
-  "renderWorkspace" | "onSideChatToggle" | "sideChatOpen"
+  "renderWorkspace" | "onAssistantToggle" | "assistantOpen"
 > {
   readonly transport?: EmendTransport
 }

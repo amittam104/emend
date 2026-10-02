@@ -19,14 +19,13 @@ coverage
 out/
 
 # fumadocs generated source
+/.source/
 /apps/web/.source/
 
 # production
 build
 dist
 /apps/web/public/r/
-/.artifacts/
-/fixtures/*/pnpm-lock.yaml
 
 # turbo
 .turbo

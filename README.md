@@ -2,11 +2,6 @@
   <img alt="Emend README Header" src="https://shieldcn.dev/header/glow.svg?title=Emend&amp;subtitle=AI+Powered+Rich+Text+Editor+Based+on+Tiptap+and+Editor+UI+Components&amp;logo=graphite_editor&amp;size=social&amp;mode=dark&amp;theme=blue&amp;font=geist&amp;border=false" />
 </p>
 
-<p align="center">
-  <a href="https://www.npmjs.com/package/@emend/ai"><img alt="badge" src="https://shieldcn.dev/npm/%40emend%2Fai.svg?size=xs&amp;theme=zinc&amp;font=geist" /></a>
-  <a href="https://www.npmjs.com/package/@emend/ai"><img alt="license" src="https://shieldcn.dev/npm/license/%40emend%2Fai.svg?size=xs&amp;theme=zinc&amp;font=geist" /></a>
-</p>
-
 ## What is Emend?
 
 - Batteries-included AI components.
@@ -22,8 +17,6 @@ The runtime, React integration, AI surfaces, editor starters, and provider recip
 are implemented. Public installation becomes available after npm publication.
 
 - [Website and documentation](https://getemend.vercel.app)
-- [Release preparation and publishing](RELEASING.md)
-- [Security policy](SECURITY.md)
 
 Validation is manual and build-based. There is no automated regression suite.
 We are not accepting contributions until we reach a stable release.

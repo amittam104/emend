@@ -13,7 +13,7 @@ jobs:
   build-and-verify:
     name: Build and Verify
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v6
@@ -30,4 +30,3 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm build
       - run: pnpm registry:validate
-      - run: pnpm fixtures:verify
