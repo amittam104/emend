@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/emend"><img alt="badge" src="https://shieldcn.dev/npm/emend.svg?size=xs&amp;theme=zinc&amp;font=geist" /></a>
-  <a href="https://www.npmjs.com/package/emend"><img alt="license" src="https://shieldcn.dev/npm/license/emend.svg?size=xs&amp;theme=zinc&amp;font=geist" /></a>
+  <a href="https://www.npmjs.com/package/@emend/ai"><img alt="badge" src="https://shieldcn.dev/npm/%40emend%2Fai.svg?size=xs&amp;theme=zinc&amp;font=geist" /></a>
+  <a href="https://www.npmjs.com/package/@emend/ai"><img alt="license" src="https://shieldcn.dev/npm/license/%40emend%2Fai.svg?size=xs&amp;theme=zinc&amp;font=geist" /></a>
 </p>
 
 ## What is Emend?
@@ -17,15 +17,16 @@
 
 ## Development Status
 
-Emend is in active development and has not been released yet. The unpublished
-`@emend/ai` package now includes the provider-neutral protocol, immutable
-proposals, controller, streaming transports, Web Platform server helpers, the
-Markdown content boundary, and the `@emend/ai/tiptap` capture, preview, stale,
-and safe-apply boundary. The React session and private AI Bubble Menu source are
-implemented for existing-editor verification. Provider recipes, installable
-registry components, the remaining AI surfaces, and the full editor remain
-future V0 work. We are not accepting contributions until we reach a stable
-release.
+The `0.1.0` preview is prepared for publication; `@emend/ai` is not on npm yet.
+The runtime, React integration, AI surfaces, editor starters, and provider recipe
+are implemented. Public installation becomes available after npm publication.
+
+- [Website and documentation](https://getemend.vercel.app)
+- [Release preparation and publishing](RELEASING.md)
+- [Security policy](SECURITY.md)
+
+Validation is manual and build-based. There is no automated regression suite.
+We are not accepting contributions until we reach a stable release.
 
 ## Distribution Model
 
@@ -38,7 +39,7 @@ release.
 
 ## Repository Layout
 
-- apps/web — current Next.js application and temporary internal Phase 2/3/4 runtime, content, and Tiptap harnesses; later documentation, demos, and registry host.
+- apps/web — Next.js website, documentation, demos, and registry host.
 - packages/ai — unpublished provider-neutral Emend AI runtime.
 - packages/ui — private internal shadcn primitives.
 - packages/eslint-config — shared ESLint configuration.
@@ -55,9 +56,7 @@ a narrow basic GFM table profile.
 
 Proposal preparation returns Supported Markdown, an explicit Plain-text
 fallback only for a caller-confirmed text-safe target, or blocked content. It
-does not apply changes to an editor document. The temporary `/phase-3` harness
-demonstrates these boundaries without mounting or mutating an editor; it is
-internal verification tooling and is not a published UI.
+does not apply changes to an editor document. Documentation demos demonstrate the boundaries without requiring a provider key.
 
 ## Tiptap runtime boundary
 
@@ -70,18 +69,18 @@ proposal.
 
 ## AI Bubble Menu
 
-The private `AiBubbleMenu` source mounts against a consumer-owned Tiptap editor
+The editable `AiBubbleMenu` source mounts against a consumer-owned Tiptap editor
 with an explicit transport. `AiBubbleMenuView` can instead use an existing
 `useEditorAi` session so initiation, inline preview, and review share one
 controller. The editor must configure compatible `@tiptap/markdown` support and
 the `EmendAi` extension.
 
-The Bubble Menu is currently internal source for the existing-editor demo.
-Registry installation is not available yet.
+The Bubble Menu is available as registry source; public installation awaits
+npm publication of `@emend/ai`.
 
 ## AI Composer
 
-The private `AiComposer` source provides one instruction followed by either an
+The editable `AiComposer` source provides one instruction followed by either an
 informational Ask response or a deliberate Edit proposal. `AiComposer` mounts
 against a consumer-owned Tiptap `editor` and `transport`; `AiComposerView`
 composes with an existing `useEditorAi` session so Bubble Menu and Composer can
@@ -94,8 +93,8 @@ no selected action is Ask and cannot change the document; Custom instruction is
 the intentional Edit path. `AiComposerPolicy` can narrow allowed scopes and
 operations, set adaptive or fixed defaults, and show or hide user overrides.
 
-The Composer is currently internal source for the existing-editor demo.
-Registry installation and real provider wiring remain future work.
+Registry components and the Vercel AI Gateway recipe are implemented; public
+installation awaits npm publication.
 
 ## Development
 

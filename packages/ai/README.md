@@ -8,13 +8,16 @@
 
 ## Status
 
-`@emend/ai` is under internal V0 development and is not published yet.
+`0.1.0` is the initial preview prepared for publication. It is not on npm yet.
 
-The versioned protocol, immutable proposals, framework-neutral controller,
-provider-neutral transports, Web Platform server helpers, the Markdown content
-boundary, and the direct Tiptap capture/preview/safe-apply boundary are
-implemented. React integration, shared UI surfaces, and the supplied editor
-starter remain later V0 work.
+The runtime includes the protocol, controller, immutable proposals, streaming
+transports, Markdown preparation, Tiptap integration, React `useEditorAi`, and
+Web Platform server helpers. Editable UI and provider recipes are distributed
+through the Shadcn registry, separately from this package.
+
+Documentation: https://getemend.vercel.app/docs.
+
+Validation is manual and build-based. There is no automated regression suite.
 
 ## Module boundaries
 
@@ -27,10 +30,11 @@ The current public entry points are:
 - **tiptap** — consumer-editor capture, revision tracking, proposal decorations, target-aware preparation, and exact-range Accept/Reject.
 - **transport** — one-shot fetch/SSE transport and deterministic mock transport.
 - **server** — framework-neutral Web `Request`, `Response`, SSE, and mock-generation helpers.
+- **react** — `useEditorAi` for one shared editor session across AI surfaces.
 
 The package can be imported through `@emend/ai`, `@emend/ai/protocol`,
 `@emend/ai/proposal`, `@emend/ai/content`, `@emend/ai/transport`,
-`@emend/ai/tiptap`, and `@emend/ai/server`.
+`@emend/ai/tiptap`, `@emend/ai/server`, and `@emend/ai/react`.
 
 The content entry point does not expose Tiptap Markdown manager, Marked lexer,
 or handler internals. Those remain behind the package boundary.
@@ -101,7 +105,7 @@ const extensions = [
 
 This is the complete default profile, not a request to add duplicate
 extensions. An existing editor can keep equivalent schema and Markdown
-handlers. `StarterKit` belongs to that consumer editor or to the later supplied
+handlers. `StarterKit` belongs to that consumer editor or to the supplied
 editor starter; it is not bundled by `@emend/ai` core.
 
 Create one adapter for the editor and connect its `capture` and
@@ -177,7 +181,8 @@ the controller or transport contracts.
 - Server helpers use Web Platform APIs and do not import Next.js.
 - Content and direct Tiptap integration use exact aligned `@tiptap/core`, `@tiptap/markdown`, and `@tiptap/pm` peers and do not bundle StarterKit.
 - Provider SDKs belong in registry server recipes.
-- React, shared review UI, provider recipes, and the supplied editor starter remain outside this package boundary.
+- React 19 is an optional peer used only by the `react` entry point.
+- Shared review UI, provider recipes, and the editor starter are registry source.
 - UI is not published from this package.
 
 ## Development

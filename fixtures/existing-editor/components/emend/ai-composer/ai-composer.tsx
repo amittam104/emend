@@ -92,7 +92,7 @@ const actions = [
     command: "custom",
     label: "Custom instruction",
     icon: TypeCursorIcon,
-    description: "Tell Emend what to do.",
+    description: "Tell emend what to do.",
     targetScope: null,
     contextScope: null,
     mutationOperation: null,
@@ -253,15 +253,16 @@ export function AiComposerView({
   const allowedMutationOperations =
     policy?.allowedMutationOperations ?? defaultMutationOperations
   const configuredContext = policy?.defaultContextScope ?? "adaptive"
-  const adaptiveContext = selection.hasText
-    ? allowedContextScopes.includes("selection")
-      ? "selection"
+  const adaptiveContext =
+    selection.hasText && selectedActionId !== null
+      ? allowedContextScopes.includes("selection")
+        ? "selection"
+        : allowedContextScopes.includes("document")
+          ? "document"
+          : (allowedContextScopes[0] ?? null)
       : allowedContextScopes.includes("document")
         ? "document"
         : (allowedContextScopes[0] ?? null)
-    : allowedContextScopes.includes("document")
-      ? "document"
-      : (allowedContextScopes[0] ?? null)
   const policyContext =
     configuredContext === "adaptive"
       ? adaptiveContext
@@ -685,8 +686,8 @@ export function AiComposerView({
                 }}
                 placeholder={
                   isCustom
-                    ? "Tell Emend what to change…"
-                    : "Ask Emend or choose an action…"
+                    ? "Tell emend what to change…"
+                    : "Ask emend or choose an action…"
                 }
                 aria-label="AI instruction"
                 role="combobox"
@@ -923,7 +924,7 @@ function getAskBlockReason(input: {
   if (input.pendingProposal) return "Review the current proposal first."
   if (!input.instruction) return "Enter a prompt."
   if (input.instructionTooLong) return "The instruction is too long."
-  if (!input.contextScope) return "Choose what Emend may read."
+  if (!input.contextScope) return "Choose what emend may read."
   if (input.contextScope === "selection" && !input.hasSelection) {
     return "Select text before using Selection context."
   }
@@ -950,7 +951,7 @@ function getEditBlockReason(input: {
   if (!input.policyAllowsAction) {
     return "This action is unavailable under the Composer policy."
   }
-  if (!input.contextScope) return "Choose what Emend may read."
+  if (!input.contextScope) return "Choose what emend may read."
   if (input.contextScope === "selection" && !input.hasSelection) {
     return "Select text before using Selection context."
   }
@@ -958,7 +959,7 @@ function getEditBlockReason(input: {
     if (!input.instruction) return "Enter a custom instruction."
     if (input.instructionTooLong) return "The instruction is too long."
   }
-  if (!input.change) return "Choose how Emend should change the document."
+  if (!input.change) return "Choose how emend should change the document."
   if (input.change.operation === "replace-selection" && !input.hasSelection) {
     return "Select text before replacing the Selection."
   }

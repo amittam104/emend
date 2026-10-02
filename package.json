@@ -10,9 +10,14 @@
     "format": "turbo format",
     "registry:build": "pnpm --filter @workspace/ui exec shadcn build registry/registry.json -o apps/web/public/r --cwd ../..",
     "registry:validate": "pnpm registry:build",
+    "changeset": "changeset",
+    "release:version": "changeset version",
+    "release:pack": "pnpm --filter @emend/ai build && pnpm --dir packages/ai pack --out ../../.artifacts/emend-ai.tgz",
+    "fixtures:verify": "pnpm release:pack && pnpm --dir fixtures/existing-editor install --no-frozen-lockfile && pnpm --dir fixtures/existing-editor typecheck && pnpm --dir fixtures/existing-editor build && pnpm --dir fixtures/editor-starter install --no-frozen-lockfile && pnpm --dir fixtures/editor-starter typecheck && pnpm --dir fixtures/editor-starter build",
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "prettier": "^3.8.3",

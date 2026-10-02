@@ -7,7 +7,7 @@ import { EmendEditor } from "@/components/emend/emend-editor"
 
 import { EmendEditorBase } from "@/components/emend/emend-editor/emend-editor-base"
 import { EmendEditorComposer } from "@/components/emend/emend-editor/emend-editor-composer"
-import { EmendEditorSideChat } from "@/components/emend/emend-editor/emend-editor-side-chat"
+import { EmendEditorAssistant } from "@/components/emend/emend-editor/emend-editor-assistant"
 import {
   Select,
   SelectContent,
@@ -19,7 +19,7 @@ import {
 const starters = {
   bubble: { label: "AI Bubble Menu (default)", component: EmendEditor },
   none: { label: "No AI", component: EmendEditorBase },
-  chat: { label: "AI Side Chat", component: EmendEditorSideChat },
+  chat: { label: "AI Assistant", component: EmendEditorAssistant },
   composer: { label: "AI Composer", component: EmendEditorComposer },
 }
 

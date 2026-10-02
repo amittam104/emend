@@ -1,14 +1,17 @@
 "use client"
 
+import { Bubble, BubbleContent } from "@/components/ui/bubble"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
+import { Marker, MarkerContent } from "@/components/ui/marker"
 import { Textarea } from "@/components/ui/textarea"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { AiMarkdown } from "@/components/emend/_shared/ai-markdown"
 import { cn } from "@/lib/utils"
 import Cancel01Icon from "@hugeicons/core-free-icons/Cancel01Icon"
 import CancelCircleIcon from "@hugeicons/core-free-icons/CancelCircleIcon"
@@ -21,6 +24,8 @@ import StopIcon from "@hugeicons/core-free-icons/StopIcon"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
 import type { UseEditorAiResult } from "@emend/ai/react"
 import { useState } from "react"
+
+const answerClassName = "max-h-72 overflow-y-auto px-1 text-sm"
 
 export interface AiComposerReviewProps {
   readonly session: UseEditorAiResult
@@ -107,7 +112,7 @@ export function AiComposerReview({
       className={
         proposalRenderedInline || isInlineEditRun
           ? "max-w-lg space-y-2 rounded-3xl border border-border/60 bg-card p-1.5 text-card-foreground shadow-md"
-          : "max-w-lg space-y-2 rounded-2xl border border-border bg-card p-3 shadow-sm"
+          : "max-w-lg space-y-3 rounded-2xl border border-border bg-card p-3 text-card-foreground shadow-md"
       }
       data-emend-review
       aria-label="AI review"
@@ -117,21 +122,20 @@ export function AiComposerReview({
       </p>
 
       {visibleError && (
-        <p
-          className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
-          role="alert"
-        >
-          {visibleError.message}
-        </p>
+        <Bubble variant="destructive" className="max-w-full">
+          <BubbleContent role="alert">{visibleError.message}</BubbleContent>
+        </Bubble>
       )}
 
       {isInlineEditRun && (
         <div className="flex items-center justify-between gap-3 pl-2.5">
-          <span className="text-[12.5px] text-muted-foreground">
-            {session.state === "streaming"
-              ? "Writing in the document…"
-              : "Generating…"}
-          </span>
+          <Marker className="text-[12.5px]">
+            <MarkerContent className="shimmer motion-reduce:shimmer-none">
+              {session.state === "streaming"
+                ? "Writing in the document…"
+                : "Thinking…"}
+            </MarkerContent>
+          </Marker>
           <ReviewAction
             label="Stop"
             icon={StopIcon}
@@ -143,21 +147,38 @@ export function AiComposerReview({
       )}
 
       {isRunning && !isInlineEditRun && (
-        <pre className="max-h-72 overflow-auto rounded-xl border border-border bg-muted/30 p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap">
-          {session.streamedMarkdown || "Generating proposal…"}
-        </pre>
+        <div className="flex items-center justify-between gap-3">
+          <Marker role="status">
+            <MarkerContent className="shimmer motion-reduce:shimmer-none">
+              {isAsk ? "Thinking…" : "Writing a suggestion…"}
+            </MarkerContent>
+          </Marker>
+          <ReviewAction
+            label="Stop"
+            icon={StopIcon}
+            variant="outline"
+            size="icon-sm"
+            onClick={session.stop}
+          />
+        </div>
+      )}
+
+      {isRunning && !isInlineEditRun && session.streamedMarkdown && (
+        <AiMarkdown className={answerClassName}>
+          {session.streamedMarkdown}
+        </AiMarkdown>
       )}
 
       {isAsk && !isRunning && (
-        <pre className="max-h-72 overflow-auto rounded-xl border border-border bg-muted/30 p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap">
+        <AiMarkdown className={answerClassName}>
           {session.informationalMarkdown || session.streamedMarkdown}
-        </pre>
+        </AiMarkdown>
       )}
 
       {!isRunning && !isAsk && !isEditReview && visibleError && (
-        <pre className="max-h-72 overflow-auto rounded-xl border border-border bg-muted/30 p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap">
+        <AiMarkdown className={answerClassName}>
           {session.streamedMarkdown || "No partial output was received."}
-        </pre>
+        </AiMarkdown>
       )}
 
       {showEditDetails && (
@@ -190,12 +211,11 @@ export function AiComposerReview({
           )}
 
           {isBlocked && preparation.kind === "blocked" && (
-            <p
-              className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
-              role="alert"
-            >
-              {preparation.error.message}
-            </p>
+            <Bubble variant="destructive" className="max-w-full">
+              <BubbleContent role="alert">
+                {preparation.error.message}
+              </BubbleContent>
+            </Bubble>
           )}
 
           {preparation &&
@@ -217,24 +237,9 @@ export function AiComposerReview({
                     })
                   }
                 />
-                <span>
-                  Confirm replacing the non-empty Document. This confirmation is
-                  checked again when the proposal is applied.
-                </span>
+                <span>Confirm replacing the whole document.</span>
               </Label>
             )}
-        </div>
-      )}
-
-      {isRunning && !isInlineEditRun && (
-        <div className="flex justify-end">
-          <ReviewAction
-            label="Stop"
-            icon={StopIcon}
-            variant="outline"
-            size="icon-sm"
-            onClick={session.stop}
-          />
         </div>
       )}
 
@@ -289,31 +294,38 @@ export function AiComposerReview({
             )}
             {proposalRenderedInline && <WarningButton warnings={warnings} />}
           </div>
-          <div className="flex items-center gap-1">
-            <ReviewAction
-              label="Reject"
-              icon={CancelCircleIcon}
-              variant="destructive"
-              size="icon-sm"
+          <div className="flex items-center gap-1.5">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="rounded-full"
               onClick={() => session.reject()}
-            />
+            >
+              <HugeiconsIcon icon={CancelCircleIcon} size={14} />
+              Reject
+            </Button>
             {isStale && canRegenerate ? (
-              <ReviewAction
-                label="Run again with current document"
-                icon={Refresh01Icon}
-                variant="default"
-                size="icon-sm"
+              <Button
+                type="button"
+                size="sm"
+                className="rounded-full"
                 onClick={() => void session.regenerate()}
-              />
+              >
+                <HugeiconsIcon icon={Refresh01Icon} size={14} />
+                Run again
+              </Button>
             ) : !isStale && !isBlocked ? (
-              <ReviewAction
-                label={isPlainTextFallback ? "Apply as plain text" : "Accept"}
-                icon={CheckmarkCircle01Icon}
-                variant="default"
-                size="icon-sm"
+              <Button
+                type="button"
+                size="sm"
+                className="rounded-full"
                 disabled={!canApply}
                 onClick={() => session.accept(confirmDocumentReplacement)}
-              />
+              >
+                <HugeiconsIcon icon={CheckmarkCircle01Icon} size={14} />
+                {isPlainTextFallback ? "Apply as plain text" : "Accept"}
+              </Button>
             ) : null}
           </div>
         </div>
