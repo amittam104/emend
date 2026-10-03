@@ -1,11 +1,12 @@
 # Changelog
 
-## Unreleased
+## 0.1.1
 
-- Update installation guides and READMEs for the published `@emend/ai@0.1.0` package.
-- Restore npm version and license badges, use the emend logo, and align README wording with the landing page.
+- Update installation guides and READMEs for the published `@emend/ai` package.
+- Restore npm version and license badges and add README header images.
 - Simplify the npm package README and description.
 - Correct Shadcn setup to use Base UI and document aligned Tiptap dependencies.
+- Fix starter imports and code highlights in the docs.
 
 ## 0.1.0
 

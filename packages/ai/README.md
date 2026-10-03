@@ -24,7 +24,7 @@ are copied into your app through Shadcn, so their source stays yours.
 - Preview edits, then accept or reject them. Undo an accepted change in one step.
 - Keep your model provider, API keys, documents, and server route in your app.
 
-The `0.1.0` preview is [available on npm](https://www.npmjs.com/package/@emend/ai).
+The `0.1.1` preview is [available on npm](https://www.npmjs.com/package/@emend/ai).
 
 ## Get started
 
@@ -35,7 +35,7 @@ Next.js App Router, React 19, Tailwind CSS 4, and Shadcn already configured.
 Install the runtime:
 
 ```bash
-npm install @emend/ai@0.1.0
+npm install @emend/ai@0.1.1
 ```
 
 Add this registry entry to your existing `components.json`, keeping its other

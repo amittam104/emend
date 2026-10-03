@@ -17,7 +17,7 @@
 
 ## Development Status
 
-The `0.1.0` preview is available on [npm](https://www.npmjs.com/package/@emend/ai).
+The `0.1.1` preview is available on [npm](https://www.npmjs.com/package/@emend/ai).
 The runtime, React integration, editable AI components, editor starters, and
 provider recipe are ready to install.
 
@@ -32,7 +32,7 @@ Use Next.js App Router, React 19, Tailwind CSS 4, and Node.js 24.19.0 or later,
 with Shadcn already configured in your project. Install the runtime:
 
 ```bash
-npm install @emend/ai@0.1.0
+npm install @emend/ai@0.1.1
 ```
 
 Add the registry to your existing `components.json` (keep its other settings):

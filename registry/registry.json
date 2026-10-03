@@ -9,7 +9,7 @@
       "title": "AI Bubble Menu",
       "description": "Selection-aware AI actions for an existing Tiptap editor.",
       "dependencies": [
-        "@emend/ai@0.1.0",
+        "@emend/ai@0.1.1",
         "@hugeicons/core-free-icons@4.2.3",
         "@hugeicons/react@^1.1.9",
         "@tiptap/react@3.31.4",
@@ -49,7 +49,7 @@
       "title": "AI Composer",
       "description": "Prompt and review controls for an existing Tiptap editor.",
       "dependencies": [
-        "@emend/ai@0.1.0",
+        "@emend/ai@0.1.1",
         "@hugeicons/core-free-icons@4.2.3",
         "@hugeicons/react@^1.1.9",
         "@tiptap/react@3.31.4",
@@ -111,7 +111,7 @@
       "title": "AI Assistant",
       "description": "Floating AI assistant with document-aware writing actions and local chat history.",
       "dependencies": [
-        "@emend/ai@0.1.0",
+        "@emend/ai@0.1.1",
         "@hugeicons/core-free-icons@4.2.3",
         "@hugeicons/react@^1.1.9",
         "@tiptap/react@3.31.4",
@@ -244,7 +244,7 @@
       "title": "Emend Editor with AI Bubble Menu",
       "description": "A Tiptap editor with AI Bubble Menu. The default starter.",
       "dependencies": [
-        "@emend/ai@0.1.0"
+        "@emend/ai@0.1.1"
       ],
       "registryDependencies": [
         "@emend/emend-editor-base",
@@ -269,7 +269,7 @@
       "title": "Emend Editor with AI Assistant",
       "description": "A Tiptap editor with AI Assistant.",
       "dependencies": [
-        "@emend/ai@0.1.0"
+        "@emend/ai@0.1.1"
       ],
       "registryDependencies": [
         "@emend/emend-editor-base",
@@ -289,7 +289,7 @@
       "title": "Emend Editor with AI Composer",
       "description": "A Tiptap editor with AI Composer.",
       "dependencies": [
-        "@emend/ai@0.1.0"
+        "@emend/ai@0.1.1"
       ],
       "registryDependencies": [
         "@emend/emend-editor-base",
@@ -309,7 +309,7 @@
       "title": "Vercel AI Gateway Route",
       "description": "An Emend AI route backed by Vercel AI Gateway.",
       "dependencies": [
-        "@emend/ai@0.1.0",
+        "@emend/ai@0.1.1",
         "ai@^7.0.97"
       ],
       "files": [
