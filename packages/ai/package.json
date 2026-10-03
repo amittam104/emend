@@ -1,7 +1,7 @@
 {
   "name": "@emend/ai",
   "version": "0.1.0",
-  "description": "Provider-neutral human-in-the-loop AI editing runtime for Tiptap.",
+  "description": "AI editing for Tiptap with streaming, reviewable changes, and undo.",
   "license": "MIT",
   "type": "module",
   "scripts": {

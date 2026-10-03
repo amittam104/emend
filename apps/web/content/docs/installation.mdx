@@ -13,12 +13,6 @@ emend comes in two parts:
   components: it talks to your server, streams the AI response, and applies
   changes to your editor.
 
-<Callout type="warn" title="Not on npm yet">
-  `@emend/ai` is not published to npm yet, so the install commands below will
-  not work until it is released. We test the same steps with a local build of
-  the package.
-</Callout>
-
 <include>../partials/nextjs-only.mdx</include>
 
 ## Before you start
@@ -27,11 +21,13 @@ Make sure your project has everything below before you install emend.
 
 - Next.js with the App Router, and React 19
 - Tiptap `3.31.4` (all `@tiptap/*` packages on the same version)
-- Shadcn set up with Tailwind CSS 4 (run `npx shadcn@latest init` if you have
-  not)
+- Shadcn already set up with Tailwind CSS 4
 - Node.js `24.19.0` or later
 - A server route that calls the AI model. You add this later with
   [one command](/docs/vercel-ai-gateway).
+
+The components use Shadcn's Base UI primitives. No specific visual preset is
+required.
 
 ## Set up your project
 
@@ -43,16 +39,17 @@ Make sure your project has everything below before you install emend.
 Open the `components.json` file that Shadcn created and add the `@emend`
 registry:
 
+{/* prettier-ignore */}
 ```jsonc title="components.json"
 {
-  "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "new-york",
-  "tailwind": { "css": "app/globals.css" },
   "registries": { // [!code ++]
     "@emend": "https://getemend.vercel.app/r/{name}.json" // [!code ++]
   } // [!code ++]
 }
 ```
+
+Keep the other settings in your existing `components.json`; only add the registry
+entry shown above.
 
 If you are running the emend repository locally, use
 `http://127.0.0.1:3000/r/{name}.json` instead.
@@ -65,7 +62,7 @@ If you are running the emend repository locally, use
 Install `@emend/ai` with your package manager:
 
 ```npm
-npm install @emend/ai@preview
+npm install @emend/ai@0.1.0
 ```
 
 </Step>
@@ -86,6 +83,31 @@ anything it needs. The copied files are yours to change. The AI logic stays in
 </Step>
 </Steps>
 
+The registry installs `@emend/ai@0.1.0` automatically when an item needs it.
+Installing the runtime separately is useful when building your own AI UI.
+
+## Enable tooltips
+
+If the CLI adds the `tooltip` component, wrap your app with its provider:
+
+```tsx title="app/layout.tsx"
+import { TooltipProvider } from "@/components/ui/tooltip"
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <TooltipProvider>{children}</TooltipProvider>
+      </body>
+    </html>
+  )
+}
+```
+
 ## What you should see
 
 - A new `components/emend` folder with the component files
@@ -103,9 +125,13 @@ anything it needs. The copied files are yours to change. The AI logic stays in
     cta="Add emend to your editor"
     href="/docs/existing-tiptap-editor"
   >
-    - Your schema, extensions, toolbar, and persistence stay as they are
-    - Add the Bubble Menu, Composer, or AI Assistant
-    - Add one server route that talks to the AI model
+    <ul>
+      <li>
+        Your schema, extensions, toolbar, and persistence stay as they are
+      </li>
+      <li>Add the Bubble Menu, Composer, or AI Assistant</li>
+      <li>Add one server route that talks to the AI model</li>
+    </ul>
   </PathCard>
   <PathCard
     icon="PencilEdit02Icon"
@@ -115,8 +141,10 @@ anything it needs. The copied files are yours to change. The AI logic stays in
     cta="Copy the editor starter"
     href="/docs/emend-editor-starter"
   >
-    - A full editor with a toolbar, formatting, tables, and saving
-    - Start with no AI or one of the three AI surfaces
-    - The copied source is yours to adapt
+    <ul>
+      <li>A full editor with a toolbar, formatting, tables, and saving</li>
+      <li>Start with no AI or one of the three AI surfaces</li>
+      <li>The copied source is yours to adapt</li>
+    </ul>
   </PathCard>
 </PathCards>

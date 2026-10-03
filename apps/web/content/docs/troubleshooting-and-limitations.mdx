@@ -8,11 +8,17 @@ entry says what went wrong and how to fix it.
 
 ## The install command fails on `@emend/ai`
 
-**Why:** `@emend/ai` is not published to npm yet.
+`@emend/ai@0.1.0` is public on npm. Check that your npm registry can see it:
 
-**Fix:** wait for the release. If you are working on the emend repository
-itself, use the test apps in the repository, which use a local build of the
-package.
+```bash
+npm view @emend/ai@0.1.0 version --registry=https://registry.npmjs.org/
+```
+
+If a private registry or an `@emend:registry` setting in `.npmrc` redirects the
+request, correct that setting. Immediately after a publication, npm may take a
+short time to serve the package; retry once it is visible. Then run the install
+command again. If npm reports Tiptap peer conflicts, align all `@tiptap/*`
+dependencies to `3.31.4`.
 
 ## The Bubble Menu does not open
 
@@ -81,7 +87,6 @@ A working route responds with `text/event-stream; charset=utf-8`.
 
 ## What emend does not do yet
 
-- `@emend/ai` is not on npm yet.
 - Only Next.js (App Router) is supported for now, together with React 19,
   Tailwind CSS 4, Shadcn, and Tiptap `3.31.4`. Other React frameworks may work,
   but we do not test them yet. Support for them is coming soon.

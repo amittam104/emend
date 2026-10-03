@@ -2,7 +2,7 @@
 
 ## 0.1.0
 
-Initial preview, prepared for publication.
+Initial preview, published to npm.
 
 - Provider-neutral controller, immutable proposals, and streaming transports.
 - Tiptap capture, Markdown preparation, inline preview, stale-content protection,

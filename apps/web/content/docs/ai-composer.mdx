@@ -20,14 +20,11 @@ Type a question and send it. Then select some text, open the **+** menu (or type
 
 ## Install
 
+First complete [Installation](/docs/installation) to add the `@emend` registry.
+
 ```npm
 npx shadcn@latest add @emend/ai-composer
 ```
-
-<Callout type="warn" title="Not on npm yet">
-  This command needs the `@emend/ai` package, which is not published to npm
-  yet. It will not work until the package is released.
-</Callout>
 
 ## Add it to your editor
 
@@ -65,7 +62,6 @@ export function DocumentEditor() {
 }
 ```
 
-
 ## Connect the server route
 
 <include>../partials/server-route.mdx</include>
@@ -86,13 +82,13 @@ you. You only need the pickers for your own instructions.
 
 ## Props
 
-| Prop         | Default         | Purpose                                                    |
-| ------------ | --------------- | ---------------------------------------------------------- |
-| `editor`     | Required        | Your Tiptap editor.                                        |
-| `transport`  | Required        | Tells the Composer which URL to send AI requests to.       |
-| `policy`     | Adaptive scopes | Limits what the AI can read and change.                    |
-| `showReview` | `true`          | Shows answers and Accept/Reject buttons under the bar.     |
-| `className`  | -               | Adds your own classes to the Composer.                     |
+| Prop         | Default         | Purpose                                                |
+| ------------ | --------------- | ------------------------------------------------------ |
+| `editor`     | Required        | Your Tiptap editor.                                    |
+| `transport`  | Required        | Tells the Composer which URL to send AI requests to.   |
+| `policy`     | Adaptive scopes | Limits what the AI can read and change.                |
+| `showReview` | `true`          | Shows answers and Accept/Reject buttons under the bar. |
+| `className`  | -               | Adds your own classes to the Composer.                 |
 
 ## What you should see
 
