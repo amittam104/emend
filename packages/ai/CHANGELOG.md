@@ -1,5 +1,13 @@
 # @emend/ai
 
+## 0.1.1
+
+Documentation release. No runtime changes.
+
+- Simplify the package README and add a header image.
+- Shorten the package description.
+- Show the published install command.
+
 ## 0.1.0
 
 Initial preview, published to npm.
