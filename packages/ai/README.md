@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="Emend README Header" src="../../apps/web/public/ai-readme-header.svg" />
+  <img alt="Emend README Header" src="https://getemend.vercel.app/ai-readme-header.svg" />
 </p>
 
 <p align="center">
