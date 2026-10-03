@@ -9,8 +9,7 @@ and Vercel AI Gateway, and keeps your API key on the server.
 
 <Callout type="info" title="The demos on this site use this recipe">
   The editors on this site run this exact route. The only difference is that
-  they use OpenRouter's free models (`openrouter/free`) instead of the
-  Gateway.
+  they use OpenRouter's free models (`openrouter/free`) instead of the Gateway.
 </Callout>
 
 <include>../partials/nextjs-only.mdx</include>
@@ -26,14 +25,11 @@ Make sure your project has everything below before you add the route.
 
 ## Install the route
 
+First complete [Installation](/docs/installation) to add the `@emend` registry.
+
 ```npm
 npx shadcn@latest add @emend/recipe-vercel-ai-gateway
 ```
-
-<Callout type="warn" title="Not on npm yet">
-  This recipe needs the `@emend/ai` package, which is not published to npm yet.
-  The command will not work until the package is released.
-</Callout>
 
 This adds one file, `app/api/editor-ai/route.ts`, which you can edit. It uses
 the `openai/gpt-5.6-luna` model by default. It gives the model different
@@ -47,7 +43,9 @@ instructions for questions and for edits.
   model, change `MODEL`. To use a different provider, replace `streamText` with
   any Vercel AI SDK provider. Nothing else needs to change.
 
-<include lang="ts" meta='title="app/api/editor-ai/route.ts"'>../../../../registry/recipes/vercel-ai-gateway/route.ts</include>
+<include lang="ts" meta='title="app/api/editor-ai/route.ts"'>
+  ../../../../registry/recipes/vercel-ai-gateway/route.ts
+</include>
 
 ## Add your API key
 
@@ -67,7 +65,7 @@ Create a transport with the route's URL and pass it to your AI component.
 "use client"
 
 import { createFetchTransport } from "@emend/ai/transport"
-import { EmendEditor } from "@/components/emend/emend-editor"
+import { EmendEditor } from "@/components/emend/emend-editor/emend-editor"
 
 const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code highlight]
 
@@ -81,6 +79,7 @@ export default function EditorPage() {
 Right now, anyone who finds the URL can call the route and use your AI
 credits. Add an `authorize` check that uses your app's existing sign-in logic:
 
+{/* prettier-ignore */}
 ```ts title="app/api/editor-ai/route.ts"
 export const POST = createEmendAiHandler({
   authorize: async (request) => { // [!code ++]

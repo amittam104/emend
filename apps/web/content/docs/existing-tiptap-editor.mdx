@@ -7,11 +7,6 @@ Use this guide if your app already has a Tiptap editor. You keep your editor
 as it is and add the Bubble Menu to it. The same steps work for the Composer
 and the AI Assistant.
 
-<Callout type="warn" title="Not on npm yet">
-  This command needs the `@emend/ai` package, which is not published to npm
-  yet. It will not work until the package is released.
-</Callout>
-
 <include>../partials/nextjs-only.mdx</include>
 
 ## Before you start
@@ -24,6 +19,13 @@ Make sure your project has everything below before you add AI to your editor.
   [Installation](/docs/installation))
 - A server route for AI requests, such as `/api/editor-ai`. The
   [last section](#connect-the-server-route) shows how to add one.
+
+Install or align your editor dependencies before adding Emend. The example
+below uses StarterKit; keep your own extensions if you already have an editor.
+
+```npm
+npm install @tiptap/core@3.31.4 @tiptap/react@3.31.4 @tiptap/pm@3.31.4 @tiptap/starter-kit@3.31.4 @tiptap/markdown@3.31.4
+```
 
 ## Add the Bubble Menu
 
@@ -120,6 +122,28 @@ its preview there.
 
 </Step>
 </Steps>
+
+## Use more than one AI component
+
+For a Bubble Menu and Composer on the same editor, create one `useEditorAi`
+session and pass it to their View components. This keeps their requests,
+preview, and review controls in sync.
+
+```tsx
+import { useEditorAi } from "@emend/ai/react"
+import { AiBubbleMenuView } from "@/components/emend/ai-bubble-menu"
+import { AiComposerView } from "@/components/emend/ai-composer"
+
+// Inside DocumentEditor, before the early return:
+const session = useEditorAi({ editor, transport, previewMode: "inline" })
+
+// Inside your editor wrapper:
+<AiBubbleMenuView editor={editor} session={session} />
+<AiComposerView editor={editor} session={session} />
+```
+
+Install both registry items before using this example. Use the standalone
+`AiBubbleMenu` or `AiComposer` wrapper when you only need one surface.
 
 ## Connect the server route
 

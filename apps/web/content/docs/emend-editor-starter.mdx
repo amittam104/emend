@@ -15,14 +15,13 @@ is yours, so you can change anything.
 - **AI Composer:** a prompt bar under the document.
 - **AI Assistant:** a floating chat panel over the editor.
 
-<Callout type="warn" title="Not on npm yet">
-  The three AI versions need the `@emend/ai` package, which is not published to
-  npm yet. The No AI version works today.
-</Callout>
-
 <include>../partials/nextjs-only.mdx</include>
 
 ## Install it
+
+First complete [Installation](/docs/installation) to add the `@emend` registry
+to `components.json`. The starter command
+installs its Tiptap dependencies and the published AI runtime when needed.
 
 | Choice                   | Registry item                   | Export                 |
 | ------------------------ | ------------------------------- | ---------------------- |
@@ -64,18 +63,50 @@ npx shadcn@latest add @emend/emend-editor-assistant
 </Tab>
 </Tabs>
 
+Each variant has its own component file. Only the Bubble Menu variant installs
+the folder-level `index.ts` export. Use the direct import for the variant you
+installed:
+
+```tsx
+import { EmendEditor } from "@/components/emend/emend-editor/emend-editor"
+import { EmendEditorBase } from "@/components/emend/emend-editor/emend-editor-base"
+import { EmendEditorComposer } from "@/components/emend/emend-editor/emend-editor-composer"
+import { EmendEditorAssistant } from "@/components/emend/emend-editor/emend-editor-assistant"
+```
+
+Import only the variant you installed. The examples below use the Bubble Menu
+variant.
+
 ## Add it to a page
 
 ```tsx title="app/editor/page.tsx"
 "use client"
 
 import { createFetchTransport } from "@emend/ai/transport"
-import { EmendEditor } from "@/components/emend/emend-editor"
+import { EmendEditor } from "@/components/emend/emend-editor/emend-editor"
 
 const transport = createFetchTransport({ url: "/api/editor-ai" })
 
 export default function EditorPage() {
-  return <EmendEditor transport={transport} />
+  return (
+    <EmendEditor
+      transport={transport}
+      initialContent={{
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Select this sentence and improve it with AI.",
+              },
+            ],
+          },
+        ],
+      }}
+    />
+  )
 }
 ```
 
@@ -100,6 +131,7 @@ OpenRouter.
 The starter is built on Tiptap. If you need the Tiptap editor itself, for
 example to save content or add your own extensions, use `onEditorReady`:
 
+{/* prettier-ignore */}
 ```tsx title="app/editor/page.tsx"
 <EmendEditor
   transport={transport}

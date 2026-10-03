@@ -17,14 +17,11 @@ type your own request in the bar. Click the arrow to see more actions.
 
 ## Install
 
+First complete [Installation](/docs/installation) to add the `@emend` registry.
+
 ```npm
 npx shadcn@latest add @emend/ai-bubble-menu
 ```
-
-<Callout type="warn" title="Not on npm yet">
-  This command needs the `@emend/ai` package, which is not published to npm
-  yet. It will not work until the package is released.
-</Callout>
 
 ## Add it to your editor
 
@@ -62,19 +59,18 @@ export function DocumentEditor() {
 }
 ```
 
-
 ## Connect the server route
 
 <include>../partials/server-route.mdx</include>
 
 ## Props
 
-| Prop         | Default  | Purpose                                                  |
-| ------------ | -------- | -------------------------------------------------------- |
-| `editor`     | Required | Your Tiptap editor.                                      |
-| `transport`  | Required | Tells the menu which URL to send AI requests to.         |
-| `showReview` | `true`   | Shows the Accept and Reject buttons in the menu.         |
-| `className`  | -        | Adds your own classes to the menu.                       |
+| Prop         | Default  | Purpose                                          |
+| ------------ | -------- | ------------------------------------------------ |
+| `editor`     | Required | Your Tiptap editor.                              |
+| `transport`  | Required | Tells the menu which URL to send AI requests to. |
+| `showReview` | `true`   | Shows the Accept and Reject buttons in the menu. |
+| `className`  | -        | Adds your own classes to the menu.               |
 
 ## How it behaves
 

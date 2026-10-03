@@ -32,14 +32,11 @@ chat. The corner button stays too.
 
 ## Install
 
+First complete [Installation](/docs/installation) to add the `@emend` registry.
+
 ```npm
 npx shadcn@latest add @emend/ai-assistant
 ```
-
-<Callout type="warn" title="Not on npm yet">
-  This command needs the `@emend/ai` package, which is not published to npm
-  yet. It will not work until the package is released.
-</Callout>
 
 ## Add it to your editor
 
@@ -88,14 +85,14 @@ button, the close button, or <kbd>Esc</kbd>.
 
 ## Props
 
-| Prop                    | Default                 | Purpose                                                                 |
-| ----------------------- | ----------------------- | ----------------------------------------------------------------------- |
-| `editor`                | Required                | Your Tiptap editor.                                                     |
-| `transport`             | Required                | Tells the chat which URL to send AI requests to.                        |
-| `open` / `onOpenChange` | Not set                 | Control when the chat is open from your own code.                       |
-| `defaultOpen`           | `false`                 | Whether the chat starts open.                                           |
-| `storageKey`            | `emend:ai-assistant:v1` | Where chat history is saved. Use a different key per document or user.  |
-| `policy`                | Adaptive scopes         | Limits what the AI can read and change.                                 |
+| Prop                    | Default                 | Purpose                                                                |
+| ----------------------- | ----------------------- | ---------------------------------------------------------------------- |
+| `editor`                | Required                | Your Tiptap editor.                                                    |
+| `transport`             | Required                | Tells the chat which URL to send AI requests to.                       |
+| `open` / `onOpenChange` | Not set                 | Control when the chat is open from your own code.                      |
+| `defaultOpen`           | `false`                 | Whether the chat starts open.                                          |
+| `storageKey`            | `emend:ai-assistant:v1` | Where chat history is saved. Use a different key per document or user. |
+| `policy`                | Adaptive scopes         | Limits what the AI can read and change.                                |
 
 ## How it behaves
 
