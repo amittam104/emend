@@ -14,23 +14,21 @@ and the AI Assistant.
 Make sure your project has everything below before you add AI to your editor.
 
 - A component that creates your Tiptap editor (with `"use client"` at the top)
-- Tiptap `3.31.4`, including `@tiptap/markdown`
+- Every `@tiptap/*` package on `3.31.4`
 - The `@emend` registry added to `components.json` (see
-  [Installation](/docs/installation))
+  [Tell Shadcn where to find emend](/docs/installation#tell-shadcn-where-to-find-emend))
 - A server route for AI requests, such as `/api/editor-ai`. The
   [last section](#connect-the-server-route) shows how to add one.
 
-Install or align your editor dependencies before adding Emend. The example
-below uses StarterKit; keep your own extensions if you already have an editor.
+The component command below installs the Tiptap packages emend needs,
+including `@tiptap/markdown`. Update the other Tiptap packages your editor
+uses to the same version, for example:
 
 ```npm
-npm install @tiptap/core@3.31.4 @tiptap/react@3.31.4 @tiptap/pm@3.31.4 @tiptap/starter-kit@3.31.4 @tiptap/markdown@3.31.4
+npm install @tiptap/starter-kit@3.31.4
 ```
 
 ## Add the Bubble Menu
-
-You only change one file: the component that creates your editor. Lines
-marked with **+** are the ones to add.
 
 <Steps>
 <Step>
@@ -125,35 +123,115 @@ its preview there.
 
 ## Use more than one AI component
 
-For a Bubble Menu and Composer on the same editor, create one `useEditorAi`
-session and pass it to their View components. This keeps their requests,
-preview, and review controls in sync.
+To show the Bubble Menu and the Composer on the same editor, first install the
+Composer:
 
-```tsx
-import { useEditorAi } from "@emend/ai/react"
-import { AiBubbleMenuView } from "@/components/emend/ai-bubble-menu"
-import { AiComposerView } from "@/components/emend/ai-composer"
-
-// Inside DocumentEditor, before the early return:
-const session = useEditorAi({ editor, transport, previewMode: "inline" })
-
-// Inside your editor wrapper:
-<AiBubbleMenuView editor={editor} session={session} />
-<AiComposerView editor={editor} session={session} />
+```npm
+npx shadcn@latest add @emend/ai-composer
 ```
 
-Install both registry items before using this example. Use the standalone
-`AiBubbleMenu` or `AiComposer` wrapper when you only need one surface.
+Then update the same `components/document-editor.tsx` file. Create one
+`useEditorAi` session and pass it to the `View` version of each component, so
+both share the same request, preview, and Accept and Reject controls.
+
+```tsx title="components/document-editor.tsx"
+"use client"
+
+import { useEditorAi } from "@emend/ai/react" // [!code ++]
+import { EmendAi } from "@emend/ai/tiptap"
+import { createFetchTransport } from "@emend/ai/transport"
+import { Markdown } from "@tiptap/markdown"
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import { AiBubbleMenu } from "@/components/emend/ai-bubble-menu" // [!code --]
+import { AiBubbleMenuView } from "@/components/emend/ai-bubble-menu" // [!code ++]
+import { AiComposerView } from "@/components/emend/ai-composer" // [!code ++]
+
+const transport = createFetchTransport({ url: "/api/editor-ai" })
+
+export function DocumentEditor() {
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [StarterKit, Markdown, EmendAi],
+    content: "<p>Select this sentence and ask emend to improve it.</p>",
+  })
+  const session = useEditorAi({ editor, transport, previewMode: "inline" }) // [!code ++]
+
+  if (!editor) return null
+
+  return (
+    <div className="relative">
+      <EditorContent editor={editor} />
+      {/* [!code --] */}
+      <AiBubbleMenu editor={editor} transport={transport} />
+      {/* [!code ++] */}
+      <AiBubbleMenuView editor={editor} session={session} />
+      {/* [!code ++] */}
+      <AiComposerView editor={editor} session={session} />
+    </div>
+  )
+}
+```
+
+Call `useEditorAi` before the `if (!editor)` check, because React hooks must
+run on every render. If you only need one component, keep using `AiBubbleMenu`
+or `AiComposer` on its own.
 
 ## Connect the server route
 
-<include>../partials/server-route.mdx</include>
+<include>../partials/server-route.mdx#intro</include>
+
+<Steps>
+
+<include>../partials/server-route.mdx#steps</include>
+
+<Step>
+
+### Connect your component to the route
+
+<include>../partials/server-route.mdx#transport</include>
+
+```tsx title="components/document-editor.tsx"
+"use client"
+
+import { EmendAi } from "@emend/ai/tiptap"
+import { createFetchTransport } from "@emend/ai/transport"
+import { Markdown } from "@tiptap/markdown"
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import { AiBubbleMenu } from "@/components/emend/ai-bubble-menu"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code highlight]
+
+export function DocumentEditor() {
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [StarterKit, Markdown, EmendAi],
+    content: "<p>Select this sentence and ask emend to improve it.</p>",
+  })
+
+  if (!editor) return null
+
+  return (
+    <div className="relative">
+      <EditorContent editor={editor} />
+      <AiBubbleMenu editor={editor} transport={transport} />
+    </div>
+  )
+}
+```
+
+</Step>
+
+</Steps>
+
+<include>../partials/server-route.mdx#outro</include>
 
 ## Try it
 
 1. Select some text in your editor. The Bubble Menu opens next to it.
-2. Pick an action such as **Improve**, or type what you want in **Describe
-   edits**.
+2. Pick an action such as **Improve**, or type your own instruction in the
+   menu's text box.
 3. The suggested change shows up as a preview. Your text has not changed yet.
 4. Click **Accept** to apply it, or **Reject** to throw it away.
 

@@ -3,34 +3,46 @@ title: emend Editor Starter
 description: Get a complete, ready-to-use editor in your app, with or without AI.
 ---
 
-Use this guide if you do not have an editor yet. One command copies a complete
-editor into your app, with a toolbar, formatting, tables, and saving. The code
-is yours, so you can change anything.
-
-## Pick a version
-
-- **AI Bubble Menu (recommended):** select text and the AI menu opens next to
-  it.
-- **No AI:** just the editor. You can add AI later.
-- **AI Composer:** a prompt bar under the document.
-- **AI Assistant:** a floating chat panel over the editor.
+Use this guide if your app does not have an editor yet. One command copies a
+complete editor into your app, with a toolbar, formatting, tables, and saving.
+The code is yours, so you can change anything.
 
 <include>../partials/nextjs-only.mdx</include>
 
-## Install it
+## Before you start
 
-First complete [Installation](/docs/installation) to add the `@emend` registry
-to `components.json`. The starter command
-installs its Tiptap dependencies and the published AI runtime when needed.
+Make sure your project has everything below before you add the starter.
 
-| Choice                   | Registry item                   | Export                 |
-| ------------------------ | ------------------------------- | ---------------------- |
-| AI Bubble Menu (default) | `@emend/emend-editor`           | `EmendEditor`          |
-| No AI                    | `@emend/emend-editor-base`      | `EmendEditorBase`      |
-| AI Composer              | `@emend/emend-editor-composer`  | `EmendEditorComposer`  |
-| AI Assistant             | `@emend/emend-editor-assistant` | `EmendEditorAssistant` |
+- The `@emend` registry added to `components.json` (see
+  [Tell Shadcn where to find emend](/docs/installation#tell-shadcn-where-to-find-emend))
+- A server route for AI requests, such as `/api/editor-ai`, if you pick an AI
+  version. The [server route section](#connect-the-server-route) shows how to
+  add one.
 
-Pick one and run its command:
+You do not need to install Tiptap first. The starter command installs it for
+you.
+
+## Pick a version
+
+The starter comes in four versions. They share the same editor and differ only
+in how you use AI:
+
+- **AI Bubble Menu (recommended):** Select text and the AI menu opens next to
+  it.
+- **No AI:** Just the editor. You can add AI later.
+- **AI Composer:** A prompt box under the document.
+- **AI Assistant:** A floating chat panel over the editor.
+
+Pick one. You can try all four in the [demo](#try-all-four) below.
+
+## Add the editor
+
+<Steps>
+<Step>
+
+### Install your version
+
+Run the command for the version you picked:
 
 <Tabs items={["AI Bubble Menu", "No AI", "AI Composer", "AI Assistant"]}>
 <Tab value="AI Bubble Menu">
@@ -63,21 +75,19 @@ npx shadcn@latest add @emend/emend-editor-assistant
 </Tab>
 </Tabs>
 
-Each variant has its own component file. Only the Bubble Menu variant installs
-the folder-level `index.ts` export. Use the direct import for the variant you
+This copies the editor into `components/emend/emend-editor`. Each version has
+its own file in that folder, and the AI versions also install `@emend/ai`.
+
+</Step>
+<Step>
+
+### Add it to a page
+
+Create a page that renders the editor. Use the tab for the version you
 installed:
 
-```tsx
-import { EmendEditor } from "@/components/emend/emend-editor/emend-editor"
-import { EmendEditorBase } from "@/components/emend/emend-editor/emend-editor-base"
-import { EmendEditorComposer } from "@/components/emend/emend-editor/emend-editor-composer"
-import { EmendEditorAssistant } from "@/components/emend/emend-editor/emend-editor-assistant"
-```
-
-Import only the variant you installed. The examples below use the Bubble Menu
-variant.
-
-## Add it to a page
+<Tabs items={["AI Bubble Menu", "No AI", "AI Composer", "AI Assistant"]}>
+<Tab value="AI Bubble Menu">
 
 ```tsx title="app/editor/page.tsx"
 "use client"
@@ -110,14 +120,241 @@ export default function EditorPage() {
 }
 ```
 
+</Tab>
+<Tab value="No AI">
+
+```tsx title="app/editor/page.tsx"
+"use client"
+
+import { EmendEditorBase } from "@/components/emend/emend-editor/emend-editor-base"
+
+export default function EditorPage() {
+  return (
+    <EmendEditorBase
+      initialContent={{
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Select this sentence and improve it with AI.",
+              },
+            ],
+          },
+        ],
+      }}
+    />
+  )
+}
+```
+
+</Tab>
+<Tab value="AI Composer">
+
+```tsx title="app/editor/page.tsx"
+"use client"
+
+import { createFetchTransport } from "@emend/ai/transport"
+import { EmendEditorComposer } from "@/components/emend/emend-editor/emend-editor-composer"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" })
+
+export default function EditorPage() {
+  return (
+    <EmendEditorComposer
+      transport={transport}
+      initialContent={{
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Select this sentence and improve it with AI.",
+              },
+            ],
+          },
+        ],
+      }}
+    />
+  )
+}
+```
+
+</Tab>
+<Tab value="AI Assistant">
+
+```tsx title="app/editor/page.tsx"
+"use client"
+
+import { createFetchTransport } from "@emend/ai/transport"
+import { EmendEditorAssistant } from "@/components/emend/emend-editor/emend-editor-assistant"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" })
+
+export default function EditorPage() {
+  return (
+    <EmendEditorAssistant
+      transport={transport}
+      initialContent={{
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Select this sentence and improve it with AI.",
+              },
+            ],
+          },
+        ],
+      }}
+    />
+  )
+}
+```
+
+</Tab>
+</Tabs>
+
 The `transport` tells the editor which URL to send AI requests to. The No AI
-version (`EmendEditorBase`) does not need one.
+version does not need one.
+
+</Step>
+</Steps>
 
 ## Connect the server route
 
-Skip this if you picked the No AI version.
+<Callout type="info">
+  Skip this section if you picked the No AI version.
+</Callout>
 
-<include>../partials/server-route.mdx</include>
+<include>../partials/server-route.mdx#intro</include>
+
+<Steps>
+
+<include>../partials/server-route.mdx#steps</include>
+
+<Step>
+
+### Connect your component to the route
+
+<include>../partials/server-route.mdx#transport</include>
+
+<Tabs items={["AI Bubble Menu", "AI Composer", "AI Assistant"]}>
+<Tab value="AI Bubble Menu">
+
+```tsx title="app/editor/page.tsx"
+"use client"
+
+import { createFetchTransport } from "@emend/ai/transport"
+import { EmendEditor } from "@/components/emend/emend-editor/emend-editor"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code highlight]
+
+export default function EditorPage() {
+  return (
+    <EmendEditor
+      transport={transport}
+      initialContent={{
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Select this sentence and improve it with AI.",
+              },
+            ],
+          },
+        ],
+      }}
+    />
+  )
+}
+```
+
+</Tab>
+<Tab value="AI Composer">
+
+```tsx title="app/editor/page.tsx"
+"use client"
+
+import { createFetchTransport } from "@emend/ai/transport"
+import { EmendEditorComposer } from "@/components/emend/emend-editor/emend-editor-composer"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code highlight]
+
+export default function EditorPage() {
+  return (
+    <EmendEditorComposer
+      transport={transport}
+      initialContent={{
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Select this sentence and improve it with AI.",
+              },
+            ],
+          },
+        ],
+      }}
+    />
+  )
+}
+```
+
+</Tab>
+<Tab value="AI Assistant">
+
+```tsx title="app/editor/page.tsx"
+"use client"
+
+import { createFetchTransport } from "@emend/ai/transport"
+import { EmendEditorAssistant } from "@/components/emend/emend-editor/emend-editor-assistant"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code highlight]
+
+export default function EditorPage() {
+  return (
+    <EmendEditorAssistant
+      transport={transport}
+      initialContent={{
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Select this sentence and improve it with AI.",
+              },
+            ],
+          },
+        ],
+      }}
+    />
+  )
+}
+```
+
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+<include>../partials/server-route.mdx#outro</include>
 
 ## Try all four
 
@@ -129,22 +366,51 @@ OpenRouter.
 ## Get the Tiptap editor
 
 The starter is built on Tiptap. If you need the Tiptap editor itself, for
-example to save content or add your own extensions, use `onEditorReady`:
+example to save content or add your own extensions, use `onEditorReady`. It
+works the same way in every version.
 
 {/* prettier-ignore */}
 ```tsx title="app/editor/page.tsx"
-<EmendEditor
-  transport={transport}
-  onEditorReady={(editor) => { // [!code ++]
-    editor.commands.focus() // [!code ++]
-  }} // [!code ++]
-/>
+"use client"
+
+import { createFetchTransport } from "@emend/ai/transport"
+import { EmendEditor } from "@/components/emend/emend-editor/emend-editor"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" })
+
+export default function EditorPage() {
+  return (
+    <EmendEditor
+      transport={transport}
+      initialContent={{
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Select this sentence and improve it with AI.",
+              },
+            ],
+          },
+        ],
+      }}
+      onEditorReady={(editor) => { // [!code ++]
+        editor.commands.focus() // [!code ++]
+      }} // [!code ++]
+    />
+  )
+}
 ```
 
-## What you should see
+## Try it
 
-A full editor on your page. If you picked an AI version, select some text or
-open the AI component and try it.
+1. Open the page you created. You should see the full editor with its toolbar.
+2. If you picked an AI version, select some text or open the AI component, and
+   ask for a change.
+3. The suggested change shows up as a preview. Click **Accept** to apply it,
+   or **Reject** to throw it away.
 
 Next, read the page for the AI component you picked, or see
 [Vercel AI Gateway](/docs/vercel-ai-gateway) to set up the server route for
