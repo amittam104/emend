@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.2
+
+- Support Tiptap 3.7.1 or later instead of requiring exactly 3.31.4.
+- Keep the Tiptap versions already installed in the app when adding components.
+- Test emend against the oldest and newest Tiptap 3, with weekly Tiptap update PRs.
+- Explain supported Tiptap versions and how to fix version conflicts.
+- Remove the formatting menu from the composer and assistant editors.
+- Simplify the introduction, installation, component, concept, recipe, and
+  troubleshooting pages.
+
 ## 0.1.1
 
 - Update installation guides and READMEs for the published `@emend/ai` package.
