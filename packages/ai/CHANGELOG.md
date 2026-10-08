@@ -1,5 +1,9 @@
 # @emend/ai
 
+## 0.1.2
+
+- Support Tiptap 3.7.1 or later instead of requiring exactly 3.31.4.
+
 ## 0.1.1
 
 Documentation release. No runtime changes.
