@@ -53,11 +53,11 @@ not apply it. It never silently drops your content.
 | Styling          | Tailwind CSS 4 and semantic Shadcn tokens                                                   |
 | Runtime          | Node.js `24.19.0` or later                                                                  |
 
-Next.js is the only framework we support for now. The AI components are plain
-React and the server handler uses standard `Request` and `Response` objects, so
-other React apps such as Vite or TanStack Start may work if they have a backend
-for the server route. We do not test them yet. Support for other frameworks is
-coming soon.
+Next.js with the App Router is the only setup we support and test for now. The
+AI components are plain React, so they may also work in other React apps, such
+as one created with Vite, as long as you have a backend endpoint for the server
+route. The server handler uses standard `Request` and `Response` objects, so it
+is not tied to Next.js either. Guides for other frameworks are coming soon.
 
 If a request is blocked because of your content or versions, see
 [Troubleshooting and Limitations](/docs/troubleshooting-and-limitations).

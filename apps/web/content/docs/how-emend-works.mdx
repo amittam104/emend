@@ -19,23 +19,22 @@ without touching the others.
    the buttons and inputs people see. Their source is copied into your app, so
    you can restyle or change them.
 4. **Your server route.** It checks who is making the request, calls the AI
-   model, and streams the answer back. Your API key stays here.
+   model, and streams the answer back.
 
 The components do not include the AI logic themselves. They all use the
-`@emend/ai` package. And the package never sees your API key.
+`@emend/ai` package.
 
-## Questions and edits
+## Ask and Edit
 
-There are two kinds of requests. In the API they are called **Ask** and
-**Edit**.
+There are two kinds of requests: **Ask** and **Edit**.
 
-| Request  | What you get                  | Does it change your document?        |
-| -------- | ----------------------------- | ------------------------------------ |
-| Question | An answer to read             | Never                                |
-| Edit     | A suggested change to review  | Only after you click Accept          |
+| Request | What you get                 | Does it change your document? |
+| ------- | ---------------------------- | ----------------------------- |
+| Ask     | An answer to read            | Never                         |
+| Edit    | A suggested change to review | Only after you click Accept   |
 
 You do not pick the kind yourself. If you select text and choose an action, it
-is an edit. If you just type a question, it is a question.
+is an Edit. If you just type a question, it is an Ask.
 
 ## What the AI reads and what it changes
 
@@ -49,6 +48,11 @@ emend keeps these two things separate:
 Letting the AI read the whole document does not let it change the whole
 document. For example, the AI can read the whole page to understand it, but
 only rewrite the one sentence you selected.
+
+Built-in actions such as Improve, Shorten, or Fix grammar already decide both
+of these for you, so they show no options. In the Composer and the AI
+Assistant, you can only choose them yourself with **Custom instruction**. When
+you just type a question, you can choose what the AI reads.
 
 ## What happens during an edit
 
