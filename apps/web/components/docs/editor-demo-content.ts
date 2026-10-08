@@ -278,60 +278,21 @@ export const composerContent = doc(
 export const assistantContent = doc(
   heading(1, "AI Assistant"),
   paragraph(
-    "AI Assistant is a floating, document-aware chat. Each turn can ask about the draft or propose an edit, and follow-up questions carry the visible conversation into the next request."
+    "A floating chat that knows your document. Ask about the draft, or select text and ask for an edit."
   ),
   blockquote(
     italic("Try it: "),
-    "open the round ",
+    "open the ",
     bold("AI Assistant"),
-    " launcher in the bottom-right corner and ask, “What would make this draft clearer?”"
-  ),
-  heading(2, "What it does"),
-  bulletList(
-    [
-      bold("Conversation: "),
-      "follow-ups keep context, so you can challenge an answer or ask for an example.",
-    ],
-    [
-      bold("Reviewable edits: "),
-      "select text and choose an action. Every edit waits for Accept or Reject.",
-    ],
-    [
-      bold("Chat history: "),
-      "the latest 20 conversations are saved in this browser. Start fresh with ",
-      bold("New chat"),
-      ".",
-    ],
-    [
-      bold("Stays open: "),
-      "keep writing while the chat is open. Close it with the launcher, the close button, or Escape.",
-    ]
-  ),
-  heading(2, "Edit actions"),
-  table(
-    ["Action", "Result"],
-    ["Improve", "A clearer version of the selection"],
-    ["Shorten", "The same point in fewer words"],
-    ["Longer", "More supporting detail"],
-    ["Fix grammar", "Corrected spelling and punctuation"],
-    ["Tone", "Friendly, Professional, Confident, or Straightforward"],
-    ["Custom instruction", "Anything you describe"]
+    " button in the bottom-right corner and ask, “What would make this note clearer?”"
   ),
   heading(2, "Practice on this note"),
   paragraph(
-    "Imagine you are preparing a short note for a project team. The first paragraph explains the goal, but the middle buries the decision under background detail."
-  ),
-  paragraph(
     "After reviewing several vendor options over the past quarter and considering a range of factors including cost, support quality, and integration effort, along with feedback gathered from three teams, we have decided to move forward with the second proposal."
   ),
-  paragraph(
-    "Ask the assistant what feels unclear. Then select the long sentence above and ask for a version that leads with the decision."
-  ),
-  heading(2, "Things to try"),
   taskList(
     [false, "Ask a question, then send a follow-up"],
-    [false, "Select a sentence and change its Tone"],
-    [false, "Start a new chat and reopen the old one from history"],
+    [false, "Select the sentence above and ask it to lead with the decision"],
     [false, "Reject a proposal and confirm nothing changed"]
   )
 )
