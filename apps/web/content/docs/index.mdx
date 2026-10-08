@@ -5,9 +5,8 @@ icon: BookOpen02Icon
 ---
 
 <Callout type="warn" title="emend is in beta">
-  `@emend/ai@0.1.1` is available on npm. APIs and components may still change
-  between preview releases. Test it thoroughly before relying on it in
-  production.
+  `@emend/ai` is available on npm. APIs and components may still change between
+  preview releases. Test it thoroughly before relying on it in production.
 </Callout>
 
 <DocsHero />
@@ -19,16 +18,16 @@ out of your document until you accept them.
 
 ## What emend gives you
 
-- **Three AI surfaces, one runtime:** the Bubble Menu appears next to selected
-  text, the Composer is a prompt bar under your document, and the AI Assistant
+- **Three AI surfaces, one runtime:** The Bubble Menu appears next to selected
+  text, the Composer is a prompt box under your document, and the AI Assistant
   is a floating chat panel. All three can edit your writing or answer
   questions.
-- **Changes you review first:** when AI edits your text, you see the change
+- **Changes you review first:** When AI edits your text, you see the change
   before it lands and choose to accept or reject it.
-- **Your own server route:** the route decides the model, provider,
+- **Your own server route:** The route decides the model, provider,
   authentication, rate limits, and logging. emend currently ships a recipe for
   the Vercel AI SDK, with more providers planned.
-- **Two ways to start:** add one or more AI surfaces to an editor you already
+- **Two ways to start:** Add one or more AI surfaces to an editor you already
   own, or copy a complete editor starter into your app.
 
 ## Choose an integration path
@@ -72,6 +71,18 @@ emend does not replace your product's permissions, content model, or backend.
 
 <Cards>
   <Card
+    icon="Rocket02Icon"
+    title="Getting started"
+    description="Follow the path for an existing Tiptap editor or a complete starter."
+    href="/docs/getting-started"
+  />
+  <Card
+    icon="InstallingUpdates02Icon"
+    title="Install emend"
+    description="Check the prerequisites, install emend, and add the AI components to your app."
+    href="/docs/installation"
+  />
+  <Card
     icon="WorkflowSquare10Icon"
     title="How emend works"
     description="See what happens between typing a request and seeing the change in your editor."
@@ -82,17 +93,5 @@ emend does not replace your product's permissions, content model, or backend.
     title="API reference"
     description="Learn about the React hook, Tiptap extension, transports, server handler, actions, and error types."
     href="/docs/api-reference"
-  />
-  <Card
-    icon="InstallingUpdates02Icon"
-    title="Install emend"
-    description="Check the prerequisites, install emend, and add the AI components to your app."
-    href="/docs/installation"
-  />
-  <Card
-    icon="Rocket02Icon"
-    title="Choose a starting point"
-    description="Follow the path for an existing Tiptap editor or a complete starter."
-    href="/docs/getting-started"
   />
 </Cards>

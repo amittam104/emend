@@ -1,9 +1,15 @@
+<section id="intro">
+
 The AI components do not call the AI model from the browser. They send each
 request to a server route in your app, and that route calls the model. This
-keeps your API key secret. The [Vercel AI Gateway recipe](/docs/vercel-ai-gateway)
-adds a ready-made route at `app/api/editor-ai/route.ts`.
+keeps your API key secret. The steps below add a ready-made route that uses
+Vercel AI Gateway. To protect it or change the model later, see the
+[Vercel AI Gateway recipe](/docs/vercel-ai-gateway).
 
-<Steps>
+</section>
+
+<section id="steps">
+
 <Step>
 
 ### Add the route
@@ -22,7 +28,7 @@ AI_GATEWAY_API_KEY=your_server_side_key
 ```
 
 Do not start the name with `NEXT_PUBLIC_`. That would send the key to the
-browser. If you deploy on Vercel, you can skip the key and use Vercel OIDC.
+browser.
 
 </Step>
 <Step>
@@ -34,23 +40,26 @@ each request and streams the answer back. The `generate` function is the only
 part that talks to the AI provider, so change it to use a different model or
 provider.
 
-<include lang="ts" meta='title="app/api/editor-ai/route.ts"'>../../../../registry/recipes/vercel-ai-gateway/route.ts</include>
+<include lang="ts" meta='title="app/api/editor-ai/route.ts"'>
+  ../../../../registry/recipes/vercel-ai-gateway/route.ts
+</include>
 
 </Step>
-<Step>
 
-### Connect your component to the route
+</section>
 
-A transport tells a component which URL to send requests to. The examples on
-this page already use `/api/editor-ai`. Change it only if you move the route.
+<section id="transport">
 
-```tsx
-const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code highlight]
-```
+A transport tells a component which URL to send requests to. The route above
+lives at `/api/editor-ai`, and the code on this page already uses that URL. If
+you move or rename the route, change `url` to match its new path.
 
-</Step>
-</Steps>
+</section>
+
+<section id="outro">
 
 Before you go live, make sure only signed-in users can call the route, and
 limit how often they can call it. See
 [Protect the route](/docs/vercel-ai-gateway#protect-the-route).
+
+</section>
