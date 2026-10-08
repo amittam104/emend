@@ -4,6 +4,12 @@ description: Set up your Next.js app and install emend in three steps.
 icon: InstallingUpdates02Icon
 ---
 
+This page covers the setup both [paths](/docs/getting-started) share. The first
+two steps apply to everyone. The last step adds the Bubble Menu to an
+[existing Tiptap editor](/docs/existing-tiptap-editor). If you are using the
+[editor starter](/docs/emend-editor-starter), skip it, because the starter
+command adds the AI components for you.
+
 emend comes in two parts:
 
 - **The AI components** (Bubble Menu, Composer, AI Assistant). The Shadcn CLI
@@ -20,14 +26,15 @@ emend comes in two parts:
 Make sure your project has everything below before you install emend.
 
 - Next.js with the App Router, and React 19
-- Tiptap `3.31.4` (all `@tiptap/*` packages on the same version)
+- Tiptap, if your app already has an editor, with every `@tiptap/*` package on
+  `3.31.4`. Otherwise the component commands install it for you.
 - Shadcn already set up with Tailwind CSS 4
 - Node.js `24.19.0` or later
-- A server route that calls the AI model. You add this later with
-  [one command](/docs/vercel-ai-gateway).
 
-The components use Shadcn's Base UI primitives. No specific visual preset is
-required.
+<Callout type="info">
+  The components are built on Base UI, so choose Base UI as the component
+  library when you set up Shadcn.
+</Callout>
 
 ## Set up your project
 
@@ -51,9 +58,6 @@ registry:
 Keep the other settings in your existing `components.json`; only add the registry
 entry shown above.
 
-If you are running the emend repository locally, use
-`http://127.0.0.1:3000/r/{name}.json` instead.
-
 </Step>
 <Step>
 
@@ -62,7 +66,7 @@ If you are running the emend repository locally, use
 Install `@emend/ai` with your package manager:
 
 ```npm
-npm install @emend/ai@0.1.1
+npm install @emend/ai
 ```
 
 </Step>
@@ -70,7 +74,8 @@ npm install @emend/ai@0.1.1
 
 ### Add your first component
 
-Start with the Bubble Menu. It is the simplest one:
+If you have an existing Tiptap editor, start with the Bubble Menu. It is the
+simplest one:
 
 ```npm
 npx shadcn@latest add @emend/ai-bubble-menu
@@ -83,30 +88,8 @@ anything it needs. The copied files are yours to change. The AI logic stays in
 </Step>
 </Steps>
 
-The registry installs `@emend/ai@0.1.1` automatically when an item needs it.
-Installing the runtime separately is useful when building your own AI UI.
-
-## Enable tooltips
-
-If the CLI adds the `tooltip` component, wrap your app with its provider:
-
-```tsx title="app/layout.tsx"
-import { TooltipProvider } from "@/components/ui/tooltip"
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <html lang="en">
-      <body>
-        <TooltipProvider>{children}</TooltipProvider>
-      </body>
-    </html>
-  )
-}
-```
+The component commands install `@emend/ai` for you. Install it on its own only
+when you are building your own AI UI.
 
 ## What you should see
 

@@ -2,8 +2,8 @@
   "title": "emend",
   "pages": [
     "index",
-    "installation",
     "getting-started",
+    "installation",
     "---Editor---",
     "existing-tiptap-editor",
     "emend-editor-starter",
