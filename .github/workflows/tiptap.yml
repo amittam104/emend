@@ -1,0 +1,93 @@
+name: Tiptap
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compatibility:
+    name: Tiptap ${{ matrix.tiptap }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        tiptap: [minimum, latest]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.19.0
+          cache: pnpm
+
+      - name: Pick the Tiptap version
+        id: version
+        run: |
+          if [ "${{ matrix.tiptap }}" = minimum ]; then
+            version=$(node -p "require('./packages/ai/package.json').peerDependencies['@tiptap/core'].replace('^', '')")
+          else
+            version=$(npm view "@tiptap/core@^3" version --json | node -p "[].concat(JSON.parse(require('fs').readFileSync(0, 'utf8'))).pop()")
+          fi
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+
+      - run: node scripts/set-tiptap-version.mjs ${{ steps.version.outputs.value }}
+      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm --filter @emend/ai build
+      - run: pnpm --filter @emend/ai --filter @emend/registry-components typecheck
+      - run: pnpm --filter @emend/ai smoke
+      - run: pnpm registry:validate
+
+  update:
+    name: Update Tiptap
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: compatibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.19.0
+          cache: pnpm
+
+      - name: Pick the latest Tiptap 3 version
+        id: version
+        run: |
+          latest=$(npm view "@tiptap/core@^3" version --json | node -p "[].concat(JSON.parse(require('fs').readFileSync(0, 'utf8'))).pop()")
+          current=$(node -p "require('./packages/ai/package.json').devDependencies['@tiptap/core']")
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+          echo "changed=$([ "$latest" != "$current" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - if: steps.version.outputs.changed == 'true'
+        run: |
+          node scripts/set-tiptap-version.mjs ${{ steps.version.outputs.latest }}
+          pnpm install --no-frozen-lockfile
+
+      - if: steps.version.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/tiptap-${{ steps.version.outputs.latest }}
+          commit-message: "chore: update Tiptap to ${{ steps.version.outputs.latest }}"
+          title: Update Tiptap to ${{ steps.version.outputs.latest }}
+          body: |
+            - Update the Tiptap packages used to develop and test emend to `${{ steps.version.outputs.latest }}`.
+          labels: dependencies
