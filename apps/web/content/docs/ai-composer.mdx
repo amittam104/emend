@@ -1,15 +1,15 @@
 ---
 title: AI Composer
-description: A prompt bar under your document for editing text or asking questions.
+description: A prompt box under your document for editing text or asking questions.
 icon: AiBackgroundIcon
 ---
 
-The Composer is a prompt bar that stays under your document. Use it two ways:
+The Composer is a prompt box that stays under your document. Use it two ways:
 
-- **Edit your text:** select some text, then pick an action or type what you
+- **Edit your text:** Select some text, then pick an action or type what you
   want changed. You see the change before it is applied.
-- **Ask a question:** type a question without picking an action. The answer
-  shows up under the bar, and your document is not changed.
+- **Ask a question:** Type a question without picking an action. The answer
+  shows up just above the Composer, and your document is not changed.
 
 ## Try it
 
@@ -18,19 +18,36 @@ Type a question and send it. Then select some text, open the **+** menu (or type
 
 <EditorDemo variant="composer" />
 
-## Install
+<include>../partials/nextjs-only.mdx</include>
 
-First complete [Installation](/docs/installation) to add the `@emend` registry.
+## Before you start
+
+This page assumes your app already has a Tiptap editor and you have completed
+[Installation](/docs/installation). If you do not have an editor yet, use the
+[Editor Starter](/docs/emend-editor-starter) instead. Its AI Composer
+version comes with the Composer already set up.
+
+## Add the Composer
+
+<Steps>
+<Step>
+
+### Install the component
 
 ```npm
 npx shadcn@latest add @emend/ai-composer
 ```
 
-## Add it to your editor
+This copies the Composer into `components/emend/ai-composer` and installs
+`@emend/ai` and the Tiptap packages it needs.
+
+</Step>
+<Step>
+
+### Add it to your editor
 
 Add the `EmendAi` and `Markdown` extensions to your editor, then render the
-Composer with that editor. Lines marked with **+** are the ones to add to a
-normal Tiptap editor.
+Composer with that same editor.
 
 ```tsx title="components/document-editor.tsx"
 "use client"
@@ -48,55 +65,119 @@ export function DocumentEditor() {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [StarterKit, Markdown, EmendAi], // [!code ++]
+    content: "<p>Select this sentence and ask emend to improve it.</p>",
   })
 
   if (!editor) return null
 
   return (
-    <>
+    <div className="relative">
       <EditorContent editor={editor} />
       {/* [!code ++] */}
       <AiComposer editor={editor} transport={transport} />
-    </>
+    </div>
   )
 }
 ```
 
+The `transport` tells the Composer which URL to send AI requests to.
+
+</Step>
+</Steps>
+
 ## Connect the server route
 
-<include>../partials/server-route.mdx</include>
+<include>../partials/server-route.mdx#intro</include>
+
+<Steps>
+
+<include>../partials/server-route.mdx#steps</include>
+
+<Step>
+
+### Connect your component to the route
+
+<include>../partials/server-route.mdx#transport</include>
+
+```tsx title="components/document-editor.tsx"
+"use client"
+
+import { EmendAi } from "@emend/ai/tiptap"
+import { createFetchTransport } from "@emend/ai/transport"
+import { Markdown } from "@tiptap/markdown"
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import { AiComposer } from "@/components/emend/ai-composer"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code highlight]
+
+export function DocumentEditor() {
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [StarterKit, Markdown, EmendAi],
+    content: "<p>Select this sentence and ask emend to improve it.</p>",
+  })
+
+  if (!editor) return null
+
+  return (
+    <div className="relative">
+      <EditorContent editor={editor} />
+      <AiComposer editor={editor} transport={transport} />
+    </div>
+  )
+}
+```
+
+</Step>
+
+</Steps>
+
+<include>../partials/server-route.mdx#outro</include>
 
 ## Choose what the AI reads and changes
 
-The Composer has two small pickers next to the prompt:
+Built-in actions like **Improve** already know what to read and change, so
+they do not show any pickers. The pickers only appear next to the prompt when
+you write your own request:
 
-- **Read:** what the AI can look at. For example, the selected text, the
+- **Read:** What the AI can look at. For example, the selected text, the
   current paragraph, or the whole document. The AI only reads this. It does
-  not change it.
-- **Change:** what the AI is allowed to replace. You can replace the selection,
+  not change it. This picker shows when you pick **Custom instruction** or
+  type a question.
+- **Change:** What the AI is allowed to replace. You can replace the selection,
   the current block, or the whole document, or insert new text at the cursor.
+  This picker shows only when you pick **Custom instruction**, because
+  questions never change your document.
 
 Questions read the whole document by default, so you can ask about anything
-in it, even with text selected. Built-in actions like **Improve** set these for
-you. You only need the pickers for your own instructions.
+in it, even with text selected. If your `policy` allows only one option, or
+turns off overrides, the matching picker is hidden.
 
 ## Props
 
-| Prop         | Default         | Purpose                                                |
-| ------------ | --------------- | ------------------------------------------------------ |
-| `editor`     | Required        | Your Tiptap editor.                                    |
-| `transport`  | Required        | Tells the Composer which URL to send AI requests to.   |
-| `policy`     | Adaptive scopes | Limits what the AI can read and change.                |
-| `showReview` | `true`          | Shows answers and Accept/Reject buttons under the bar. |
-| `className`  | -               | Adds your own classes to the Composer.                 |
+| Prop         | Default         | Purpose                                                     |
+| ------------ | --------------- | ----------------------------------------------------------- |
+| `editor`     | Required        | Your Tiptap editor.                                         |
+| `transport`  | Required        | Tells the Composer which URL to send AI requests to.        |
+| `policy`     | Adaptive scopes | Limits what the AI can read and change.                     |
+| `showReview` | `true`          | Shows answers and Accept/Reject buttons above the Composer. |
+| `className`  | -               | Adds your own classes to the Composer.                      |
 
-## What you should see
+To use the Composer together with another AI component on the same editor,
+use `AiComposerView` with a shared session. See
+[Use more than one AI component](/docs/existing-tiptap-editor#use-more-than-one-ai-component).
 
-- A question gives you an answer under the bar.
-- An edit shows a preview in your document with **Accept** and **Reject**
-  buttons.
-- **Accept** is disabled while the AI is still writing, if the text changed in
-  the meantime, or if your editor cannot display the result.
+## How it behaves
+
+- **Actions:** **Improve**, **Shorten**, **Longer**, **Fix grammar**, and
+  **Custom instruction**. Open the **+** menu or type **/** to pick one. The
+  built-in actions need selected text.
+- **Questions:** Anything you type without an action is a question. The answer
+  shows up just above the Composer, and your document is not changed.
+- **Edits:** These show a preview in your document with **Accept** and **Reject**
+  buttons. **Accept** is disabled while the AI is still writing, if the text
+  changed in the meantime, or if your editor cannot display the result.
 
 ## Next
 
