@@ -7,7 +7,6 @@ import { EmendAi } from "@emend/ai/tiptap"
 import { useMemo, type ReactNode } from "react"
 import { AiComposerView } from "@/components/emend/ai-composer"
 import { EmendEditorBase, type EmendEditorBaseProps } from "./emend-editor-base"
-import { EditorBubbleMenu } from "./editor-bubble-menu"
 
 export interface EmendEditorComposerProps extends Omit<
   EmendEditorBaseProps,
@@ -55,7 +54,6 @@ function EditorAi({
     <div className="emend-editor__workspace">
       <div className="emend-editor__main emend-editor__main--ai">
         <div className="emend-editor__content">{children}</div>
-        <EditorBubbleMenu editor={editor} />
         <div className="emend-editor__ai-tools">
           <AiComposerView editor={editor} session={session} />
         </div>
