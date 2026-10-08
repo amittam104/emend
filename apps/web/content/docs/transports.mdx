@@ -12,12 +12,12 @@ and answers.
 
 ## Which one to use
 
-| Option                                  | Use it for                                        | Network |
-| --------------------------------------- | ------------------------------------------------- | ------- |
-| `createFetchTransport`                  | Your real app. Sends requests to your server route | Yes     |
-| `createMockTransport`                   | Demos and building UI without a server or API key  | No      |
-| `mockGenerate` + `createFetchTransport` | Testing your server route without calling a model  | Yes     |
-| Custom `EmendTransport`                 | WebSockets, workers, queues, or anything else      | Depends |
+| Option                                  | Use it for                                          | Network |
+| --------------------------------------- | --------------------------------------------------- | ------- |
+| `createFetchTransport`                  | Your real app. Sends requests to your server route  | Yes     |
+| `createMockTransport`                   | Demos and building UI without a server or API key   | No      |
+| `mockGenerate` + `createFetchTransport` | Testing your server route without calling a model   | Yes     |
+| Your own transport                      | Sending requests some other way, such as WebSockets | Depends |
 
 ## Fetch transport (most apps)
 
@@ -57,6 +57,11 @@ through an answer.
 
 ## Build your own transport
 
+If you do not want to send requests with `fetch`, you can write your own
+transport. It is an object with a `run` function that takes the request and
+returns the answer's events one at a time. emend does not include any other
+transports, so you write this part yourself. Its type is `EmendTransport`.
+
 ```ts
 import type { EmendTransport } from "@emend/ai"
 
@@ -73,11 +78,10 @@ const transport: EmendTransport = {
 
 Your transport must:
 
-- stop when `signal` is aborted (for example, when the user clicks Stop), so
-  you do not keep paying for an answer nobody will see;
-- send back events with the same protocol version and request ID as the
+- Stop when `signal` is aborted (for example, when the user clicks Stop), so
+  you do not keep paying for an answer nobody will see.
+- Send back events with the same protocol version and request ID as the
   request. Events that do not match are ignored.
 
-Next, see [Vercel AI Gateway](/docs/vercel-ai-gateway) for a ready-made server
-route, or [`createEmendAiHandler`](/docs/api-reference/create-emend-ai-handler)
-to build your own.
+Next, read [Supported Markdown and Compatibility](/docs/supported-markdown-and-compatibility)
+to see which content the AI can edit and which versions emend supports.

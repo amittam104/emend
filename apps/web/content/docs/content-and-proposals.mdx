@@ -15,10 +15,10 @@ Tiptap content. Your stored document stays Tiptap JSON.
 
 When you send a request, emend saves:
 
-- the text the AI may change, and the text it may read;
-- that text as Markdown;
-- a version number of the document at that moment;
-- what kinds of content your editor supports (for example, tables or images).
+- The text the AI may change, and the text it may read.
+- That text as Markdown.
+- A version number of the document at that moment.
+- What kinds of content your editor supports (for example, tables or images).
 
 If the text you want to change contains something that cannot be turned into
 Markdown, the request is blocked. The same is true for the text the AI reads,
@@ -29,11 +29,11 @@ unless your code chooses to send it as plain text instead.
 When the AI finishes, emend checks whether your editor can display the answer.
 There are three possible results:
 
-| Result                | What it means                                                                              |
-| --------------------- | ------------------------------------------------------------------------------------------ |
-| `supported-markdown`  | The answer fits your editor. You can accept it.                                            |
-| `plain-text-fallback` | The answer can only be applied as plain text, and your code has allowed that.              |
-| `blocked`             | Your editor cannot display the answer. You can still read and copy it, but not apply it.   |
+| Result                | What it means                                                                            |
+| --------------------- | ---------------------------------------------------------------------------------------- |
+| `supported-markdown`  | The answer fits your editor. You can accept it.                                          |
+| `plain-text-fallback` | The answer can only be applied as plain text, and your code has allowed that.            |
+| `blocked`             | Your editor cannot display the answer. You can still read and copy it, but not apply it. |
 
 ## Step 3: you see a preview
 
@@ -50,12 +50,12 @@ apply it. Run the request again on the current text instead.
 ## Accept is one change you can undo
 
 When you click **Accept**, emend checks everything one last time and then
-replaces the text in a single step. Press <kbd>Cmd</kbd>+<kbd>Z</kbd> on Mac or
-<kbd>Ctrl</kbd>+<kbd>Z</kbd> on Windows and Linux to undo it, like any other
-edit. If a suggestion would replace a whole document that is not empty, emend
-asks you to confirm first.
+replaces the text in a single step. Like any other edit, you can undo it with
+the keys <kbd>Cmd</kbd>+<kbd>Z</kbd> on Mac or <kbd>Ctrl</kbd>+<kbd>Z</kbd> on
+Windows and Linux. If a suggestion would replace a whole document that is not
+empty, emend asks you to confirm first.
 
 **Reject** removes the suggestion and leaves your document as it was.
 
-See [Supported Markdown and Compatibility](/docs/supported-markdown-and-compatibility)
-for the content emend can send to the AI.
+Next, read [Transports](/docs/transports) to learn how AI components send
+requests to your server and get answers back.
