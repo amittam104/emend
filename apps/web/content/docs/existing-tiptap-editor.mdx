@@ -14,19 +14,24 @@ and the AI Assistant.
 Make sure your project has everything below before you add AI to your editor.
 
 - A component that creates your Tiptap editor (with `"use client"` at the top)
-- Every `@tiptap/*` package on `3.31.4`
+- Tiptap `3.7.1` or later, with all your `@tiptap/*` packages on the same
+  version
 - The `@emend` registry added to `components.json` (see
   [Tell Shadcn where to find emend](/docs/installation#tell-shadcn-where-to-find-emend))
 - A server route for AI requests, such as `/api/editor-ai`. The
   [last section](#connect-the-server-route) shows how to add one.
 
-The component command below installs the Tiptap packages emend needs,
-including `@tiptap/markdown`. Update the other Tiptap packages your editor
-uses to the same version, for example:
+The component command does not change the Tiptap packages you already have. If
+your editor does not use `@tiptap/markdown` yet, install it at the same version
+as your other Tiptap packages first. To see your version, run
+`npm ls @tiptap/react`. For example, if it shows `3.25.0`:
 
 ```npm
-npm install @tiptap/starter-kit@3.31.4
+npm install @tiptap/markdown@3.25.0
 ```
+
+If you skip this, the component command installs the newest `@tiptap/markdown`,
+which does not match an older editor.
 
 ## Add the Bubble Menu
 
