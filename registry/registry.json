@@ -12,12 +12,10 @@
         "@emend/ai@0.1.1",
         "@hugeicons/core-free-icons@4.2.3",
         "@hugeicons/react@^1.1.9",
-        "@tiptap/react@3.31.4",
+        "@tiptap/react",
         "clsx@^2.1.1",
         "tailwind-merge@^3.6.0",
-        "@tiptap/core@3.31.4",
-        "@tiptap/markdown@3.31.4",
-        "@tiptap/pm@3.31.4"
+        "@tiptap/markdown"
       ],
       "registryDependencies": [],
       "files": [
@@ -52,14 +50,12 @@
         "@emend/ai@0.1.1",
         "@hugeicons/core-free-icons@4.2.3",
         "@hugeicons/react@^1.1.9",
-        "@tiptap/react@3.31.4",
+        "@tiptap/react",
         "clsx@^2.1.1",
         "react-markdown@^10.1.0",
         "remark-gfm@^4.0.1",
         "tailwind-merge@^3.6.0",
-        "@tiptap/core@3.31.4",
-        "@tiptap/markdown@3.31.4",
-        "@tiptap/pm@3.31.4"
+        "@tiptap/markdown"
       ],
       "registryDependencies": [
         "badge",
@@ -114,14 +110,12 @@
         "@emend/ai@0.1.1",
         "@hugeicons/core-free-icons@4.2.3",
         "@hugeicons/react@^1.1.9",
-        "@tiptap/react@3.31.4",
+        "@tiptap/react",
         "clsx@^2.1.1",
         "react-markdown@^10.1.0",
         "remark-gfm@^4.0.1",
         "tailwind-merge@^3.6.0",
-        "@tiptap/core@3.31.4",
-        "@tiptap/markdown@3.31.4",
-        "@tiptap/pm@3.31.4"
+        "@tiptap/markdown"
       ],
       "registryDependencies": [
         "button",
@@ -188,16 +182,15 @@
       "dependencies": [
         "@hugeicons/core-free-icons@4.2.3",
         "@hugeicons/react@^1.1.9",
-        "@tiptap/core@3.31.4",
-        "@tiptap/extension-list@3.31.4",
-        "@tiptap/extension-table@3.31.4",
-        "@tiptap/extensions@3.31.4",
-        "@tiptap/markdown@3.31.4",
-        "@tiptap/react@3.31.4",
-        "@tiptap/starter-kit@3.31.4",
+        "@tiptap/core",
+        "@tiptap/extension-list",
+        "@tiptap/extension-table",
+        "@tiptap/extensions",
+        "@tiptap/markdown",
+        "@tiptap/react",
+        "@tiptap/starter-kit",
         "clsx@^2.1.1",
-        "tailwind-merge@^3.6.0",
-        "@tiptap/pm@3.31.4"
+        "tailwind-merge@^3.6.0"
       ],
       "registryDependencies": [
         "button",
