@@ -5,29 +5,47 @@ icon: AiReplaceIcon
 ---
 
 When you select text, the Bubble Menu opens right next to it. Pick an action
-or type what you want, and the AI's suggested change shows up in place. Then
-click **Accept** or **Reject**.
+or type your own instruction, and the AI's suggested change shows up in place.
+Then click **Accept** to keep it, **Reject** to throw it away, or **Try again**
+for a different suggestion.
 
 ## Try it
 
-Select the sentence in the editor below. Pick an action like **Improve**, or
-type your own request in the bar. Click the arrow to see more actions.
+Select the sentence in the editor below. Pick **Improve**, or type your own
+instruction in the text box. Click the arrow to see all the actions.
 
 <EditorDemo variant="bubble" />
 
-## Install
+<include>../partials/nextjs-only.mdx</include>
 
-First complete [Installation](/docs/installation) to add the `@emend` registry.
+## Before you start
+
+This page assumes your app already has a Tiptap editor and you have completed
+[Installation](/docs/installation). If you do not have an editor yet, use the
+[Editor Starter](/docs/emend-editor-starter) instead. Its default
+version comes with the Bubble Menu already set up.
+
+## Add the Bubble Menu
+
+<Steps>
+<Step>
+
+### Install the component
 
 ```npm
 npx shadcn@latest add @emend/ai-bubble-menu
 ```
 
-## Add it to your editor
+This copies the Bubble Menu into `components/emend/ai-bubble-menu` and installs
+`@emend/ai` and the Tiptap packages it needs.
+
+</Step>
+<Step>
+
+### Add it to your editor
 
 Add the `EmendAi` and `Markdown` extensions to your editor, then render the
-Bubble Menu with that editor. Lines marked with **+** are the ones to add to a
-normal Tiptap editor.
+Bubble Menu with that same editor.
 
 ```tsx title="components/document-editor.tsx"
 "use client"
@@ -45,23 +63,75 @@ export function DocumentEditor() {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [StarterKit, Markdown, EmendAi], // [!code ++]
+    content: "<p>Select this sentence and ask emend to improve it.</p>",
   })
 
   if (!editor) return null
 
   return (
-    <>
+    <div className="relative">
       <EditorContent editor={editor} />
       {/* [!code ++] */}
       <AiBubbleMenu editor={editor} transport={transport} />
-    </>
+    </div>
   )
 }
 ```
 
+The `transport` tells the menu which URL to send AI requests to.
+
+</Step>
+</Steps>
+
 ## Connect the server route
 
-<include>../partials/server-route.mdx</include>
+<include>../partials/server-route.mdx#intro</include>
+
+<Steps>
+
+<include>../partials/server-route.mdx#steps</include>
+
+<Step>
+
+### Connect your component to the route
+
+<include>../partials/server-route.mdx#transport</include>
+
+```tsx title="components/document-editor.tsx"
+"use client"
+
+import { EmendAi } from "@emend/ai/tiptap"
+import { createFetchTransport } from "@emend/ai/transport"
+import { Markdown } from "@tiptap/markdown"
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import { AiBubbleMenu } from "@/components/emend/ai-bubble-menu"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code highlight]
+
+export function DocumentEditor() {
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [StarterKit, Markdown, EmendAi],
+    content: "<p>Select this sentence and ask emend to improve it.</p>",
+  })
+
+  if (!editor) return null
+
+  return (
+    <div className="relative">
+      <EditorContent editor={editor} />
+      <AiBubbleMenu editor={editor} transport={transport} />
+    </div>
+  )
+}
+```
+
+</Step>
+
+</Steps>
+
+<include>../partials/server-route.mdx#outro</include>
 
 ## Props
 
@@ -72,18 +142,29 @@ export function DocumentEditor() {
 | `showReview` | `true`   | Shows the Accept and Reject buttons in the menu. |
 | `className`  | -        | Adds your own classes to the menu.               |
 
+To use the Bubble Menu together with another AI component on the same editor,
+use `AiBubbleMenuView` with a shared session. See
+[Use more than one AI component](/docs/existing-tiptap-editor#use-more-than-one-ai-component).
+
 ## How it behaves
 
-- The actions are Improve, Shorten, Expand, Tone, and Grammar. On small screens,
-  some of them move behind the arrow.
-- Actions and typed requests only change the text you selected.
-- The suggested change shows up in place. **Accept** applies it. **Reject**
-  removes it.
+- The menu opens with a text box and the **Improve** and **Shorten** actions.
+  On small screens, only **Improve** shows next to the text box.
+- Click the arrow to see all five actions: **Improve**, **Shorten**,
+  **Expand**, **Tone**, and **Grammar**. Click it again to go back to the text
+  box.
+- When you start typing in the text box, the actions hide and a send button
+  appears. Press <kbd>Enter</kbd> or click it to send your instruction.
+- Actions and typed instructions only change the text you selected.
+- While the AI is working, click **Stop** to cancel the request.
+- The suggested change shows up in place. **Accept** applies it, **Reject**
+  removes it, and **Try again** asks for a new suggestion.
 - If the text changes while a suggestion is showing, the suggestion is out of
-  date and can no longer be accepted. Run the action again.
+  date and can no longer be accepted. The menu tells you, and you can go back
+  to the actions or close the menu, then select the text again.
 
 ## Next
 
-See the [AI Composer](/docs/ai-composer) for a prompt bar that stays under your
-document, or read [Content and Proposals](/docs/content-and-proposals) to learn
-how AI suggestions work.
+Read [Content and Proposals](/docs/content-and-proposals) to learn how AI
+suggestions work, or see the [AI Composer](/docs/ai-composer) for a prompt box
+that stays under your document.

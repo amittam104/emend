@@ -8,7 +8,7 @@ The AI Assistant is a chat window that opens from a button in the bottom-right
 corner. It can see your document, so you can:
 
 - **Ask questions** about what you wrote, and follow up like a normal chat.
-- **Edit your text:** select some text, pick an action or type what you want,
+- **Edit your text:** Select some text, pick an action or type what you want,
   and review the change before it is applied.
 
 ## Try it
@@ -19,69 +19,185 @@ the text, send a follow-up, or select some text and pick an action like
 
 <EditorDemo variant="chat" />
 
-## Open it from the toolbar
+<include>../partials/nextjs-only.mdx</include>
 
-If your editor has a toolbar, you can also add a button there to open the
-chat. The corner button stays too.
+## Before you start
+
+This page assumes your app already has a Tiptap editor and you have completed
+[Installation](/docs/installation). If you do not have an editor yet, use the
+[Editor Starter](/docs/emend-editor-starter) instead. Its AI Assistant
+version comes with the chat already set up.
+
+## Add the AI Assistant
+
+<Steps>
+<Step>
+
+### Install the component
+
+```npm
+npx shadcn@latest add @emend/ai-assistant
+```
+
+This copies the AI Assistant into `components/emend/ai-assistant` and installs
+`@emend/ai` and the Tiptap packages it needs.
+
+</Step>
+<Step>
+
+### Add it to your editor
+
+Add the `EmendAi` and `Markdown` extensions to your editor, then render the
+AI Assistant with that same editor.
+
+```tsx title="components/document-editor.tsx"
+"use client"
+
+import { EmendAi } from "@emend/ai/tiptap" // [!code ++]
+import { createFetchTransport } from "@emend/ai/transport" // [!code ++]
+import { Markdown } from "@tiptap/markdown" // [!code ++]
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import { AiAssistant } from "@/components/emend/ai-assistant" // [!code ++]
+
+const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code ++]
+
+export function DocumentEditor() {
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [StarterKit, Markdown, EmendAi], // [!code ++]
+    content: "<p>Select this sentence and ask emend to improve it.</p>",
+  })
+
+  if (!editor) return null
+
+  return (
+    <div className="relative">
+      <EditorContent editor={editor} />
+      {/* [!code ++] */}
+      <AiAssistant editor={editor} transport={transport} />
+    </div>
+  )
+}
+```
+
+The `transport` tells the chat which URL to send AI requests to. The AI
+Assistant adds its own button to the bottom-right corner of the page. Click it
+to open the chat.
+
+</Step>
+</Steps>
+
+## Connect the server route
+
+<include>../partials/server-route.mdx#intro</include>
+
+<Steps>
+
+<include>../partials/server-route.mdx#steps</include>
+
+<Step>
+
+### Connect your component to the route
+
+<include>../partials/server-route.mdx#transport</include>
+
+```tsx title="components/document-editor.tsx"
+"use client"
+
+import { EmendAi } from "@emend/ai/tiptap"
+import { createFetchTransport } from "@emend/ai/transport"
+import { Markdown } from "@tiptap/markdown"
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import { AiAssistant } from "@/components/emend/ai-assistant"
+
+const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code highlight]
+
+export function DocumentEditor() {
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [StarterKit, Markdown, EmendAi],
+    content: "<p>Select this sentence and ask emend to improve it.</p>",
+  })
+
+  if (!editor) return null
+
+  return (
+    <div className="relative">
+      <EditorContent editor={editor} />
+      <AiAssistant editor={editor} transport={transport} />
+    </div>
+  )
+}
+```
+
+</Step>
+
+</Steps>
+
+<include>../partials/server-route.mdx#outro</include>
+
+## Open it from your own button
+
+The AI Assistant always shows its own button in the bottom-right corner. To
+open the chat from another button too, pass `open` and `onOpenChange`. The
+install command adds the Shadcn `Button` used here if your project does not
+have it yet.
+
+```tsx title="components/document-editor.tsx"
+"use client"
+
+import { EmendAi } from "@emend/ai/tiptap"
+import { createFetchTransport } from "@emend/ai/transport"
+import { Markdown } from "@tiptap/markdown"
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import { useState } from "react" // [!code ++]
+import { AiAssistant } from "@/components/emend/ai-assistant"
+import { Button } from "@/components/ui/button" // [!code ++]
+
+const transport = createFetchTransport({ url: "/api/editor-ai" })
+
+export function DocumentEditor() {
+  const [open, setOpen] = useState(false) // [!code ++]
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [StarterKit, Markdown, EmendAi],
+    content: "<p>Select this sentence and ask emend to improve it.</p>",
+  })
+
+  if (!editor) return null
+
+  return (
+    <div className="relative">
+      {/* [!code ++:3] */}
+      <Button type="button" variant="outline" onClick={() => setOpen(true)}>
+        Open AI Assistant
+      </Button>
+      <EditorContent editor={editor} />
+      <AiAssistant
+        editor={editor}
+        transport={transport}
+        open={open} // [!code ++]
+        onOpenChange={setOpen} // [!code ++]
+      />
+    </div>
+  )
+}
+```
+
+## Open it from the Editor Starter toolbar
+
+If you use the AI Assistant version of the
+[Editor Starter](/docs/emend-editor-starter), you can also add a button to its
+toolbar that opens the chat. The corner button stays too.
 
 ```tsx
 <EmendEditorAssistant transport={transport} showToolbarAssistantToggle />
 ```
 
 <EditorDemo variant="chat" showToolbarAssistantToggle />
-
-## Install
-
-First complete [Installation](/docs/installation) to add the `@emend` registry.
-
-```npm
-npx shadcn@latest add @emend/ai-assistant
-```
-
-## Add it to your editor
-
-Render `AiAssistant` with your editor. This example also opens the chat from
-your own button by passing `open` and `onOpenChange`. Lines marked with **+**
-are the ones to add.
-
-```tsx title="components/document-chat.tsx"
-"use client"
-
-import { createFetchTransport } from "@emend/ai/transport" // [!code ++]
-import type { Editor } from "@tiptap/core"
-import { useState } from "react"
-import { AiAssistant } from "@/components/emend/ai-assistant" // [!code ++]
-
-const transport = createFetchTransport({ url: "/api/editor-ai" }) // [!code ++]
-
-export function DocumentChat({ editor }: { readonly editor: Editor }) {
-  const [open, setOpen] = useState(false)
-
-  return (
-    <>
-      <button type="button" onClick={() => setOpen(true)}>
-        Open AI Assistant
-      </button>
-      {/* [!code ++:6] */}
-      <AiAssistant
-        editor={editor}
-        transport={transport}
-        open={open}
-        onOpenChange={setOpen}
-      />
-    </>
-  )
-}
-```
-
-Your editor must include the `EmendAi` extension (see
-[Existing Tiptap Editor](/docs/existing-tiptap-editor#add-the-emend-extension)).
-The chat stays open while you work in the document. Close it with the corner
-button, the close button, or <kbd>Esc</kbd>.
-
-## Connect the server route
-
-<include>../partials/server-route.mdx</include>
 
 ## Props
 
@@ -94,17 +210,19 @@ button, the close button, or <kbd>Esc</kbd>.
 | `storageKey`            | `emend:ai-assistant:v1` | Where chat history is saved. Use a different key per document or user. |
 | `policy`                | Adaptive scopes         | Limits what the AI can read and change.                                |
 
+To use the AI Assistant together with another AI component on the same editor,
+use `AiAssistantView` with a shared session. See
+[Use more than one AI component](/docs/existing-tiptap-editor#use-more-than-one-ai-component).
+
 ## How it behaves
 
 - **Actions:** **Improve**, **Shorten**, **Longer**, **Fix grammar**, **Tone**
   (Friendly, Professional, Confident, or Straightforward), and **Custom
   instruction**. The built-in actions need selected text.
-- **Questions:** anything you type without an action is a question. The answer
+- **Questions:** Anything you type without an action is a question. The answer
   shows up in the chat and your document is not changed.
-- **Edits:** show a preview in your document with **Accept** and **Reject**
+- **Edits:** These show a preview in your document with **Accept** and **Reject**
   buttons, just like the other components.
-- **Follow-ups:** each new message includes the conversation so far, so the AI
-  remembers what you talked about.
 - **New chat** saves the current chat and starts a fresh one.
 - **Chat history** shows your last 20 chats. You can reopen or delete them. Old
   chats can be read, but their edit suggestions can no longer be applied.
