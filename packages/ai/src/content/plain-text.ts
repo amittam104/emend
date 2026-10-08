@@ -1,4 +1,11 @@
-import { decodeHtmlEntities, type MarkdownToken } from "@tiptap/core"
+import type { MarkdownToken } from "@tiptap/core"
+
+const namedEntities: Readonly<Record<string, string>> = {
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  amp: "&",
+}
 
 export function markdownTokensToPlainText(
   tokens: readonly MarkdownToken[]
@@ -105,4 +112,23 @@ function renderTable(token: MarkdownToken): string {
 
 function text(token: MarkdownToken): string {
   return decodeHtmlEntities(typeof token.text === "string" ? token.text : "")
+}
+
+function decodeHtmlEntities(value: string): string {
+  return value.replace(
+    /&(?:#(\d{1,7})|#[xX]([0-9a-fA-F]{1,6})|(lt|gt|quot|amp));/g,
+    (_match, decimal?: string, hex?: string, name?: string) => {
+      if (decimal !== undefined) return decodeCodePoint(Number(decimal))
+      if (hex !== undefined) return decodeCodePoint(parseInt(hex, 16))
+      return namedEntities[name ?? ""] ?? ""
+    }
+  )
+}
+
+function decodeCodePoint(codePoint: number): string {
+  const invalid =
+    codePoint === 0 ||
+    codePoint > 0x10ffff ||
+    (codePoint >= 0xd800 && codePoint <= 0xdfff)
+  return invalid ? "\uFFFD" : String.fromCodePoint(codePoint)
 }
