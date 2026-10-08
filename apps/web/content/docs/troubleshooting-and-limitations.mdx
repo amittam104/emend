@@ -3,15 +3,16 @@ title: Troubleshooting and Limitations
 description: Fix common problems, and see what emend does not do yet.
 ---
 
-Most problems show an error message in the AI component. Find it below. Each
-entry says what went wrong and how to fix it.
+Most problems show an error message in the AI component. Find your problem
+below. Each entry lists the error code you may see, what went wrong, and how to
+fix it.
 
 ## The install command fails on `@emend/ai`
 
-`@emend/ai@0.1.1` is public on npm. Check that your npm registry can see it:
+`@emend/ai` is public on npm. Check that your npm registry can see it:
 
 ```bash
-npm view @emend/ai@0.1.1 version --registry=https://registry.npmjs.org/
+npm view @emend/ai version --registry=https://registry.npmjs.org/
 ```
 
 If a private registry or an `@emend:registry` setting in `.npmrc` redirects the
@@ -22,7 +23,7 @@ dependencies to `3.31.4`.
 
 ## The Bubble Menu does not open
 
-**Check that:**
+Check that:
 
 1. You selected some text, and the editor still has focus.
 2. Your editor includes `EmendAi`, and you passed that same editor to
@@ -30,36 +31,44 @@ dependencies to `3.31.4`.
 3. There is no suggestion already waiting for Accept or Reject.
 4. The editor is editable.
 
-## `editor_not_configured`
+## The editor is not set up for AI
 
-**Why:** the AI component did not get an editor with the `EmendAi` extension.
+Error code: `editor_not_configured`
 
-**Fix:** add `EmendAi` to your editor's extensions. Wait until `useEditor`
+**Why:** The AI component did not get an editor with the `EmendAi` extension.
+
+**Fix:** Add `EmendAi` to your editor's extensions. Wait until `useEditor`
 returns an editor, then pass that same editor to the AI component.
 
-## `context_too_large` or HTTP `413`
+## The request has too much text
 
-**Why:** the request has too much text. This can be the instruction, the
+Error code: `context_too_large`, or HTTP `413` from your server route
+
+**Why:** The request has too much text. This can be the instruction, the
 selected text, the text the AI reads, or a long chat.
 
-**Fix:** select less text, let the AI read less (for example, the current
+**Fix:** Select less text, let the AI read less (for example, the current
 paragraph instead of the whole document), or start a new chat in the AI
 Assistant.
 
-## `stale_revision`
+## The suggestion is out of date
 
-**Why:** the document changed after you sent the request, so the suggestion is
+Error code: `stale_revision`
+
+**Why:** The document changed after you sent the request, so the suggestion is
 out of date.
 
-**Fix:** reject the suggestion, select the text again, and run the request
+**Fix:** Reject the suggestion, select the text again, and run the request
 again. An out-of-date suggestion can never be accepted.
 
-## `schema_unsupported` or a blocked suggestion
+## The suggestion is blocked
 
-**Why:** the text or the AI's answer contains something your editor cannot
+Error code: `schema_unsupported`
+
+**Why:** The text or the AI's answer contains something your editor cannot
 display.
 
-**Fix:** make sure all your `@tiptap/*` packages are on `3.31.4`, and that your
+**Fix:** Make sure all your `@tiptap/*` packages are on `3.31.4`, and that your
 editor has the extensions for the content you use (for example, tables). See
 [supported content](/docs/supported-markdown-and-compatibility). You can still
 copy the AI's answer by hand.
@@ -68,9 +77,9 @@ copy the AI's answer by hand.
 
 Accept is disabled when:
 
-- the AI is still writing its answer;
-- the suggestion is out of date or blocked;
-- the suggestion replaces the whole document and you have not confirmed yet.
+- The AI is still writing its answer.
+- The suggestion is out of date or blocked.
+- The suggestion replaces the whole document and you have not confirmed yet.
 
 The message in the component tells you which one it is.
 
@@ -78,10 +87,10 @@ The message in the component tells you which one it is.
 
 Check that:
 
-- the URL in `createFetchTransport` matches your route;
-- the request is a `POST` with JSON;
-- your API key is set on the server;
-- your `authorize` check allows the request.
+- The URL in `createFetchTransport` matches your route.
+- The request is a `POST` with JSON.
+- Your API key is set on the server.
+- Your `authorize` check allows the request.
 
 A working route responds with `text/event-stream; charset=utf-8`.
 
@@ -95,9 +104,8 @@ A working route responds with `text/event-stream; charset=utf-8`.
   AI-generated images are not supported.
 - Sign-in, permissions, rate limits, saving, AI costs, and hosting are up to
   your app.
-- There is one server recipe so far: Vercel AI Gateway.
-- The **AI Composer** is the prompt bar available today. "Agent Composer" and
-  "Agentic Editor" are ideas for the future, not other names for it.
+- There is one server recipe so far: Vercel AI Gateway. More recipes are
+  planned.
 
 If the problem is with one component, compare your code with the example on its
 page: [AI Bubble Menu](/docs/ai-bubble-menu), [AI Composer](/docs/ai-composer),

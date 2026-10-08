@@ -11,7 +11,8 @@ the systems your app already has.
 
 Put your AI provider key in a server-only environment variable. Never put it in
 a `NEXT_PUBLIC_*` variable, a component prop, browser storage, or the component
-files. All of those end up in the browser.
+files. All of those end up in the browser, where anyone can copy the key and
+use it to run up your AI bill or abuse your account.
 
 ## Check who is making each request
 
@@ -44,11 +45,11 @@ change, and be able to accept, reject, or undo it.
 
 If you change the component files, keep these working:
 
-- real `<button>` and `<a>` elements;
-- labels on icon-only buttons;
-- a visible focus outline;
-- keyboard access to every action;
-- screen reader announcements for loading and errors.
+- Real `<button>` and `<a>` elements.
+- Labels on icon-only buttons.
+- A visible focus outline.
+- Keyboard access to every action.
+- Screen reader announcements for loading and errors.
 
 Also check your final page at 320 px wide and at 200% zoom.
 
@@ -57,15 +58,15 @@ Also check your final page at 320 px wide and at 200% zoom.
 Make sure everything below is set up and working before real users start using
 AI in your app.
 
-- [ ] Your site uses HTTPS, and the API key is only on the server.
+- [ ] The API key is only on the server.
 - [ ] The route checks sign-in, document access, and rate limits.
 - [ ] Request and response size limits fit your AI plan.
 - [ ] Documents and chat history are saved and deleted according to your own
-  rules.
+      rules.
 - [ ] Questions, edits, Accept, Reject, out-of-date suggestions, and Undo all
-  work with your real editor extensions.
+      work with your real editor extensions.
 - [ ] Keyboard use, mobile layout, light and dark themes, and error messages all
-  work.
+      work.
 
 See [Troubleshooting and Limitations](/docs/troubleshooting-and-limitations) if
 something is not working.
