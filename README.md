@@ -55,7 +55,8 @@ Then choose an installation path:
 Both AI paths need a server route and server-side provider credentials. Run
 `npx shadcn@latest add @emend/recipe-vercel-ai-gateway` and follow the
 [server setup](https://getemend.vercel.app/docs/vercel-ai-gateway).
-Keep all `@tiptap/*` dependencies aligned to `3.31.4`.
+emend works with Tiptap `3.7.1` or later. Keep all your `@tiptap/*` packages on
+the same version.
 
 ## Distribution Model
 

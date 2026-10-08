@@ -28,8 +28,8 @@ The `0.1.1` preview is [available on npm](https://www.npmjs.com/package/@emend/a
 
 ## Get started
 
-The runtime requires Node.js 24.19.0 or later and Tiptap `3.31.4`. Keep all
-`@tiptap/*` packages on that version. The component guides currently use
+The runtime requires Node.js 24.19.0 or later and Tiptap `3.7.1` or later. Keep
+all your `@tiptap/*` packages on the same version. The component guides currently use
 Next.js App Router, React 19, Tailwind CSS 4, and Shadcn already configured.
 
 Install the runtime:

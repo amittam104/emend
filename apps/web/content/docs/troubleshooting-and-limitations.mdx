@@ -18,8 +18,55 @@ npm view @emend/ai version --registry=https://registry.npmjs.org/
 If a private registry or an `@emend:registry` setting in `.npmrc` redirects the
 request, correct that setting. Immediately after a publication, npm may take a
 short time to serve the package; retry once it is visible. Then run the install
-command again. If npm reports Tiptap peer conflicts, align all `@tiptap/*`
-dependencies to `3.31.4`.
+command again.
+
+## The install fails with a Tiptap version conflict
+
+npm may show `ERESOLVE` and name two different `@tiptap/*` versions. This
+happens when the component command adds a Tiptap package your editor did not
+have yet, such as `@tiptap/markdown`, at a newer version than the rest of your
+Tiptap packages.
+
+**Fix:** Install the missing package at the same version as your other Tiptap
+packages, then run the component command again. To see your version, run
+`npm ls @tiptap/react`. For example:
+
+```npm
+npm install @tiptap/markdown@3.25.0
+```
+
+Or update all your Tiptap packages to the newest version together:
+
+<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
+<Tab value="npm">
+
+```bash
+npx npm-check-updates --upgrade --filter "@tiptap/*" && npm install
+```
+
+</Tab>
+<Tab value="pnpm">
+
+```bash
+pnpm update "@tiptap/*" --latest
+```
+
+</Tab>
+<Tab value="yarn">
+
+```bash
+yarn up "@tiptap/*"
+```
+
+</Tab>
+<Tab value="bun">
+
+```bash
+bun update "@tiptap/*" --latest
+```
+
+</Tab>
+</Tabs>
 
 ## The Bubble Menu does not open
 
@@ -68,8 +115,9 @@ Error code: `schema_unsupported`
 **Why:** The text or the AI's answer contains something your editor cannot
 display.
 
-**Fix:** Make sure all your `@tiptap/*` packages are on `3.31.4`, and that your
-editor has the extensions for the content you use (for example, tables). See
+**Fix:** Make sure all your `@tiptap/*` packages are on the same version, and
+that your editor has the extensions for the content you use (for example,
+tables). See
 [supported content](/docs/supported-markdown-and-compatibility). You can still
 copy the AI's answer by hand.
 
@@ -97,7 +145,7 @@ A working route responds with `text/event-stream; charset=utf-8`.
 ## What emend does not do yet
 
 - Only Next.js (App Router) is supported for now, together with React 19,
-  Tailwind CSS 4, Shadcn, and Tiptap `3.31.4`. Other React frameworks may work,
+  Tailwind CSS 4, Shadcn, and Tiptap `3.7.1` or later. Other React frameworks may work,
   but we do not test them yet. Support for them is coming soon.
 - Suggestions can only be applied if they use
   [supported content](/docs/supported-markdown-and-compatibility). Raw HTML and
