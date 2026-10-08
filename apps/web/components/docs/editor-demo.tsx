@@ -113,12 +113,8 @@ export function EditorDemo({
       ) : null}
       <div
         className={cn(
-          "min-h-[48rem] overflow-hidden",
-          activeVariant === "chat"
-            ? showToolbarAssistantToggle
-              ? "h-[60rem]"
-              : "h-[84rem]"
-            : "h-[64rem]"
+          "overflow-hidden",
+          activeVariant === "chat" ? "h-[42rem]" : "h-[64rem]"
         )}
       >
         <DemoEditor
