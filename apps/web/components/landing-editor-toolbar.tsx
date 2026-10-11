@@ -16,21 +16,17 @@ import {
   GridTableIcon,
   HeadingIcon,
   HighlighterIcon,
-  Image02Icon,
   InsertColumnRightIcon,
   InsertRowDownIcon,
   LeftToRightBlockQuoteIcon,
   LeftToRightListBulletIcon,
   LeftToRightListNumberIcon,
-  Link01Icon,
-  PaintBucketIcon,
   RedoIcon,
   SeparatorHorizontalIcon,
   SourceCodeIcon,
   TableRowsSplitIcon,
   TextBoldIcon,
   TextClearIcon,
-  TextColorIcon,
   TextItalicIcon,
   TextStrikethroughIcon,
   TextUnderlineIcon,
@@ -39,8 +35,14 @@ import {
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
 import Image from "next/image"
 import Link from "next/link"
-import { useRef, type ReactNode } from "react"
+import type { ReactNode } from "react"
 
+import {
+  EditorColorControl,
+  EditorImageControl,
+  EditorLinkControl,
+  EditorToolbarScroller,
+} from "@/components/emend/editor-controls"
 import { Button } from "@workspace/ui/components/button"
 import {
   Select,
@@ -102,11 +104,9 @@ export function LandingEditorToolbar({
         underline: currentEditor.isActive("underline"),
         strike: currentEditor.isActive("strike"),
         code: currentEditor.isActive("code"),
-        highlight: Boolean(
-          currentEditor.getAttributes("textStyle").backgroundColor
-        ),
-        textColor: Boolean(currentEditor.getAttributes("textStyle").color),
-        link: currentEditor.isActive("link"),
+        backgroundColor:
+          currentEditor.getAttributes("textStyle").backgroundColor ?? null,
+        textColor: currentEditor.getAttributes("textStyle").color ?? null,
         bulletList: currentEditor.isActive("bulletList"),
         orderedList: currentEditor.isActive("orderedList"),
         taskList: currentEditor.isActive("taskList"),
@@ -198,21 +198,15 @@ export function LandingEditorToolbar({
       active: state.code,
       onClick: () => editor.chain().focus().toggleCode().run(),
     },
-    {
-      label: "Link",
-      icon: Link01Icon,
-      active: state.link,
-      onClick: () => updateLink(editor),
-    },
   ]
   const colorControls = [
     {
       label: "Highlight",
       icon: HighlighterIcon,
-      active: state.highlight,
+      active: Boolean(state.backgroundColor),
       onClick: () => {
         const chain = editor.chain().focus()
-        if (state.highlight) chain.unsetBackgroundColor().run()
+        if (state.backgroundColor) chain.unsetBackgroundColor().run()
         else chain.setBackgroundColor(highlightColor).run()
       },
     },
@@ -325,16 +319,6 @@ export function LandingEditorToolbar({
               .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
               .run(),
         },
-        {
-          label: "Insert image",
-          icon: Image02Icon,
-          onClick: () => insertImage(editor),
-        },
-        {
-          label: "Mention a component",
-          icon: AtIcon,
-          onClick: () => editor.chain().focus().insertContent("@").run(),
-        },
       ]
 
   return (
@@ -354,7 +338,7 @@ export function LandingEditorToolbar({
 
       <Separator orientation="vertical" className={toolbarSeparatorClasses} />
 
-      <div className="flex min-w-0 flex-1 items-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <EditorToolbarScroller size="icon-xs">
         <ControlGroup label="History" controls={historyControls} />
         <Separator orientation="vertical" className={toolbarSeparatorClasses} />
 
@@ -412,13 +396,31 @@ export function LandingEditorToolbar({
         </div>
 
         <Separator orientation="vertical" className={toolbarSeparatorClasses} />
-        <ControlGroup label="Inline formatting" controls={inlineControls} />
+        <ControlGroup
+          label="Inline formatting"
+          controls={inlineControls}
+          after={
+            <EditorLinkControl
+              editor={editor}
+              trigger={controlTrigger}
+              strokeWidth={2}
+            />
+          }
+        />
         <ControlGroup label="Colors and cleanup" controls={colorControls}>
-          <ColorControl editor={editor} active={state.textColor} type="text" />
-          <ColorControl
+          <EditorColorControl
             editor={editor}
-            active={state.highlight}
+            color={state.textColor}
+            type="text"
+            trigger={controlTrigger}
+            strokeWidth={2}
+          />
+          <EditorColorControl
+            editor={editor}
+            color={state.backgroundColor}
             type="background"
+            trigger={controlTrigger}
+            strokeWidth={2}
           />
         </ControlGroup>
         <Separator orientation="vertical" className={toolbarSeparatorClasses} />
@@ -431,6 +433,24 @@ export function LandingEditorToolbar({
         <ControlGroup
           label={state.inTable ? "Table" : "Insert"}
           controls={insertControls}
+          after={
+            !state.inTable && (
+              <>
+                <EditorImageControl
+                  editor={editor}
+                  trigger={controlTrigger}
+                  strokeWidth={2}
+                />
+                <EditorControl
+                  label="Mention a component"
+                  icon={AtIcon}
+                  onClick={() =>
+                    editor.chain().focus().insertContent("@").run()
+                  }
+                />
+              </>
+            )
+          }
         />
         <Separator orientation="vertical" className={toolbarSeparatorClasses} />
         <div className="mx-2 flex shrink-0 items-center px-0.5">
@@ -455,7 +475,7 @@ export function LandingEditorToolbar({
             onClick={onToggleComposer}
           />
         </div>
-      </div>
+      </EditorToolbarScroller>
 
       {actions && (
         <div className="mr-2 ml-1 flex shrink-0 items-center gap-1">
@@ -478,11 +498,13 @@ function ControlGroup({
   label,
   controls,
   children,
+  after,
   className,
 }: {
   readonly label: string
   readonly controls: readonly EditorControlProps[]
   readonly children?: ReactNode
+  readonly after?: ReactNode
   readonly className?: string
 }) {
   return (
@@ -495,6 +517,7 @@ function ControlGroup({
       {controls.map((control) => (
         <EditorControl key={control.label} {...control} />
       ))}
+      {after}
     </div>
   )
 }
@@ -533,34 +556,6 @@ function EditorControl({
   )
 }
 
-function updateLink(editor: Editor) {
-  if (editor.isActive("link")) {
-    editor.chain().focus().unsetLink().run()
-    return
-  }
-
-  const href = promptForValue("Link URL", "https://")
-  if (href) editor.chain().focus().setLink({ href }).run()
-}
-
-function insertImage(editor: Editor) {
-  const src =
-    promptForValue("Image URL", "/emend-logo.svg") ?? "/emend-logo.svg"
-  if (src) editor.chain().focus().setImage({ src }).run()
-}
-
-/**
- * Embedded browsers reject native prompts, so a dismissed prompt and an
- * unavailable prompt both read as "no value".
- */
-function promptForValue(message: string, fallback: string): string | null {
-  try {
-    return window.prompt(message, fallback)?.trim() ?? null
-  } catch {
-    return null
-  }
-}
-
 function ToolbarToggle({
   label,
   surface,
@@ -587,57 +582,17 @@ function ToolbarToggle({
   )
 }
 
-function ColorControl({
-  editor,
-  active,
-  type,
-}: {
-  readonly editor: Editor
-  readonly active: boolean
-  readonly type: "text" | "background"
-}) {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const label = type === "text" ? "Text color" : "Background color"
-
+function controlTrigger(active: boolean) {
   return (
-    <>
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <Button
-              type="button"
-              variant={active ? "outline" : "ghost"}
-              size="icon-xs"
-              className={cn(
-                landingEditorControlClasses,
-                active ? "hover:bg-muted" : "hover:bg-foreground/8"
-              )}
-              aria-label={label}
-              aria-pressed={active}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => inputRef.current?.click()}
-            />
-          }
-        >
-          <HugeiconsIcon
-            icon={type === "text" ? TextColorIcon : PaintBucketIcon}
-            strokeWidth={2}
-          />
-        </TooltipTrigger>
-        <TooltipContent>{label}</TooltipContent>
-      </Tooltip>
-      <input
-        ref={inputRef}
-        type="color"
-        tabIndex={-1}
-        className="sr-only"
-        aria-label={`Choose ${label.toLowerCase()}`}
-        onChange={(event) => {
-          const chain = editor.chain().focus()
-          if (type === "text") chain.setColor(event.target.value).run()
-          else chain.setBackgroundColor(event.target.value).run()
-        }}
-      />
-    </>
+    <Button
+      type="button"
+      variant={active ? "outline" : "ghost"}
+      size="icon-xs"
+      className={cn(
+        "relative",
+        landingEditorControlClasses,
+        active ? "hover:bg-muted" : "hover:bg-foreground/8"
+      )}
+    />
   )
 }

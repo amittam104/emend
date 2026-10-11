@@ -17,15 +17,22 @@
     "./blocks/emend-editor-base": "./blocks/emend-editor/emend-editor-base.tsx",
     "./blocks/emend-editor-composer": "./blocks/emend-editor/emend-editor-composer.tsx",
     "./components/ai-assistant": "./components/ai-assistant/index.ts",
-    "./blocks/emend-editor-assistant": "./blocks/emend-editor/emend-editor-assistant.tsx"
+    "./blocks/emend-editor-assistant": "./blocks/emend-editor/emend-editor-assistant.tsx",
+    "./components/color-picker": "./components/color-picker/index.ts",
+    "./blocks/emend-editor/color-control": "./blocks/emend-editor/editor-color-control.tsx",
+    "./blocks/emend-editor/image-control": "./blocks/emend-editor/editor-image-control.tsx",
+    "./blocks/emend-editor/link-control": "./blocks/emend-editor/editor-link-control.tsx",
+    "./blocks/emend-editor/toolbar-scroller": "./blocks/emend-editor/editor-toolbar-scroller.tsx"
   },
   "dependencies": {
+    "@base-ui/react": "^1.7.0",
     "@emend/ai": "workspace:*",
     "@hugeicons/core-free-icons": "4.2.3",
     "@hugeicons/react": "^1.1.9",
     "@tiptap/core": "3.31.4",
     "@tiptap/extension-bold": "3.31.4",
     "@tiptap/extension-bubble-menu": "3.31.4",
+    "@tiptap/extension-image": "3.31.4",
     "@tiptap/extension-italic": "3.31.4",
     "@tiptap/extension-link": "3.31.4",
     "@tiptap/extension-list": "3.31.4",
@@ -38,6 +45,7 @@
     "@tiptap/starter-kit": "3.31.4",
     "@workspace/ui": "workspace:*",
     "ai": "^7.0.105",
+    "color": "^5.0.3",
     "react": "19.2.4",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1"

@@ -19,8 +19,6 @@ import {
   LeftToRightBlockQuoteIcon,
   LeftToRightListBulletIcon,
   LeftToRightListNumberIcon,
-  Link01Icon,
-  MoreHorizontalIcon,
   RedoIcon,
   SeparatorHorizontalIcon,
   SourceCodeIcon,
@@ -32,7 +30,7 @@ import {
   UndoIcon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
-import { useState, type ReactNode } from "react"
+import type { ReactNode } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -49,27 +47,45 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+import { EditorColorControl } from "./editor-color-control"
+import {
+  EditorImageControl,
+  type EditorImageUpload,
+} from "./editor-image-control"
+import { EditorLinkControl } from "./editor-link-control"
+import { EditorToolbarScroller } from "./editor-toolbar-scroller"
 
 const headingLevels = [1, 2, 3, 4, 5, 6] as const
 
+export type EditorToolbarVariant = "compact" | "classic"
+
+type ControlSize = "icon" | "icon-xs"
+
 export function EditorToolbar({
   editor,
+  variant = "compact",
   onSave,
   onAssistantToggle,
+  onImageUpload,
   saveDisabled,
   saveStatus,
   assistantOpen,
   toolbarActions,
 }: {
   readonly editor: Editor
+  readonly variant?: EditorToolbarVariant
   readonly onSave?: () => Promise<void>
   readonly onAssistantToggle?: () => void
+  readonly onImageUpload?: EditorImageUpload
   readonly saveDisabled: boolean
   readonly saveStatus: "idle" | "saving" | "success" | "error"
   readonly assistantOpen?: boolean
   readonly toolbarActions?: ReactNode
 }) {
-  const [moreOpen, setMoreOpen] = useState(false)
+  const compact = variant === "compact"
+  const size: ControlSize = compact ? "icon-xs" : "icon"
+  const strokeWidth = compact ? 2 : undefined
+  const trigger = (active: boolean) => controlTrigger(active, size)
   const state = useEditorState({
     editor,
     selector: ({ editor: currentEditor }) => {
@@ -87,7 +103,9 @@ export function EditorToolbar({
         underline: currentEditor.isActive("underline"),
         strike: currentEditor.isActive("strike"),
         code: currentEditor.isActive("code"),
-        link: currentEditor.isActive("link"),
+        textColor: currentEditor.getAttributes("textStyle").color ?? null,
+        backgroundColor:
+          currentEditor.getAttributes("textStyle").backgroundColor ?? null,
         bulletList: currentEditor.isActive("bulletList"),
         orderedList: currentEditor.isActive("orderedList"),
         taskList: currentEditor.isActive("taskList"),
@@ -138,7 +156,7 @@ export function EditorToolbar({
       onClick: () => editor.chain().focus().redo().run(),
     },
   ]
-  const commonControls = [
+  const inlineControls = [
     {
       label: "Bold",
       icon: TextBoldIcon,
@@ -151,8 +169,6 @@ export function EditorToolbar({
       active: state.italic,
       onClick: () => editor.chain().focus().toggleItalic().run(),
     },
-  ]
-  const inlineControls = [
     {
       label: "Underline",
       icon: TextUnderlineIcon,
@@ -170,12 +186,6 @@ export function EditorToolbar({
       icon: CodeSimpleIcon,
       active: state.code,
       onClick: () => editor.chain().focus().toggleCode().run(),
-    },
-    {
-      label: "Link",
-      icon: Link01Icon,
-      active: state.link,
-      onClick: () => updateLink(editor),
     },
   ]
   const blockControls = [
@@ -282,106 +292,102 @@ export function EditorToolbar({
               .run(),
         },
       ]
+  const controlProps = { size, strokeWidth }
 
   return (
     <div
       className="emend-editor__toolbar"
+      data-variant={variant}
       role="toolbar"
       aria-label="Editor formatting"
     >
-      <ControlGroup label="History" controls={historyControls} />
-      <Separator orientation="vertical" className="emend-editor__separator" />
+      <EditorToolbarScroller size={size}>
+        <ControlGroup
+          label="History"
+          controls={historyControls}
+          {...controlProps}
+        />
+        <Separator orientation="vertical" className="emend-editor__separator" />
 
-      <div className="emend-editor__toolbar-section">
-        <Select value={state.block} onValueChange={setBlock}>
-          <SelectTrigger
-            size="sm"
-            className="emend-editor__block-type"
-            aria-label={`Block type: ${blockLabel}`}
-          >
-            <HugeiconsIcon icon={HeadingIcon} />
-            <SelectValue>{blockLabel}</SelectValue>
-          </SelectTrigger>
-          <SelectContent align="start">
-            <SelectGroup>
-              <SelectItem value="paragraph">Paragraph</SelectItem>
-              {headingLevels.map((level) => (
-                <SelectItem key={level} value={`heading-${level}`}>
-                  Heading {level}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <Separator orientation="vertical" className="emend-editor__separator" />
-
-      <ControlGroup label="Common formatting" controls={commonControls} />
-
-      <div
-        className="emend-editor__more"
-        onKeyDown={(event) => {
-          if (event.key === "Escape") {
-            setMoreOpen(false)
-            event.currentTarget
-              .querySelector<HTMLElement>("[aria-expanded]")
-              ?.focus()
-          }
-        }}
-        onBlur={(event) => {
-          if (
-            !(event.relatedTarget instanceof Node) ||
-            !event.currentTarget.contains(event.relatedTarget)
-          ) {
-            setMoreOpen(false)
-          }
-        }}
-      >
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="emend-editor__more-trigger"
-                aria-label="More formatting"
-                aria-expanded={moreOpen}
-                onClick={() => setMoreOpen((open) => !open)}
-              >
-                <HugeiconsIcon icon={MoreHorizontalIcon} />
-              </Button>
-            }
-          />
-          <TooltipContent>More formatting</TooltipContent>
-        </Tooltip>
-
-        <div className="emend-editor__more-content" data-open={moreOpen}>
-          <Separator
-            orientation="vertical"
-            className="emend-editor__separator"
-          />
-          <ControlGroup label="Inline formatting" controls={inlineControls} />
-
-          <Separator
-            orientation="vertical"
-            className="emend-editor__separator"
-          />
-
-          <ControlGroup label="Lists and blocks" controls={blockControls} />
-
-          <Separator
-            orientation="vertical"
-            className="emend-editor__separator"
-          />
-
-          <ControlGroup
-            label={state.inTable ? "Table" : "Insert"}
-            controls={insertControls}
-          />
+        <div className="emend-editor__toolbar-section">
+          <Select value={state.block} onValueChange={setBlock}>
+            <SelectTrigger
+              size="sm"
+              className={cn(
+                "emend-editor__block-type",
+                compact && "h-6! px-2! text-xs [&_svg]:size-3!"
+              )}
+              aria-label={`Block type: ${blockLabel}`}
+            >
+              <HugeiconsIcon icon={HeadingIcon} strokeWidth={strokeWidth} />
+              <SelectValue>{blockLabel}</SelectValue>
+            </SelectTrigger>
+            <SelectContent align="start">
+              <SelectGroup>
+                <SelectItem value="paragraph">Paragraph</SelectItem>
+                {headingLevels.map((level) => (
+                  <SelectItem key={level} value={`heading-${level}`}>
+                    Heading {level}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
-      </div>
+
+        <Separator orientation="vertical" className="emend-editor__separator" />
+
+        <ControlGroup
+          label="Text formatting"
+          controls={inlineControls}
+          {...controlProps}
+        >
+          <EditorLinkControl
+            editor={editor}
+            trigger={trigger}
+            strokeWidth={strokeWidth}
+          />
+          <EditorColorControl
+            editor={editor}
+            type="text"
+            color={state.textColor}
+            trigger={trigger}
+            strokeWidth={strokeWidth}
+          />
+          <EditorColorControl
+            editor={editor}
+            type="background"
+            color={state.backgroundColor}
+            trigger={trigger}
+            strokeWidth={strokeWidth}
+          />
+        </ControlGroup>
+
+        <Separator orientation="vertical" className="emend-editor__separator" />
+
+        <ControlGroup
+          label="Lists and blocks"
+          controls={blockControls}
+          {...controlProps}
+        />
+
+        <Separator orientation="vertical" className="emend-editor__separator" />
+
+        <ControlGroup
+          label={state.inTable ? "Table" : "Insert"}
+          controls={insertControls}
+          {...controlProps}
+        >
+          {!state.inTable && (
+            <EditorImageControl
+              editor={editor}
+              trigger={trigger}
+              strokeWidth={strokeWidth}
+              onUpload={onImageUpload}
+            />
+          )}
+        </ControlGroup>
+      </EditorToolbarScroller>
 
       {(toolbarActions || onAssistantToggle || onSave) && (
         <div className="emend-editor__toolbar-actions">
@@ -393,14 +399,14 @@ export function EditorToolbar({
                   <Button
                     type="button"
                     variant="outline"
-                    size="icon"
+                    size={size}
                     aria-label="AI Assistant"
                     aria-expanded={assistantOpen}
                     onClick={onAssistantToggle}
                   />
                 }
               >
-                <HugeiconsIcon icon={AiChat02Icon} />
+                <HugeiconsIcon icon={AiChat02Icon} strokeWidth={strokeWidth} />
               </TooltipTrigger>
               <TooltipContent>AI Assistant</TooltipContent>
             </Tooltip>
@@ -408,6 +414,7 @@ export function EditorToolbar({
           {onSave && (
             <Button
               type="button"
+              size={compact ? "xs" : "default"}
               disabled={saveDisabled}
               aria-live="polite"
               aria-busy={saveStatus === "saving"}
@@ -427,15 +434,23 @@ interface EditorControlProps {
   readonly icon: IconSvgElement
   readonly active?: boolean
   readonly disabled?: boolean
+  readonly size?: ControlSize
+  readonly strokeWidth?: number
   readonly onClick: () => void
 }
 
 function ControlGroup({
   label,
   controls,
+  children,
+  size,
+  strokeWidth,
 }: {
   readonly label: string
   readonly controls: readonly EditorControlProps[]
+  readonly children?: ReactNode
+  readonly size: ControlSize
+  readonly strokeWidth?: number
 }) {
   return (
     <div
@@ -444,9 +459,26 @@ function ControlGroup({
       aria-label={label}
     >
       {controls.map((control) => (
-        <EditorControl key={control.label} {...control} />
+        <EditorControl
+          key={control.label}
+          size={size}
+          strokeWidth={strokeWidth}
+          {...control}
+        />
       ))}
+      {children}
     </div>
+  )
+}
+
+export function controlTrigger(active: boolean, size: ControlSize = "icon") {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size={size}
+      className={cn("relative", active && "bg-muted text-foreground")}
+    />
   )
 }
 
@@ -455,6 +487,8 @@ export function EditorControl({
   icon,
   active,
   disabled,
+  size = "icon",
+  strokeWidth,
   onClick,
 }: EditorControlProps) {
   return (
@@ -464,7 +498,7 @@ export function EditorControl({
           <Button
             type="button"
             variant="ghost"
-            size="icon"
+            size={size}
             className={cn(active && "bg-muted text-foreground")}
             aria-label={label}
             aria-pressed={active}
@@ -472,21 +506,11 @@ export function EditorControl({
             onMouseDown={(event) => event.preventDefault()}
             onClick={onClick}
           >
-            <HugeiconsIcon icon={icon} />
+            <HugeiconsIcon icon={icon} strokeWidth={strokeWidth} />
           </Button>
         }
       />
       <TooltipContent>{label}</TooltipContent>
     </Tooltip>
   )
-}
-
-export function updateLink(editor: Editor) {
-  if (editor.isActive("link")) {
-    editor.chain().focus().unsetLink().run()
-    return
-  }
-
-  const href = window.prompt("Link URL", "https://")?.trim()
-  if (href) editor.chain().focus().setLink({ href }).run()
 }

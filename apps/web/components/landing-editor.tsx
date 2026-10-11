@@ -95,12 +95,14 @@ export function LandingEditor({
   const [composerOpen, setComposerOpen] = useState(false)
   const configuredExtensions = useMemo(
     () => [
-      StarterKit.configure({ link: { openOnClick: false } }),
+      StarterKit.configure({
+        link: { openOnClick: false, enableClickSelection: true },
+      }),
       TaskList,
       TaskItem.configure({ nested: true }),
       TableKit,
       TextStyleKit.configure({ fontFamily: false, lineHeight: false }),
-      Image,
+      Image.configure({ allowBase64: true }),
       FindAndReplace.configure({ injectCSS: false, searchDebounceMs: 0 }),
       landingMention,
       Markdown.configure({ markedOptions: { gfm: true } }),

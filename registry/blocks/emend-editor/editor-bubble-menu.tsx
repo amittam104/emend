@@ -4,12 +4,12 @@ import type { Editor } from "@tiptap/core"
 import { useEditorState } from "@tiptap/react"
 import { BubbleMenu } from "@tiptap/react/menus"
 import {
-  Link01Icon,
   TextBoldIcon,
   TextItalicIcon,
   TextUnderlineIcon,
 } from "@hugeicons/core-free-icons"
-import { EditorControl, updateLink } from "./editor-toolbar"
+import { EditorLinkControl } from "./editor-link-control"
+import { controlTrigger, EditorControl } from "./editor-toolbar"
 
 const bubbleMenuOptions = {
   placement: "top" as const,
@@ -25,7 +25,6 @@ export function EditorBubbleMenu({ editor }: { readonly editor: Editor }) {
       bold: currentEditor.isActive("bold"),
       italic: currentEditor.isActive("italic"),
       underline: currentEditor.isActive("underline"),
-      link: currentEditor.isActive("link"),
     }),
   })
 
@@ -54,11 +53,9 @@ export function EditorBubbleMenu({ editor }: { readonly editor: Editor }) {
           active={active.underline}
           onClick={() => editor.chain().focus().toggleUnderline().run()}
         />
-        <EditorControl
-          label="Link"
-          icon={Link01Icon}
-          active={active.link}
-          onClick={() => updateLink(editor)}
+        <EditorLinkControl
+          editor={editor}
+          trigger={(linkActive) => controlTrigger(linkActive)}
         />
       </div>
     </BubbleMenu>
