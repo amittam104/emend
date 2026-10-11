@@ -2,6 +2,8 @@ import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared"
 import Image from "next/image"
 import { createElement } from "react"
 
+import { GitHubLogo, githubRepositoryUrl } from "@/components/github-logo"
+
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
@@ -25,6 +27,15 @@ export function baseOptions(): BaseLayoutProps {
       ),
       url: "/",
     },
-    githubUrl: "https://github.com/amittam104/emend",
+    links: [
+      {
+        type: "icon",
+        url: githubRepositoryUrl,
+        text: "GitHub",
+        label: "GitHub repo",
+        icon: createElement(GitHubLogo, { className: "size-5" }),
+        external: true,
+      },
+    ],
   }
 }

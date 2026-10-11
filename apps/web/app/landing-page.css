@@ -54,8 +54,9 @@
   margin-top: 3rem;
 }
 
-/* The hero call to action node view. */
-.landing-page .emend-landing-editor .ProseMirror > .node-heroCta {
+/* The call to action node views. */
+.landing-page .emend-landing-editor .ProseMirror > .node-heroCta,
+.landing-page .emend-landing-editor .ProseMirror > .node-docsCta {
   margin-top: 2rem;
 }
 
@@ -87,10 +88,9 @@
   background: color-mix(in oklch, var(--chart-2) 75%, transparent);
 }
 
-/* The hero call to action renders inside the editable surface, so the
+/* The call to action links render inside the editable surface, so the
    document link and code styling has to give way to the button styling. */
 .landing-page [data-node-view-wrapper] a[data-slot="button"] {
-  color: var(--primary-foreground);
   text-decoration: none;
 }
 

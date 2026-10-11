@@ -189,15 +189,19 @@ export function DocumentEditor() {
 
 ## Open it from the Editor Starter toolbar
 
-If you use the AI Assistant version of the
-[Editor Starter](/docs/emend-editor-starter), you can also add a button to its
-toolbar that opens the chat. The corner button stays too.
+The AI Assistant version of the
+[Editor Starter](/docs/emend-editor-starter) also has a toolbar button that
+opens the chat. The corner button stays too. To hide the toolbar button, set
+`showToolbarAssistantToggle` to `false`.
 
 ```tsx
-<EmendEditorAssistant transport={transport} showToolbarAssistantToggle />
+<EmendEditorAssistant
+  transport={transport}
+  showToolbarAssistantToggle={false}
+/>
 ```
 
-<EditorDemo variant="chat" showToolbarAssistantToggle />
+<EditorDemo variant="chat" />
 
 ## Props
 

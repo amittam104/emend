@@ -49,6 +49,10 @@
   width: 7.5rem;
 }
 
+.emend-editor__font-size {
+  width: 5.5rem;
+}
+
 .emend-editor__toolbar[data-variant="compact"] {
   gap: 0.125rem;
   padding-inline: 0.25rem;
@@ -67,6 +71,10 @@
 
 .emend-editor__toolbar[data-variant="compact"] .emend-editor__block-type {
   width: 6.5rem;
+}
+
+.emend-editor__toolbar[data-variant="compact"] .emend-editor__font-size {
+  width: 5rem;
 }
 
 .emend-editor__workspace,
@@ -113,6 +121,23 @@
   background: color-mix(in oklch, var(--primary) 14%, transparent);
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
+}
+
+.emend-editor .emend-editor__mention {
+  border-radius: 0.25rem;
+  background: color-mix(in oklch, var(--primary) 12%, transparent);
+  padding: 0.1rem 0.3rem;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.emend-editor .find-and-replace-result {
+  border-radius: 0.15rem;
+  background: color-mix(in oklch, var(--chart-1) 45%, transparent);
+}
+
+.emend-editor .find-and-replace-result-current {
+  background: color-mix(in oklch, var(--chart-2) 75%, transparent);
 }
 
 .emend-editor [data-emend-preview="true"] {

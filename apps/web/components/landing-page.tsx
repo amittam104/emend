@@ -3,13 +3,10 @@
 import { createFetchTransport } from "@emend/ai/transport"
 import {
   BookOpen02Icon,
-  Copy01Icon,
   Edit02Icon,
-  Github01Icon,
   Moon02Icon,
   SparklesIcon,
   Sun01Icon,
-  Tick02Icon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Node, type Editor, type JSONContent } from "@tiptap/core"
@@ -22,11 +19,13 @@ import { useCallback, useEffect, useState } from "react"
 import { Button, buttonVariants } from "@workspace/ui/components/button"
 import { cn } from "@workspace/ui/lib/utils"
 
+import { GitHubLogo, githubRepositoryUrl } from "./github-logo"
 import { LandingEditor } from "./landing-editor"
 import { ComponentShowcase } from "./landing-showcase"
 
 const transport = createFetchTransport({ url: "/api/editor-ai" })
-const installCommand = "npx shadcn@latest add @emend/ai-bubble-menu"
+const ctaClasses =
+  "!no-underline transition-[background-color,color,scale] duration-200 ease-out active:translate-y-0 active:duration-100 motion-safe:active:scale-96"
 
 const initialContent: JSONContent = {
   type: "doc",
@@ -225,9 +224,21 @@ const initialContent: JSONContent = {
       content: [
         {
           type: "text",
-          text: "This page is the editor. Change the copy, use the toolbar, or select a sentence to try the AI Bubble Menu.",
+          text: "Everything on this page is editable. Change the copy, format it with the toolbar, select a sentence to open the AI Bubble Menu, or use the AI Assistant and AI Composer buttons in the toolbar.",
         },
       ],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "When you're ready to add emend to your own app, read the docs to install it and set up your editor.",
+        },
+      ],
+    },
+    {
+      type: "docsCta",
     },
   ],
 }
@@ -256,54 +267,64 @@ const HeroCta = Node.create({
   addNodeView: () => ReactNodeViewRenderer(HeroCtaView),
 })
 
-const landingExtensions = [HeroCta, ComponentShowcase]
+const DocsCta = Node.create({
+  name: "docsCta",
+  group: "block",
+  atom: true,
+  parseHTML: () => [{ tag: "div[data-docs-cta]" }],
+  renderHTML: () => ["div", { "data-docs-cta": "" }],
+  addNodeView: () => ReactNodeViewRenderer(DocsCtaView),
+})
+
+const landingExtensions = [HeroCta, DocsCta, ComponentShowcase]
+
+function ReadDocsLink() {
+  return (
+    <Link
+      data-slot="button"
+      href="/docs"
+      className={cn(
+        buttonVariants({
+          variant: "default",
+          size: "lg",
+          className: cn("!text-primary-foreground", ctaClasses),
+        })
+      )}
+    >
+      <HugeiconsIcon icon={BookOpen02Icon} />
+      Read docs
+    </Link>
+  )
+}
 
 function HeroCtaView() {
-  const [copied, setCopied] = useState(false)
-
-  async function copyInstall() {
-    const didCopy = await navigator.clipboard
-      .writeText(installCommand)
-      .then(() => true)
-      .catch(() => false)
-    if (!didCopy) return
-
-    setCopied(true)
-    window.setTimeout(() => setCopied(false), 1500)
-  }
-
   return (
     <NodeViewWrapper className="flex flex-wrap items-center gap-3">
-      <Link
+      <ReadDocsLink />
+      <a
         data-slot="button"
-        href="/docs"
+        href={githubRepositoryUrl}
+        rel="noreferrer"
+        target="_blank"
         className={cn(
           buttonVariants({
-            variant: "default",
+            variant: "secondary",
             size: "lg",
-            className:
-              "!text-primary-foreground !no-underline transition-[background-color,color,scale] duration-200 ease-out active:translate-y-0 active:duration-100 motion-safe:active:scale-96",
+            className: cn("!text-secondary-foreground", ctaClasses),
           })
         )}
       >
-        <HugeiconsIcon icon={BookOpen02Icon} />
-        Read docs
-      </Link>
-      <Button
-        type="button"
-        variant="secondary"
-        size="lg"
-        className="transition-[background-color,color,scale] duration-200 ease-out active:translate-y-0 active:duration-100 motion-safe:active:scale-96"
-        onClick={copyInstall}
-        aria-label={`Copy install command: ${installCommand}`}
-        title={`Copy ${installCommand}`}
-      >
-        <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} />
-        <code className="font-mono text-[13px]">
-          <span className="text-muted-foreground">$ </span>
-          {installCommand}
-        </code>
-      </Button>
+        <GitHubLogo />
+        GitHub repo
+      </a>
+    </NodeViewWrapper>
+  )
+}
+
+function DocsCtaView() {
+  return (
+    <NodeViewWrapper className="flex flex-wrap items-center gap-3">
+      <ReadDocsLink />
     </NodeViewWrapper>
   )
 }
@@ -409,7 +430,7 @@ export function LandingPage() {
             <>
               <a
                 data-slot="button"
-                href="https://github.com/amittam104/emend"
+                href={githubRepositoryUrl}
                 rel="noreferrer"
                 target="_blank"
                 className={cn(
@@ -420,10 +441,10 @@ export function LandingPage() {
                       "border-border transition-[background-color,color,scale] duration-100 active:translate-y-0 motion-safe:active:scale-96",
                   })
                 )}
-                aria-label="View emend on GitHub"
-                title="View emend on GitHub"
+                aria-label="GitHub repo"
+                title="GitHub repo"
               >
-                <HugeiconsIcon icon={Github01Icon} className="size-3.5" />
+                <GitHubLogo className="size-3.5" />
               </a>
               <LandingThemeSwitch />
             </>

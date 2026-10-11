@@ -10,7 +10,11 @@ import { EmendEditorBase, type EmendEditorBaseProps } from "./emend-editor-base"
 
 export interface EmendEditorAssistantProps extends Omit<
   EmendEditorBaseProps,
-  "renderWorkspace" | "onAssistantToggle" | "assistantOpen"
+  | "renderWorkspace"
+  | "onAssistantToggle"
+  | "assistantOpen"
+  | "onComposerToggle"
+  | "composerOpen"
 > {
   readonly transport?: EmendTransport
   readonly storageKey?: string
@@ -20,7 +24,7 @@ export interface EmendEditorAssistantProps extends Omit<
 export function EmendEditorAssistant({
   transport,
   storageKey = "emend:editor-assistant:v1",
-  showToolbarAssistantToggle = false,
+  showToolbarAssistantToggle = true,
   ...props
 }: EmendEditorAssistantProps) {
   const extensions = useMemo(

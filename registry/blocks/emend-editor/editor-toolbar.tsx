@@ -3,10 +3,13 @@
 import type { Editor } from "@tiptap/core"
 import { useEditorState } from "@tiptap/react"
 import {
+  ALargeSmallIcon,
+  AiEditingIcon,
   AiChat02Icon,
   AlignHorizontalCenterIcon,
   AlignLeftIcon,
   AlignRightIcon,
+  AtIcon,
   CheckListIcon,
   CodeSimpleIcon,
   Delete02Icon,
@@ -14,6 +17,7 @@ import {
   DeleteRowIcon,
   GridTableIcon,
   HeadingIcon,
+  HighlighterIcon,
   InsertColumnRightIcon,
   InsertRowDownIcon,
   LeftToRightBlockQuoteIcon,
@@ -24,6 +28,7 @@ import {
   SourceCodeIcon,
   TableRowsSplitIcon,
   TextBoldIcon,
+  TextClearIcon,
   TextItalicIcon,
   TextStrikethroughIcon,
   TextUnderlineIcon,
@@ -48,6 +53,7 @@ import {
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import { EditorColorControl } from "./editor-color-control"
+import { EditorFindReplace } from "./editor-find-replace"
 import {
   EditorImageControl,
   type EditorImageUpload,
@@ -56,6 +62,8 @@ import { EditorLinkControl } from "./editor-link-control"
 import { EditorToolbarScroller } from "./editor-toolbar-scroller"
 
 const headingLevels = [1, 2, 3, 4, 5, 6] as const
+const fontSizeOptions = ["12", "14", "16", "18", "24", "32"] as const
+const highlightColor = "color-mix(in oklch, var(--chart-1) 45%, transparent)"
 
 export type EditorToolbarVariant = "compact" | "classic"
 
@@ -66,20 +74,24 @@ export function EditorToolbar({
   variant = "compact",
   onSave,
   onAssistantToggle,
+  onComposerToggle,
   onImageUpload,
   saveDisabled,
   saveStatus,
   assistantOpen,
+  composerOpen,
   toolbarActions,
 }: {
   readonly editor: Editor
   readonly variant?: EditorToolbarVariant
   readonly onSave?: () => Promise<void>
   readonly onAssistantToggle?: () => void
+  readonly onComposerToggle?: () => void
   readonly onImageUpload?: EditorImageUpload
   readonly saveDisabled: boolean
   readonly saveStatus: "idle" | "saving" | "success" | "error"
   readonly assistantOpen?: boolean
+  readonly composerOpen?: boolean
   readonly toolbarActions?: ReactNode
 }) {
   const compact = variant === "compact"
@@ -98,6 +110,7 @@ export function EditorToolbar({
 
       return {
         block: heading ? `heading-${heading}` : "paragraph",
+        fontSize: currentEditor.getAttributes("textStyle").fontSize ?? null,
         bold: currentEditor.isActive("bold"),
         italic: currentEditor.isActive("italic"),
         underline: currentEditor.isActive("underline"),
@@ -123,6 +136,13 @@ export function EditorToolbar({
     state.block === "paragraph"
       ? "Paragraph"
       : `Heading ${state.block.slice(-1)}`
+  const parsedFontSize = state.fontSize
+    ? String(Number.parseInt(state.fontSize, 10))
+    : null
+  const fontSize =
+    parsedFontSize && fontSizeOptions.some((size) => size === parsedFontSize)
+      ? parsedFontSize
+      : "auto"
   const saveLabel =
     saveStatus === "saving"
       ? "Saving…"
@@ -140,6 +160,15 @@ export function EditorToolbar({
 
     const level = headingLevels.find((level) => value === `heading-${level}`)
     if (level) editor.chain().focus().setHeading({ level }).run()
+  }
+
+  function setFontSize(value: string | null) {
+    if (!value || value === "auto") {
+      editor.chain().focus().unsetFontSize().run()
+      return
+    }
+
+    editor.chain().focus().setFontSize(`${value}px`).run()
   }
 
   const historyControls = [
@@ -186,6 +215,23 @@ export function EditorToolbar({
       icon: CodeSimpleIcon,
       active: state.code,
       onClick: () => editor.chain().focus().toggleCode().run(),
+    },
+  ]
+  const colorControls = [
+    {
+      label: "Highlight",
+      icon: HighlighterIcon,
+      active: Boolean(state.backgroundColor),
+      onClick: () => {
+        const chain = editor.chain().focus()
+        if (state.backgroundColor) chain.unsetBackgroundColor().run()
+        else chain.setBackgroundColor(highlightColor).run()
+      },
+    },
+    {
+      label: "Clear formatting",
+      icon: TextClearIcon,
+      onClick: () => editor.chain().focus().unsetAllMarks().clearNodes().run(),
     },
   ]
   const blockControls = [
@@ -291,6 +337,15 @@ export function EditorToolbar({
               .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
               .run(),
         },
+        ...(editor.schema.nodes.mention
+          ? [
+              {
+                label: "Mention",
+                icon: AtIcon,
+                onClick: () => editor.chain().focus().insertContent("@").run(),
+              },
+            ]
+          : []),
       ]
   const controlProps = { size, strokeWidth }
 
@@ -333,6 +388,35 @@ export function EditorToolbar({
               </SelectGroup>
             </SelectContent>
           </Select>
+          <Select value={fontSize} onValueChange={setFontSize}>
+            <SelectTrigger
+              size="sm"
+              className={cn(
+                "emend-editor__font-size",
+                compact && "h-6! px-2! text-xs [&_svg]:size-3!"
+              )}
+              aria-label={
+                fontSize === "auto"
+                  ? "Font size: Automatic"
+                  : `Font size: ${fontSize} pixels`
+              }
+            >
+              <HugeiconsIcon icon={ALargeSmallIcon} strokeWidth={strokeWidth} />
+              <SelectValue>
+                {fontSize === "auto" ? "Auto" : fontSize}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent align="start">
+              <SelectGroup>
+                <SelectItem value="auto">Auto</SelectItem>
+                {fontSizeOptions.map((size) => (
+                  <SelectItem key={size} value={size}>
+                    {size} px
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
 
         <Separator orientation="vertical" className="emend-editor__separator" />
@@ -363,6 +447,12 @@ export function EditorToolbar({
           />
         </ControlGroup>
 
+        <ControlGroup
+          label="Highlight and cleanup"
+          controls={colorControls}
+          {...controlProps}
+        />
+
         <Separator orientation="vertical" className="emend-editor__separator" />
 
         <ControlGroup
@@ -387,9 +477,23 @@ export function EditorToolbar({
             />
           )}
         </ControlGroup>
+
+        <Separator orientation="vertical" className="emend-editor__separator" />
+
+        <div
+          className="emend-editor__toolbar-group"
+          role="group"
+          aria-label="Search"
+        >
+          <EditorFindReplace
+            editor={editor}
+            trigger={trigger}
+            strokeWidth={strokeWidth}
+          />
+        </div>
       </EditorToolbarScroller>
 
-      {(toolbarActions || onAssistantToggle || onSave) && (
+      {(toolbarActions || onAssistantToggle || onComposerToggle || onSave) && (
         <div className="emend-editor__toolbar-actions">
           {toolbarActions}
           {onAssistantToggle && (
@@ -409,6 +513,25 @@ export function EditorToolbar({
                 <HugeiconsIcon icon={AiChat02Icon} strokeWidth={strokeWidth} />
               </TooltipTrigger>
               <TooltipContent>AI Assistant</TooltipContent>
+            </Tooltip>
+          )}
+          {onComposerToggle && (
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size={size}
+                    aria-label="AI Composer"
+                    aria-pressed={composerOpen}
+                    onClick={onComposerToggle}
+                  />
+                }
+              >
+                <HugeiconsIcon icon={AiEditingIcon} strokeWidth={strokeWidth} />
+              </TooltipTrigger>
+              <TooltipContent>AI Composer</TooltipContent>
             </Tooltip>
           )}
           {onSave && (

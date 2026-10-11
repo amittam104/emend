@@ -17,6 +17,7 @@ import {
 } from "react"
 import { EditorBubbleMenu } from "./editor-bubble-menu"
 import type { EditorImageUpload } from "./editor-image-control"
+import type { EditorMentionItem } from "./editor-mention"
 import { EditorToolbar, type EditorToolbarVariant } from "./editor-toolbar"
 import { createEmendEditorExtensions } from "./extensions"
 import "./emend-editor.css"
@@ -26,6 +27,7 @@ export interface EmendEditorBaseProps {
   readonly placeholder?: string
   readonly editable?: boolean
   readonly extensions?: Extensions
+  readonly mentionItems?: readonly EditorMentionItem[]
   readonly editorProps?: EditorOptions["editorProps"]
   readonly toolbarActions?: ReactNode
   readonly toolbarVariant?: EditorToolbarVariant
@@ -39,6 +41,8 @@ export interface EmendEditorBaseProps {
   readonly renderWorkspace?: (editor: Editor, content: ReactNode) => ReactNode
   readonly onAssistantToggle?: () => void
   readonly assistantOpen?: boolean
+  readonly onComposerToggle?: () => void
+  readonly composerOpen?: boolean
 }
 
 export function EmendEditorBase({
@@ -46,6 +50,7 @@ export function EmendEditorBase({
   placeholder = "Start writing…",
   editable = true,
   extensions,
+  mentionItems,
   editorProps,
   toolbarActions,
   toolbarVariant = "compact",
@@ -56,6 +61,8 @@ export function EmendEditorBase({
   renderWorkspace,
   onAssistantToggle,
   assistantOpen,
+  onComposerToggle,
+  composerOpen,
 }: EmendEditorBaseProps) {
   const [characterCount, setCharacterCount] = useState(0)
   const [saveStatus, setSaveStatus] = useState<
@@ -64,8 +71,11 @@ export function EmendEditorBase({
   const documentVersion = useRef(0)
   const saveInFlight = useRef(false)
   const configuredExtensions = useMemo(
-    () => [...createEmendEditorExtensions(placeholder), ...(extensions ?? [])],
-    [extensions, placeholder]
+    () => [
+      ...createEmendEditorExtensions(placeholder, mentionItems),
+      ...(extensions ?? []),
+    ],
+    [extensions, mentionItems, placeholder]
   )
   const editor = useEditor({
     content: initialContent,
@@ -135,6 +145,8 @@ export function EmendEditorBase({
           saveDisabled={saveStatus === "saving"}
           saveStatus={saveStatus}
           assistantOpen={assistantOpen}
+          onComposerToggle={onComposerToggle}
+          composerOpen={composerOpen}
           toolbarActions={toolbarActions}
         />
       )}

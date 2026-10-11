@@ -187,11 +187,7 @@
         "color@^5.0.3",
         "tailwind-merge@^3.6.0"
       ],
-      "registryDependencies": [
-        "button",
-        "input",
-        "select"
-      ],
+      "registryDependencies": ["button", "input", "select"],
       "files": [
         {
           "path": "registry/components/color-picker/color-picker.tsx",
@@ -225,20 +221,24 @@
         "@hugeicons/react@^1.1.9",
         "@tiptap/core",
         "@base-ui/react",
+        "@tiptap/extension-find-and-replace",
         "@tiptap/extension-image",
         "@tiptap/extension-list",
+        "@tiptap/extension-mention",
         "@tiptap/extension-table",
         "@tiptap/extensions",
         "@tiptap/extension-text-style",
         "@tiptap/markdown",
         "@tiptap/react",
         "@tiptap/starter-kit",
+        "@tiptap/suggestion",
         "clsx@^2.1.1",
         "tailwind-merge@^3.6.0"
       ],
       "registryDependencies": [
         "button",
         "input",
+        "input-group",
         "popover",
         "select",
         "separator",
@@ -257,9 +257,19 @@
           "target": "components/emend/emend-editor/editor-color-control.tsx"
         },
         {
+          "path": "registry/blocks/emend-editor/editor-find-replace.tsx",
+          "type": "registry:component",
+          "target": "components/emend/emend-editor/editor-find-replace.tsx"
+        },
+        {
           "path": "registry/blocks/emend-editor/editor-image-control.tsx",
           "type": "registry:component",
           "target": "components/emend/emend-editor/editor-image-control.tsx"
+        },
+        {
+          "path": "registry/blocks/emend-editor/editor-mention.tsx",
+          "type": "registry:component",
+          "target": "components/emend/emend-editor/editor-mention.tsx"
         },
         {
           "path": "registry/blocks/emend-editor/editor-link-control.tsx",
@@ -303,9 +313,7 @@
       "type": "registry:block",
       "title": "Emend Editor with AI Bubble Menu",
       "description": "A Tiptap editor with AI Bubble Menu. The default starter.",
-      "dependencies": [
-        "@emend/ai@0.1.2"
-      ],
+      "dependencies": ["@emend/ai@0.1.2"],
       "registryDependencies": [
         "@emend/emend-editor-base",
         "@emend/ai-bubble-menu"
@@ -328,9 +336,7 @@
       "type": "registry:block",
       "title": "Emend Editor with AI Assistant",
       "description": "A Tiptap editor with AI Assistant.",
-      "dependencies": [
-        "@emend/ai@0.1.2"
-      ],
+      "dependencies": ["@emend/ai@0.1.2"],
       "registryDependencies": [
         "@emend/emend-editor-base",
         "@emend/ai-assistant"
@@ -348,9 +354,7 @@
       "type": "registry:block",
       "title": "Emend Editor with AI Composer",
       "description": "A Tiptap editor with AI Composer.",
-      "dependencies": [
-        "@emend/ai@0.1.2"
-      ],
+      "dependencies": ["@emend/ai@0.1.2"],
       "registryDependencies": [
         "@emend/emend-editor-base",
         "@emend/ai-composer"
@@ -368,10 +372,7 @@
       "type": "registry:item",
       "title": "Vercel AI Gateway Route",
       "description": "An Emend AI route backed by Vercel AI Gateway.",
-      "dependencies": [
-        "@emend/ai@0.1.2",
-        "ai@^7.0.97"
-      ],
+      "dependencies": ["@emend/ai@0.1.2", "ai@^7.0.97"],
       "files": [
         {
           "path": "registry/recipes/vercel-ai-gateway/route.ts",
