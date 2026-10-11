@@ -7,6 +7,7 @@ import { EmendAi } from "@emend/ai/tiptap"
 import { useMemo, type ReactNode } from "react"
 import { AiBubbleMenuView } from "@/components/emend/ai-bubble-menu"
 import { EmendEditorBase, type EmendEditorBaseProps } from "./emend-editor-base"
+import { createEmendContextProjection } from "./extensions"
 
 export interface EmendEditorProps extends Omit<
   EmendEditorBaseProps,
@@ -50,7 +51,16 @@ function EditorAi({
   readonly editor: Editor
   readonly transport: EmendTransport
 }) {
-  const session = useEditorAi({ editor, transport, previewMode: "inline" })
+  const contextProjection = useMemo(
+    () => createEmendContextProjection(editor),
+    [editor]
+  )
+  const session = useEditorAi({
+    editor,
+    transport,
+    previewMode: "inline",
+    contextProjection,
+  })
   return (
     <div className="emend-editor__workspace">
       <div className="emend-editor__main">

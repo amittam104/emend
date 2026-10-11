@@ -8,6 +8,7 @@ import { useMemo, useState, type ReactNode } from "react"
 import { AiComposerView } from "@/components/emend/ai-composer"
 import { cn } from "@/lib/utils"
 import { EmendEditorBase, type EmendEditorBaseProps } from "./emend-editor-base"
+import { createEmendContextProjection } from "./extensions"
 
 export interface EmendEditorComposerProps extends Omit<
   EmendEditorBaseProps,
@@ -65,7 +66,16 @@ function EditorAi({
   readonly transport: EmendTransport
   readonly open: boolean
 }) {
-  const session = useEditorAi({ editor, transport, previewMode: "inline" })
+  const contextProjection = useMemo(
+    () => createEmendContextProjection(editor),
+    [editor]
+  )
+  const session = useEditorAi({
+    editor,
+    transport,
+    previewMode: "inline",
+    contextProjection,
+  })
   return (
     <div className="emend-editor__workspace">
       <div

@@ -1,4 +1,10 @@
-import type { Extensions } from "@tiptap/core"
+import {
+  getText,
+  getTextSerializersFromSchema,
+  type Editor,
+  type Extensions,
+  type JSONContent,
+} from "@tiptap/core"
 import { FindAndReplace } from "@tiptap/extension-find-and-replace"
 import { Image } from "@tiptap/extension-image"
 import { TaskItem, TaskList } from "@tiptap/extension-list"
@@ -32,4 +38,13 @@ export function createEmendEditorExtensions(
     CharacterCount,
     ...(mentionItems.length > 0 ? [createEditorMention(mentionItems)] : []),
   ]
+}
+
+export function createEmendContextProjection(editor: Editor) {
+  const textSerializers = getTextSerializersFromSchema(editor.schema)
+  return (context: JSONContent) =>
+    getText(editor.schema.nodeFromJSON(context), {
+      blockSeparator: "\n\n",
+      textSerializers,
+    })
 }
