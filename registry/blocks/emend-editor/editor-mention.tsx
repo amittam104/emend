@@ -104,7 +104,30 @@ export function createEditorMention(items: readonly EditorMentionItem[]) {
       render: () => {
         let component: ReactRenderer<MentionListRef, MentionListProps> | null =
           null
-        let unmount: (() => void) | null = null
+        let clientRect: SuggestionProps<EditorMentionItem>["clientRect"] =
+          null
+
+        function position() {
+          const element = component?.element
+          const rect = clientRect?.()
+          if (!(element instanceof HTMLElement) || !rect) return
+          const { offsetWidth: width, offsetHeight: height } = element
+          const below = rect.bottom + 4
+          const top =
+            below + height > window.innerHeight && rect.top - 4 - height >= 0
+              ? rect.top - 4 - height
+              : below
+          const left = Math.max(
+            4,
+            Math.min(rect.left, window.innerWidth - width - 4)
+          )
+          Object.assign(element.style, {
+            position: "fixed",
+            top: `${top}px`,
+            left: `${left}px`,
+            zIndex: "50",
+          })
+        }
 
         return {
           onStart: (props: SuggestionProps<EditorMentionItem>) => {
@@ -112,16 +135,26 @@ export function createEditorMention(items: readonly EditorMentionItem[]) {
               props,
               editor: props.editor,
             })
-            unmount = props.mount(component.element)
+            clientRect = props.clientRect
+            document.body.appendChild(component.element)
+            window.addEventListener("scroll", position, true)
+            window.addEventListener("resize", position)
+            position()
+            requestAnimationFrame(position)
           },
           onUpdate: (props: SuggestionProps<EditorMentionItem>) => {
             component?.updateProps(props)
+            clientRect = props.clientRect
+            requestAnimationFrame(position)
           },
           onKeyDown: (props) => component?.ref?.onKeyDown(props) ?? false,
           onExit: () => {
-            unmount?.()
+            window.removeEventListener("scroll", position, true)
+            window.removeEventListener("resize", position)
+            component?.element.remove()
             component?.destroy()
             component = null
+            clientRect = null
           },
         }
       },

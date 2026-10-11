@@ -7,6 +7,7 @@ import { EmendAi } from "@emend/ai/tiptap"
 import { useMemo, useState, type ReactNode } from "react"
 import { AiAssistantView } from "@/components/emend/ai-assistant"
 import { EmendEditorBase, type EmendEditorBaseProps } from "./emend-editor-base"
+import { createEmendContextProjection } from "./extensions"
 
 export interface EmendEditorAssistantProps extends Omit<
   EmendEditorBaseProps,
@@ -76,7 +77,16 @@ function EditorAi({
   readonly open: boolean
   readonly onOpenChange: (open: boolean) => void
 }) {
-  const session = useEditorAi({ editor, transport, previewMode: "inline" })
+  const contextProjection = useMemo(
+    () => createEmendContextProjection(editor),
+    [editor]
+  )
+  const session = useEditorAi({
+    editor,
+    transport,
+    previewMode: "inline",
+    contextProjection,
+  })
   return (
     <div className="emend-editor__workspace">
       <div className="emend-editor__main">
