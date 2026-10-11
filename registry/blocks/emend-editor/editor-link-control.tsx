@@ -40,7 +40,7 @@ interface LinkDraft {
 function normalizeLinkUrl(value: string) {
   const text = value.trim()
   if (!text || /\s/.test(text)) return null
-  if (/^[/#]/.test(text)) return text
+  if (/^(?:[/#?]|\.\.?\/)/.test(text)) return text
 
   const href = /^(https?:\/\/|mailto:|tel:)/i.test(text)
     ? text
