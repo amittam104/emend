@@ -363,6 +363,58 @@ OpenRouter.
 
 <EditorDemo variantPicker />
 
+## Choose the toolbar size
+
+The toolbar is compact by default. Set `toolbarVariant="classic"` for larger
+buttons. It works the same way in every version.
+
+```tsx
+<EmendEditor transport={transport} toolbarVariant="classic" />
+```
+
+When the toolbar is wider than the editor, scroll it sideways with touch or a
+trackpad, or use the arrow buttons at each end.
+
+## Links
+
+Select text and click **Link** in the toolbar or the selection menu. Enter a
+URL and press **Enter** to add it. With nothing selected, you can also type the
+link text, or the URL itself is used as the text.
+
+Click an existing link to select it, then click **Link** to change the URL,
+open it in a new tab, or remove it. Links do not open while you are editing.
+URLs without a scheme, like `example.com`, get `https://`. Only `http`,
+`https`, `mailto`, and `tel` links and relative paths are accepted.
+
+## Images
+
+Click **Insert image** to choose an image file or paste an image URL. You can
+add alt text for screen readers. The image goes where your cursor was.
+
+By default, a chosen file is embedded in the document as a `data:` URL. This
+needs no server, and the image is saved and reloaded with the rest of the
+content (JSON, HTML, or Markdown). It also makes the document bigger, so files
+are limited to 2 MB and to PNG, JPEG, GIF, WebP, and AVIF.
+
+For real hosting, pass `onImageUpload`. It receives the file and returns the
+URL to insert. emend does not host images for you.
+
+```tsx
+<EmendEditor
+  transport={transport}
+  onImageUpload={async (file) => {
+    const body = new FormData()
+    body.append("file", file)
+    const response = await fetch("/api/uploads", { method: "POST", body })
+    if (!response.ok) throw new Error("Upload failed")
+    const { url } = await response.json()
+    return url
+  }}
+/>
+```
+
+If the upload throws, the error message is shown and nothing is inserted.
+
 ## Get the Tiptap editor
 
 The starter is built on Tiptap. If you need the Tiptap editor itself, for

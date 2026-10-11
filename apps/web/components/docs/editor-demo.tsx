@@ -4,7 +4,10 @@ import { createFetchTransport } from "@emend/ai/transport"
 import { EmendEditorBase } from "@emend/registry-components/blocks/emend-editor-base"
 import { EmendEditorComposer } from "@emend/registry-components/blocks/emend-editor-composer"
 import { EmendEditorAssistant } from "@emend/registry-components/blocks/emend-editor-assistant"
-import { EmendEditor } from "@emend/registry-components/blocks/emend-editor"
+import {
+  EmendEditor,
+  type EditorToolbarVariant,
+} from "@emend/registry-components/blocks/emend-editor"
 import { RefreshIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import type { JSONContent } from "@tiptap/core"
@@ -63,6 +66,8 @@ export function EditorDemo({
 }: EditorDemoProps) {
   const [activeVariant, setActiveVariant] = useState(variant)
   const [revision, setRevision] = useState(0)
+  const [toolbarVariant, setToolbarVariant] =
+    useState<EditorToolbarVariant>("compact")
 
   return (
     <DocsDemo
@@ -70,22 +75,42 @@ export function EditorDemo({
         variantPicker ? "Editor starter previews" : `${variants[variant]} demo`
       }
       action={
-        <Tooltip>
-          <TooltipTrigger
-            render={
+        <div className="flex items-center gap-2">
+          <div
+            className="flex items-center gap-1"
+            role="group"
+            aria-label="Toolbar size"
+          >
+            {(["compact", "classic"] as const).map((value) => (
               <Button
+                key={value}
                 type="button"
-                variant="outline"
-                size="icon-sm"
-                aria-label="Reset demo"
-                onClick={() => setRevision((value) => value + 1)}
+                size="sm"
+                variant={toolbarVariant === value ? "secondary" : "ghost"}
+                aria-pressed={toolbarVariant === value}
+                onClick={() => setToolbarVariant(value)}
               >
-                <HugeiconsIcon icon={RefreshIcon} />
+                {value === "compact" ? "Compact" : "Classic"}
               </Button>
-            }
-          />
-          <TooltipContent>Reset demo</TooltipContent>
-        </Tooltip>
+            ))}
+          </div>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon-sm"
+                  aria-label="Reset demo"
+                  onClick={() => setRevision((value) => value + 1)}
+                >
+                  <HugeiconsIcon icon={RefreshIcon} />
+                </Button>
+              }
+            />
+            <TooltipContent>Reset demo</TooltipContent>
+          </Tooltip>
+        </div>
       }
     >
       {variantPicker ? (
@@ -120,6 +145,7 @@ export function EditorDemo({
         <DemoEditor
           key={`${activeVariant}-${revision}`}
           variant={activeVariant}
+          toolbarVariant={toolbarVariant}
           showToolbarAssistantToggle={showToolbarAssistantToggle}
         />
       </div>
@@ -129,12 +155,14 @@ export function EditorDemo({
 
 function DemoEditor({
   variant,
+  toolbarVariant,
   showToolbarAssistantToggle,
 }: {
   readonly variant: DemoVariant
+  readonly toolbarVariant: EditorToolbarVariant
   readonly showToolbarAssistantToggle: boolean
 }) {
-  const props = { initialContent: demoContent[variant] }
+  const props = { initialContent: demoContent[variant], toolbarVariant }
 
   if (variant === "none") return <EmendEditorBase {...props} />
   if (variant === "composer")

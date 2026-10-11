@@ -175,6 +175,47 @@
       ]
     },
     {
+      "name": "color-picker",
+      "type": "registry:component",
+      "title": "Color Picker",
+      "description": "A color picker with a color canvas, hue and opacity sliders, eyedropper and editable formats. Adapted from Kibo UI.",
+      "dependencies": [
+        "@base-ui/react",
+        "@hugeicons/core-free-icons@4.2.3",
+        "@hugeicons/react@^1.1.9",
+        "clsx@^2.1.1",
+        "color@^5.0.3",
+        "tailwind-merge@^3.6.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "input",
+        "select"
+      ],
+      "files": [
+        {
+          "path": "registry/components/color-picker/color-picker.tsx",
+          "type": "registry:component",
+          "target": "components/emend/color-picker/color-picker.tsx"
+        },
+        {
+          "path": "registry/components/color-picker/index.ts",
+          "type": "registry:component",
+          "target": "components/emend/color-picker/index.ts"
+        },
+        {
+          "path": "registry/components/color-picker/LICENSE.md",
+          "type": "registry:file",
+          "target": "components/emend/color-picker/LICENSE.md"
+        },
+        {
+          "path": "packages/ui/src/lib/utils.ts",
+          "type": "registry:lib",
+          "target": "lib/utils.ts"
+        }
+      ]
+    },
+    {
       "name": "emend-editor-base",
       "type": "registry:block",
       "title": "Emend Editor without AI",
@@ -183,9 +224,12 @@
         "@hugeicons/core-free-icons@4.2.3",
         "@hugeicons/react@^1.1.9",
         "@tiptap/core",
+        "@base-ui/react",
+        "@tiptap/extension-image",
         "@tiptap/extension-list",
         "@tiptap/extension-table",
         "@tiptap/extensions",
+        "@tiptap/extension-text-style",
         "@tiptap/markdown",
         "@tiptap/react",
         "@tiptap/starter-kit",
@@ -194,15 +238,38 @@
       ],
       "registryDependencies": [
         "button",
+        "input",
+        "popover",
         "select",
         "separator",
-        "tooltip"
+        "tooltip",
+        "@emend/color-picker"
       ],
       "files": [
         {
           "path": "registry/blocks/emend-editor/editor-bubble-menu.tsx",
           "type": "registry:component",
           "target": "components/emend/emend-editor/editor-bubble-menu.tsx"
+        },
+        {
+          "path": "registry/blocks/emend-editor/editor-color-control.tsx",
+          "type": "registry:component",
+          "target": "components/emend/emend-editor/editor-color-control.tsx"
+        },
+        {
+          "path": "registry/blocks/emend-editor/editor-image-control.tsx",
+          "type": "registry:component",
+          "target": "components/emend/emend-editor/editor-image-control.tsx"
+        },
+        {
+          "path": "registry/blocks/emend-editor/editor-link-control.tsx",
+          "type": "registry:component",
+          "target": "components/emend/emend-editor/editor-link-control.tsx"
+        },
+        {
+          "path": "registry/blocks/emend-editor/editor-toolbar-scroller.tsx",
+          "type": "registry:component",
+          "target": "components/emend/emend-editor/editor-toolbar-scroller.tsx"
         },
         {
           "path": "registry/blocks/emend-editor/editor-toolbar.tsx",

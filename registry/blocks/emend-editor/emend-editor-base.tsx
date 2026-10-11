@@ -16,7 +16,8 @@ import {
   type ReactNode,
 } from "react"
 import { EditorBubbleMenu } from "./editor-bubble-menu"
-import { EditorToolbar } from "./editor-toolbar"
+import type { EditorImageUpload } from "./editor-image-control"
+import { EditorToolbar, type EditorToolbarVariant } from "./editor-toolbar"
 import { createEmendEditorExtensions } from "./extensions"
 import "./emend-editor.css"
 
@@ -27,6 +28,8 @@ export interface EmendEditorBaseProps {
   readonly extensions?: Extensions
   readonly editorProps?: EditorOptions["editorProps"]
   readonly toolbarActions?: ReactNode
+  readonly toolbarVariant?: EditorToolbarVariant
+  readonly onImageUpload?: EditorImageUpload
   readonly onChange?: (content: {
     readonly json: JSONContent
     readonly html: string
@@ -45,6 +48,8 @@ export function EmendEditorBase({
   extensions,
   editorProps,
   toolbarActions,
+  toolbarVariant = "compact",
+  onImageUpload,
   onChange,
   onEditorReady,
   onSave,
@@ -123,6 +128,8 @@ export function EmendEditorBase({
       {editor && editable && (
         <EditorToolbar
           editor={editor}
+          variant={toolbarVariant}
+          onImageUpload={onImageUpload}
           onSave={onSave ? save : undefined}
           onAssistantToggle={onAssistantToggle}
           saveDisabled={saveStatus === "saving"}
