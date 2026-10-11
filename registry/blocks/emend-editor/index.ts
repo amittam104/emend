@@ -1,4 +1,5 @@
 export { EmendEditor, type EmendEditorProps } from "./emend-editor"
 export { createEmendEditorExtensions } from "./extensions"
 export type { EditorImageUpload } from "./editor-image-control"
+export { editorMentionItems, type EditorMentionItem } from "./editor-mention"
 export type { EditorToolbarVariant } from "./editor-toolbar"

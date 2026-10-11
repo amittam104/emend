@@ -415,6 +415,37 @@ URL to insert. emend does not host images for you.
 
 If the upload throws, the error message is shown and nothing is inserted.
 
+## Find and replace
+
+Click **Find and replace** at the end of the toolbar. Type to highlight every
+match, press **Enter** for the next match or **Shift+Enter** for the previous
+one, and use **Replace** or **Replace all**. Press **Escape** or the close
+button to clear the search.
+
+## Mentions
+
+Type **@** or click **Mention** in the toolbar to pick an item from a list.
+The starter lists the emend components as examples. Pass your own items with
+`mentionItems`, or an empty list to turn mentions off. Define the list outside
+your component so the editor is not recreated on every render.
+
+```tsx
+const people = [
+  { id: "ada", label: "Ada Lovelace" },
+  { id: "grace", label: "Grace Hopper" },
+]
+
+<EmendEditor transport={transport} mentionItems={people} />
+```
+
+## AI toolbar buttons
+
+The AI Assistant version has a toolbar button that opens the chat, and the AI
+Composer version has one that shows or hides the composer. Set
+`showToolbarAssistantToggle` or `showToolbarComposerToggle` to `false` to hide
+them. The AI Bubble Menu appears when you select text, so it has no toolbar
+button.
+
 ## Get the Tiptap editor
 
 The starter is built on Tiptap. If you need the Tiptap editor itself, for

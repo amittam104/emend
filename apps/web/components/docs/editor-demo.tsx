@@ -62,7 +62,7 @@ interface EditorDemoProps {
 export function EditorDemo({
   variant = "bubble",
   variantPicker = false,
-  showToolbarAssistantToggle = false,
+  showToolbarAssistantToggle = true,
 }: EditorDemoProps) {
   const [activeVariant, setActiveVariant] = useState(variant)
   const [revision, setRevision] = useState(0)

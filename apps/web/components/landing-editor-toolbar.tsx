@@ -39,6 +39,7 @@ import type { ReactNode } from "react"
 
 import {
   EditorColorControl,
+  EditorFindReplace,
   EditorImageControl,
   EditorLinkControl,
   EditorToolbarScroller,
@@ -60,7 +61,6 @@ import {
 } from "@workspace/ui/components/tooltip"
 import { cn } from "@workspace/ui/lib/utils"
 
-import { LandingFindReplace } from "./landing-find-replace"
 import { SurfaceIcon, type SurfaceIconName } from "./surface-icon"
 
 const headingLevels = [1, 2, 3, 4, 5, 6] as const
@@ -454,7 +454,11 @@ export function LandingEditorToolbar({
         />
         <Separator orientation="vertical" className={toolbarSeparatorClasses} />
         <div className="mx-2 flex shrink-0 items-center px-0.5">
-          <LandingFindReplace editor={editor} />
+          <EditorFindReplace
+            editor={editor}
+            trigger={controlTrigger}
+            strokeWidth={2}
+          />
         </div>
 
         <div
