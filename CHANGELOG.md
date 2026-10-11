@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.0
+
+- Add link editing with relative-link support, image insertion and uploads, text
+  and highlight colors, and horizontally scrolling editor toolbars.
+- Add find-and-replace and configurable mention suggestions to the editor starters.
+- Preserve compatibility with older Tiptap 3 mention APIs and pass configured
+  mention labels into AI document context.
+- Improve landing-page actions, theme controls, and editor demos.
+- Document the new editor controls, mention configuration, and AI Assistant setup.
+- Keep the published `@emend/ai` runtime at `0.1.2`; this release updates the
+  website and editable registry components without runtime source changes.
+
 ## 0.1.2
 
 - Support Tiptap 3.7.1 or later instead of requiring exactly 3.31.4.
