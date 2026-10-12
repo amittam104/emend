@@ -14,14 +14,20 @@ import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react"
 import Lenis from "lenis"
 import Link from "next/link"
 import { useTheme } from "next-themes"
-import { useCallback, useEffect, useState } from "react"
+import {
+  createElement,
+  useCallback,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react"
 
 import { Button, buttonVariants } from "@workspace/ui/components/button"
 import { cn } from "@workspace/ui/lib/utils"
 
 import { GitHubLogo, githubRepositoryUrl } from "./github-logo"
 import { LandingEditor } from "./landing-editor"
-import { ComponentShowcase } from "./landing-showcase"
+import { ComponentShowcase, showcaseItems } from "./landing-showcase"
 
 const transport = createFetchTransport({ url: "/api/editor-ai" })
 const ctaClasses =
@@ -210,7 +216,7 @@ const initialContent: JSONContent = {
       content: [
         {
           type: "text",
-          text: "emend is in active development. The public package is not available yet, so this demo calls our own emend route backed by OpenRouter's free models.",
+          text: "emend is in active development and available on npm as @emend/ai, with editable components from our Shadcn registry. This demo calls our own emend route backed by OpenRouter's free models.",
         },
       ],
     },
@@ -256,6 +262,54 @@ function listItem(label: string, detail: string): JSONContent {
       },
     ],
   }
+}
+
+function renderLandingContent(node: JSONContent, index = 0): ReactNode {
+  if (node.type === "doc") return node.content?.map(renderLandingContent)
+  if (node.type === "componentShowcase") {
+    return (
+      <ul key={index}>
+        {showcaseItems.map((item) => (
+          <li key={item.href}>
+            <a href={item.href}>{item.name}</a> — {item.description}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+  if (node.type === "text") {
+    return node.marks?.some((mark) => mark.type === "bold") ? (
+      <strong key={index}>{node.text}</strong>
+    ) : (
+      node.text
+    )
+  }
+  if (node.type === "heroCta" || node.type === "docsCta") {
+    return (
+      <div key={index} className="flex flex-wrap gap-3">
+        <ReadDocsLink />
+        {node.type === "heroCta" && (
+          <a href={githubRepositoryUrl}>GitHub repo</a>
+        )}
+      </div>
+    )
+  }
+  const tags: Record<string, string> = {
+    heading: node.attrs?.level === 1 ? "h1" : "h2",
+    paragraph: "p",
+    bulletList: "ul",
+    orderedList: "ol",
+    listItem: "li",
+    blockquote: "blockquote",
+  }
+  const tag = tags[node.type ?? ""]
+  return tag
+    ? createElement(
+        tag,
+        { key: index },
+        node.content?.map(renderLandingContent)
+      )
+    : null
 }
 
 const HeroCta = Node.create({
@@ -425,6 +479,11 @@ export function LandingPage() {
         <LandingEditor
           extensions={landingExtensions}
           initialContent={initialContent}
+          fallback={
+            <div className="ProseMirror">
+              {renderLandingContent(initialContent)}
+            </div>
+          }
           onEditorReady={onEditorReady}
           actions={
             <>

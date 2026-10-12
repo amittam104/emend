@@ -8,7 +8,8 @@ import {
 } from "fumadocs-ui/layouts/notebook/page"
 
 import { getMDXComponents } from "@/components/mdx"
-import { source } from "@/lib/source"
+import { getPageImage, source } from "@/lib/source"
+import { pageMetadata } from "@/lib/site"
 
 interface PageProps {
   params: Promise<{ slug?: string[] }>
@@ -43,8 +44,11 @@ export async function generateMetadata({
   const page = source.getPage((await params).slug)
   if (!page) notFound()
 
-  return {
-    title: page.data.title,
-    description: page.data.description,
-  }
+  return pageMetadata(
+    `${page.data.title} | emend`,
+    page.data.description ??
+      "Documentation for emend AI editing and Tiptap editor components.",
+    page.url,
+    getPageImage(page).url
+  )
 }

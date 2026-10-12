@@ -1,7 +1,12 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalEnv": ["OPENROUTER_API_KEY", "OPENROUTER_DEMO_API_KEY", "VERCEL"],
+  "globalEnv": [
+    "OPENROUTER_API_KEY",
+    "OPENROUTER_DEMO_API_KEY",
+    "VERCEL",
+    "VERCEL_ENV"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

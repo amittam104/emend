@@ -4,6 +4,15 @@ import { createMDX } from "fumadocs-mdx/next"
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@emend/registry-components", "@workspace/ui"],
+  async redirects() {
+    return [
+      {
+        source: "/docs/ai-side-chat",
+        destination: "/docs/ai-assistant",
+        permanent: true,
+      },
+    ]
+  },
   async rewrites() {
     return [
       {

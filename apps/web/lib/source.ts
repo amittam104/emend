@@ -118,3 +118,8 @@ export const docsLlms = llms(source, {
 
 ${await page.data.getText("processed")}`,
 })
+
+export function getPageImage(page: typeof source.$inferPage) {
+  const segments = [...page.slugs, "image.png"]
+  return { segments, url: `/og/docs/${segments.join("/")}` }
+}
