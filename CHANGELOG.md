@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1
+
+- Add canonical URLs, Open Graph and Twitter cards, a sitemap, and robots rules.
+- Add branded landing share images and page-specific Fumadocs share images.
+- Render landing content before JavaScript loads, refresh icons and package copy,
+  and redirect the renamed AI Side Chat page to AI Assistant.
+
 ## 0.2.0
 
 - Add link editing with relative-link support, image insertion and uploads, text

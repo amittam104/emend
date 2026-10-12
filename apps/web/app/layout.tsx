@@ -5,6 +5,8 @@ import { RootProvider } from "fumadocs-ui/provider/next"
 import { TooltipProvider } from "@workspace/ui/components/tooltip"
 import { cn } from "@workspace/ui/lib/utils"
 
+import { siteDescription, siteTitle, siteUrl } from "@/lib/site"
+
 import "./globals.css"
 
 const instrumentSans = Instrument_Sans({
@@ -24,11 +26,15 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: {
-    default: "emend",
-    template: "%s | emend",
-  },
-  description: "AI editing components and editor starters for Tiptap.",
+  metadataBase: new URL(siteUrl),
+  title: { default: siteTitle, template: "%s | emend" },
+  description: siteDescription,
+  applicationName: "emend",
+  robots:
+    process.env.VERCEL_ENV === "preview"
+      ? { index: false, follow: false }
+      : undefined,
+  icons: { icon: "/emend-logo.svg", apple: "/apple-icon.png" },
 }
 
 export default function RootLayout({

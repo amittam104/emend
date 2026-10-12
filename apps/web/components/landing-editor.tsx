@@ -81,12 +81,14 @@ const editorContentClasses = [
 export function LandingEditor({
   actions,
   extensions,
+  fallback,
   initialContent,
   onEditorReady,
   transport,
 }: {
   readonly actions?: ReactNode
   readonly extensions?: Extensions
+  readonly fallback?: ReactNode
   readonly initialContent: JSONContent
   readonly onEditorReady?: (editor: Editor) => void
   readonly transport: EmendTransport
@@ -130,6 +132,7 @@ export function LandingEditor({
           onToggleAssistant={() => setAssistantOpen((open) => !open)}
         />
       )}
+      {!editor && <div className={editorContentClasses}>{fallback}</div>}
       {editor && (
         <LandingAiWorkspace
           editor={editor}

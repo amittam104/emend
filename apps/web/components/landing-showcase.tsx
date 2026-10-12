@@ -9,7 +9,7 @@ import Link from "next/link"
 import { ShowcaseClip } from "./showcase-clip"
 import { SurfaceIcon } from "./surface-icon"
 
-const showcaseItems = [
+export const showcaseItems = [
   {
     clip: "composer",
     icon: "composer",
