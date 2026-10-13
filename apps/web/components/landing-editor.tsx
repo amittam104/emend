@@ -39,10 +39,10 @@ const landingPolicy = {
 } satisfies AiComposerPolicy & AiAssistantPolicy
 
 const editorContentClasses = [
-  "min-h-0 flex-1 overflow-x-hidden overflow-y-auto",
-  "[&_.ProseMirror]:mx-auto [&_.ProseMirror]:min-h-full [&_.ProseMirror]:max-w-[720px] [&_.ProseMirror]:px-0 [&_.ProseMirror]:pt-32 [&_.ProseMirror]:pb-40",
+  "overflow-x-clip",
+  "[&_.ProseMirror]:mx-auto [&_.ProseMirror]:max-w-[720px] [&_.ProseMirror]:px-0 [&_.ProseMirror]:pt-32 [&_.ProseMirror]:pb-0",
   "[&_.ProseMirror]:font-sans [&_.ProseMirror]:text-base [&_.ProseMirror]:leading-[1.6] [&_.ProseMirror]:text-foreground [&_.ProseMirror]:outline-none",
-  "max-md:[&_.ProseMirror]:px-6 max-md:[&_.ProseMirror]:pt-16 max-md:[&_.ProseMirror]:pb-32 max-md:[&_.ProseMirror]:text-base",
+  "max-md:[&_.ProseMirror]:px-6 max-md:[&_.ProseMirror]:pt-16 max-md:[&_.ProseMirror]:text-base",
   "[&_.ProseMirror]:before:mb-6 [&_.ProseMirror]:before:block [&_.ProseMirror]:before:size-11",
   "[&_.ProseMirror]:before:bg-[url('/emend-logo.svg')] [&_.ProseMirror]:before:bg-center [&_.ProseMirror]:before:bg-no-repeat [&_.ProseMirror]:before:content-['']",
   "[&_.ProseMirror>*+*]:mt-4",
@@ -121,7 +121,7 @@ export function LandingEditor({
   })
 
   return (
-    <section className="emend-landing-editor flex h-full w-full min-w-0 flex-col overflow-hidden bg-background text-foreground">
+    <section className="emend-landing-editor flex w-full min-w-0 flex-col bg-background text-foreground">
       {editor && (
         <LandingEditorToolbar
           editor={editor}
@@ -174,11 +174,11 @@ function LandingAiWorkspace({
   })
 
   return (
-    <div className="relative flex min-h-0 min-w-0 flex-1">
-      <div className="relative flex h-full min-h-0 min-w-0 flex-1 flex-col">
+    <div className="relative flex min-w-0 flex-1">
+      <div className="relative flex min-w-0 flex-1 flex-col">
         <EditorContent editor={editor} className={editorContentClasses} />
         {composerOpen && (
-          <div className="shrink-0 px-3 py-3">
+          <div className="fixed inset-x-0 bottom-[30px] z-40 px-3 py-3">
             <div className="mx-auto w-full max-w-[720px]">
               <AiComposerView
                 editor={editor}
