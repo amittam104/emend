@@ -17,7 +17,7 @@
 
 ## Development Status
 
-The `0.2.0` project preview includes the latest website and editable editor
+The `0.2.2` project preview includes the latest website and editable editor
 components. The shared `@emend/ai` runtime remains available as `0.1.2` on
 [npm](https://www.npmjs.com/package/@emend/ai).
 The runtime, React integration, editable AI components, editor starters, and
@@ -28,12 +28,11 @@ provider recipe are ready to install.
 Validation is manual and build-based. There is no automated regression suite.
 We are not accepting contributions until we reach a stable release.
 
-## What’s new in 0.2.0
+## What’s new in 0.2.2
 
-- Link editing, images and uploads, text colors, and highlights.
-- Find-and-replace, configurable mentions, and scrolling editor toolbars.
-- Improved landing-page actions and editor demos.
-- Relative-link and mention compatibility fixes, including mention labels in AI context.
+- A fully visible, responsive Mac-layout branded keyboard below the landing text,
+  including the knob, with light and dark themes.
+- Continuous smooth page scrolling with Lenis and tighter landing spacing.
 
 See the [changelog](CHANGELOG.md) for release details.
 

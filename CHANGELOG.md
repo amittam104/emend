@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.2
+
+- Add a fully visible, responsive Mac-layout branded keyboard below the landing
+  text, including the knob, with light and dark themes.
+- Add continuous smooth page scrolling with Lenis and tighten landing spacing.
+- Keep the published `@emend/ai` runtime at `0.1.2`; this release updates the
+  website and registry metadata without runtime source changes.
+
 ## 0.2.1
 
 - Add canonical URLs, Open Graph and Twitter cards, a sitemap, and robots rules.
