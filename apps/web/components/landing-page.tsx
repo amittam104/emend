@@ -18,6 +18,7 @@ import {
   createElement,
   useCallback,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react"
@@ -418,8 +419,23 @@ export function LandingPage() {
     line: 1,
     words: 0,
   })
+  const lenisRef = useRef<Lenis | null>(null)
   const onEditorReady = useCallback((nextEditor: Editor) => {
     setEditor(nextEditor)
+  }, [])
+  const scrollPageBy = useCallback((offset: number) => {
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches
+    const lenis = lenisRef.current
+    if (!lenis) {
+      window.scrollBy({
+        top: offset,
+        behavior: reduceMotion ? "auto" : "smooth",
+      })
+      return
+    }
+    lenis.scrollTo(window.scrollY + offset, { immediate: reduceMotion })
   }, [])
 
   useEffect(() => {
@@ -429,7 +445,11 @@ export function LandingPage() {
       allowNestedScroll: true,
       autoRaf: true,
     })
-    return () => lenis.destroy()
+    lenisRef.current = lenis
+    return () => {
+      lenisRef.current = null
+      lenis.destroy()
+    }
   }, [])
 
   useEffect(() => {
@@ -475,6 +495,7 @@ export function LandingPage() {
           </div>
         }
         onEditorReady={onEditorReady}
+        scrollPageBy={scrollPageBy}
         actions={
           <>
             <a

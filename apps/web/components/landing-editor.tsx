@@ -12,7 +12,14 @@ import { TextStyleKit } from "@tiptap/extension-text-style"
 import { Markdown } from "@tiptap/markdown"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import { useCallback, useMemo, useState, type ReactNode } from "react"
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react"
 
 import { AiBubbleMenuView } from "@/components/emend/ai-bubble-menu"
 import {
@@ -84,6 +91,7 @@ export function LandingEditor({
   fallback,
   initialContent,
   onEditorReady,
+  scrollPageBy,
   transport,
 }: {
   readonly actions?: ReactNode
@@ -91,6 +99,7 @@ export function LandingEditor({
   readonly fallback?: ReactNode
   readonly initialContent: JSONContent
   readonly onEditorReady?: (editor: Editor) => void
+  readonly scrollPageBy?: (offset: number) => void
   readonly transport: EmendTransport
 }) {
   const [assistantOpen, setAssistantOpen] = useState(false)
@@ -140,6 +149,7 @@ export function LandingEditor({
           composerOpen={composerOpen}
           assistantOpen={assistantOpen}
           onOpenChange={setAssistantOpen}
+          scrollPageBy={scrollPageBy}
         />
       )}
     </section>
@@ -152,12 +162,14 @@ function LandingAiWorkspace({
   composerOpen,
   assistantOpen,
   onOpenChange,
+  scrollPageBy,
 }: {
   readonly editor: Editor
   readonly transport: EmendTransport
   readonly composerOpen: boolean
   readonly assistantOpen: boolean
   readonly onOpenChange: (open: boolean) => void
+  readonly scrollPageBy?: (offset: number) => void
 }) {
   const contextProjection = useCallback(
     (context: JSONContent) => {
@@ -172,6 +184,31 @@ function LandingAiWorkspace({
     previewMode: "inline",
     contextProjection,
   })
+  const composerPanelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const panel = composerPanelRef.current
+    if (!composerOpen || !panel) return
+
+    const revealSelection = () => {
+      if (editor.isDestroyed) return
+      const { from, to } = editor.state.selection
+      const start = editor.view.coordsAtPos(from)
+      const end = editor.view.coordsAtPos(to)
+      const panelRect = panel.getBoundingClientRect()
+      const limit = panelRect.top - 12
+      const bottom = Math.max(start.bottom, end.bottom)
+      const top = Math.min(start.top, end.top)
+      if (bottom <= limit || top >= panelRect.bottom) return
+      const offset = bottom - limit
+      if (scrollPageBy) scrollPageBy(offset)
+      else window.scrollBy({ top: offset, behavior: "smooth" })
+    }
+
+    const observer = new ResizeObserver(revealSelection)
+    observer.observe(panel)
+    return () => observer.disconnect()
+  }, [composerOpen, editor, scrollPageBy])
 
   return (
     <div className="relative flex min-w-0 flex-1">
@@ -179,7 +216,10 @@ function LandingAiWorkspace({
         <EditorContent editor={editor} className={editorContentClasses} />
         {composerOpen && (
           <div className="fixed inset-x-0 bottom-[30px] z-40 px-3 py-3">
-            <div className="mx-auto w-full max-w-[720px]">
+            <div
+              ref={composerPanelRef}
+              className="mx-auto w-full max-w-[720px]"
+            >
               <AiComposerView
                 editor={editor}
                 session={session}
