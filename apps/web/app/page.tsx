@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 
+import { LandingKeyboard } from "@/components/landing-keyboard"
 import { LandingPage } from "@/components/landing-page"
 import { pageMetadata, siteDescription, siteTitle, siteUrl } from "@/lib/site"
 
@@ -28,6 +29,7 @@ export default function Page() {
         }}
       />
       <LandingPage />
+      <LandingKeyboard />
     </>
   )
 }

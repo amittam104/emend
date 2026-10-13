@@ -422,24 +422,15 @@ export function LandingPage() {
     setEditor(nextEditor)
   }, [])
 
-  // The editor, not the window, is the page's scroll container. Lenis eases
-  // wheel input on it for a slower, weighted scroll; touch stays native, and
-  // it steps aside when the visitor prefers reduced motion.
   useEffect(() => {
-    const content = editor?.view.dom
-    const wrapper = content?.parentElement
-    if (!content || !wrapper) return
-
     const lenis = new Lenis({
-      wrapper,
-      content,
       lerp: 0.08,
       wheelMultiplier: 0.9,
       allowNestedScroll: true,
       autoRaf: true,
     })
     return () => lenis.destroy()
-  }, [editor])
+  }, [])
 
   useEffect(() => {
     if (!editor) return
@@ -474,43 +465,41 @@ export function LandingPage() {
   }, [editor])
 
   return (
-    <main className="landing-page min-h-svh overflow-hidden bg-background font-sans text-foreground">
-      <div className="h-svh pb-[30px]">
-        <LandingEditor
-          extensions={landingExtensions}
-          initialContent={initialContent}
-          fallback={
-            <div className="ProseMirror">
-              {renderLandingContent(initialContent)}
-            </div>
-          }
-          onEditorReady={onEditorReady}
-          actions={
-            <>
-              <a
-                data-slot="button"
-                href={githubRepositoryUrl}
-                rel="noreferrer"
-                target="_blank"
-                className={cn(
-                  buttonVariants({
-                    variant: "secondary",
-                    size: "icon-xs",
-                    className:
-                      "border-border transition-[background-color,color,scale] duration-100 active:translate-y-0 motion-safe:active:scale-96",
-                  })
-                )}
-                aria-label="GitHub repo"
-                title="GitHub repo"
-              >
-                <GitHubLogo className="size-3.5" />
-              </a>
-              <LandingThemeSwitch />
-            </>
-          }
-          transport={transport}
-        />
-      </div>
+    <main className="landing-page overflow-x-clip bg-background font-sans text-foreground">
+      <LandingEditor
+        extensions={landingExtensions}
+        initialContent={initialContent}
+        fallback={
+          <div className="ProseMirror">
+            {renderLandingContent(initialContent)}
+          </div>
+        }
+        onEditorReady={onEditorReady}
+        actions={
+          <>
+            <a
+              data-slot="button"
+              href={githubRepositoryUrl}
+              rel="noreferrer"
+              target="_blank"
+              className={cn(
+                buttonVariants({
+                  variant: "secondary",
+                  size: "icon-xs",
+                  className:
+                    "border-border transition-[background-color,color,scale] duration-100 active:translate-y-0 motion-safe:active:scale-96",
+                })
+              )}
+              aria-label="GitHub repo"
+              title="GitHub repo"
+            >
+              <GitHubLogo className="size-3.5" />
+            </a>
+            <LandingThemeSwitch />
+          </>
+        }
+        transport={transport}
+      />
 
       <footer className="fixed inset-x-0 bottom-0 z-60 flex h-[30px] items-center justify-between border-t border-border bg-secondary px-3.5 font-sans text-xs leading-4 whitespace-nowrap text-secondary-foreground/70">
         <div className="flex items-center gap-4">
